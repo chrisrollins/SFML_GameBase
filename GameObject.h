@@ -50,8 +50,8 @@ public:
 	GraphicalGameObject(sf::Text);
 	GraphicalGameObject(sf::VertexArray);
 	GraphicalGameObject(sf::VertexBuffer);
-	~GraphicalGameObject();
 	virtual void draw(sf::RenderWindow& win);
+	~GraphicalGameObject();
 protected:
 	sf::Drawable* graphic;
 };

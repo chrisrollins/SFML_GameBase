@@ -7,6 +7,8 @@
 #include <functional>
 #include <mutex>
 
+#include <iostream>
+
 unsigned int Screen::windowWidth = 0;
 unsigned int Screen::windowHeight = 0;
 const char* Screen::windowTitle = nullptr;
@@ -19,7 +21,7 @@ static std::atomic<int> addCount = 0;
 static std::atomic<int> removeCount = 0;
 static std::thread::id renderThreadID;
 
-bool Screen::_add(GameObject& gameObject, GameObjectMap& map)
+bool Screen::_add(GameObject* gameObject, GameObjectMap& map)
 {
 	bool result = true;
 	l.lock();
@@ -35,12 +37,12 @@ bool Screen::_add(GameObject& gameObject, GameObjectMap& map)
 			}
 			else
 			{
-				objectsToAdd[index] = &gameObject;
+				objectsToAdd[index] = gameObject;
 			}
 		}
 		else
 		{
-			map[gameObject.getID()] = &gameObject;
+			map[gameObject->getID()] = gameObject;
 		}
 	}
 	catch (...) {}
@@ -48,7 +50,7 @@ bool Screen::_add(GameObject& gameObject, GameObjectMap& map)
 	return result;
 }
 
-bool Screen::_remove(GameObject& gameObject, GameObjectMap& map)
+bool Screen::_remove(GameObject* gameObject, GameObjectMap& map)
 {
 	bool result = true;
 	l.lock();
@@ -57,11 +59,13 @@ bool Screen::_remove(GameObject& gameObject, GameObjectMap& map)
 		if (std::this_thread::get_id() != renderThreadID && currentScreen.load() == this)
 		{
 			int index = removeCount.fetch_add(1);
-			objectsToRemove[index] = &gameObject;			
+			objectsToRemove[index] = gameObject;			
 		}
 		else
 		{
-			map.erase(gameObject.getID());
+			GameObjectID id = gameObject->getID();
+			GameObject* obj = map[id];
+			map.erase(id);
 		}
 	}
 	catch (...) {}
@@ -69,16 +73,16 @@ bool Screen::_remove(GameObject& gameObject, GameObjectMap& map)
 	return result;
 }
 
-void Screen::add(GameObject& gameObject)
+void Screen::add(GameObject* gameObject)
 {
-	GameObjectMap& map = (dynamic_cast<GraphicalGameObject*>(&gameObject)) ? this->g_objects : this->objects;
+	GameObjectMap& map = (dynamic_cast<GraphicalGameObject*>(gameObject)) ? this->g_objects : this->objects;
 	while(!this->_add(gameObject, map)) { }
 }
 
-void Screen::remove(GameObject& gameObject)
+void Screen::remove(GameObject* gameObject)
 {
-	GameObjectMap& map = (dynamic_cast<GraphicalGameObject*>(&gameObject)) ? this->g_objects : this->objects;
-	if (map.find(gameObject.getID()) == map.end()) { return; }
+	GameObjectMap& map = (dynamic_cast<GraphicalGameObject*>(gameObject)) ? this->g_objects : this->objects;
+	if (map.find(gameObject->getID()) == map.end()) { return; }
 	while (!this->_remove(gameObject, map)) { }
 }
 
@@ -190,19 +194,23 @@ std::thread* Screen::render(int fps)
 		{
 			clock.restart();
 			Screen* cs = currentScreen.load();
+			int addIndex = addCount.load();
 
-			int addIndex = addCount;
 			while (addIndex > 0)
 			{
-				cs->add(*objectsToAdd[addIndex]);
-				addIndex = --addCount;
+				l.lock();
+				cs->add(objectsToAdd[addIndex]);
+				addCount--;
+				l.unlock();
 			} 
 
-			int removeIndex = removeCount;
+			int removeIndex = removeCount.load();
 			while (removeIndex > 0)
 			{
-				cs->remove(*objectsToAdd[removeIndex]);
+				l.lock();
+				cs->remove(objectsToAdd[removeIndex]);
 				removeIndex = --removeCount;
+				l.unlock();
 			}
 
 			for (auto const& pair : cs->g_objects)

@@ -1,5 +1,6 @@
 #include "GameObject.h"
 #include "SFML\Graphics.hpp"
+#include <iostream>
 
 GameObjectID generateID()
 {
@@ -51,15 +52,16 @@ GraphicalGameObject::GraphicalGameObject(sf::VertexBuffer vb)
 }
 /////
 
+void GraphicalGameObject::draw(sf::RenderWindow& win)
+{
+	win.draw(*this->graphic);
+}
+
 GraphicalGameObject::~GraphicalGameObject()
 {
 	delete this->graphic;
 }
 
-void GraphicalGameObject::draw(sf::RenderWindow& win)
-{
-	win.draw(*this->graphic);
-}
 void GameObject::EveryFrame(uint64_t frameNumber)
 {
 
