@@ -11,7 +11,7 @@ class Screen
 public:
 	void add(GameObject* gameObject);
 	void remove(GameObject* gameObject);
-	std::thread* render(int fps = 60); //returns the thread to join
+	void render(int fps = 60);
 	unsigned static int windowWidth;
 	unsigned static int windowHeight;
 	static const char* windowTitle;
@@ -19,8 +19,6 @@ private:
 	typedef std::map<GameObjectID, GameObject*> GameObjectMap;
 	GameObjectMap objects;
 	GameObjectMap g_objects; //GraphicalGameObjects go here so during rendering it doesn't have to check the other ones
-	bool _add(GameObject* gameObject, GameObjectMap& map);
-	bool _remove(GameObject* gameObject, GameObjectMap& map);
 };
 
 #endif

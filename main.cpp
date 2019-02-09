@@ -77,7 +77,7 @@ int main(int argc, char** argv)
 
 	//render the screen (replaces whichever screen is currently rendering)
 	//also join the thread which was returned. this prevents the program from exiting.
-	startingScreen.render()->join();
+	startingScreen.render();
 
 	return 0;
 }
