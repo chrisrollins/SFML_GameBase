@@ -1,4 +1,4 @@
-#include "SFML\Graphics.hpp"
+#include "SFML/Graphics.hpp"
 #include "Screen.h"
 #include "GameObject.h"
 #include <thread>

@@ -1,5 +1,5 @@
 #include "GameObject.h"
-#include "SFML\Graphics.hpp"
+#include "SFML/Graphics.hpp"
 #include <iostream>
 
 GameObjectID generateID()

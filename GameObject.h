@@ -1,7 +1,7 @@
 #ifndef GAME_OBJECT_HEADER
 #define GAME_OBJECT_HEADER
 
-#include "SFML\Graphics.hpp"
+#include "SFML/Graphics.hpp"
 #include <cstdint>
 #include <map>
 

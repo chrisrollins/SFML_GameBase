@@ -1,7 +1,7 @@
 #ifndef SCREEN_HEADER
 #define SCREEN_HEADER
 
-#include "SFML\Graphics.hpp"
+#include "SFML/Graphics.hpp"
 #include "GameObject.h"
 #include <map>
 #include <thread>
