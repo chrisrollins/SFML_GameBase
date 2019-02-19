@@ -5,6 +5,8 @@
 #include "Screen.h"
 #include "GameObject.h"
 
+using namespace Engine;
+
 Screen startingScreen;
 
 class SampleCircle : public GraphicalGameObject
@@ -21,6 +23,64 @@ public:
 	sf::CircleShape* circle()
 	{
 		return dynamic_cast<sf::CircleShape*>(this->graphic);
+	}
+};
+
+class SampleMainCharacter : public GraphicalGameObject
+{
+	bool W_KeyHeld = false;
+	bool A_KeyHeld = false;
+	bool S_KeyHeld = false;
+	bool D_KeyHeld = false;
+public:
+	SampleMainCharacter(sf::RectangleShape r) : GraphicalGameObject(r) { }
+	void KeyPressed(sf::Event e)
+	{
+		switch (e.key.code)
+		{
+		case sf::Keyboard::W:
+			this->W_KeyHeld = true;
+			break;
+		case sf::Keyboard::A:
+			this->A_KeyHeld = true;
+			break;
+		case sf::Keyboard::S:
+			this->S_KeyHeld = true;
+			break;
+		case sf::Keyboard::D:
+			this->D_KeyHeld = true;
+			break;
+		}
+	}
+	void KeyReleased(sf::Event e)
+	{
+		switch (e.key.code)
+		{
+		case sf::Keyboard::W:
+			this->W_KeyHeld = false;
+			break;
+		case sf::Keyboard::A:
+			this->A_KeyHeld = false;
+			break;
+		case sf::Keyboard::S:
+			this->S_KeyHeld = false;
+			break;
+		case sf::Keyboard::D:
+			this->D_KeyHeld = false;
+			break;
+		}
+	}
+	void EveryFrame(uint64_t f)
+	{
+		sf::RectangleShape* r = this->placeholder();
+		if (this->W_KeyHeld) { r->move(0, -10); }
+		if (this->A_KeyHeld) { r->move(-10, 0); }
+		if (this->S_KeyHeld) { r->move(0, 10); }
+		if (this->D_KeyHeld) { r->move(10, 0); }
+	}
+	sf::RectangleShape* placeholder()
+	{
+		return dynamic_cast<sf::RectangleShape*>(this->graphic);
 	}
 };
 
@@ -68,9 +128,13 @@ int main(int argc, char** argv)
 	//a class which derives from GraphicalGameObject and puts a circle on the screen with an event to move it when the user clicks
 	SampleCircle s;
 
+	//main character sample
+	SampleMainCharacter c(sf::RectangleShape(sf::Vector2f(100, 100)));
+
 	//add the objects to the screen
 	startingScreen.add(&s);
 	startingScreen.add(&clicks);
+	startingScreen.addMainCharacter(&c);
 
 	//note: The lifetime of the objects added to the screen must be as long as the screen's lifetime. In this case it's ok to use these local variables because this function waits for the thread returned by the screen.
 	//For most other cases we'll probably have to use heap allocated objects.
