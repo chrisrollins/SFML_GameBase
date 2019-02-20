@@ -68,6 +68,8 @@ public:
 		case sf::Keyboard::D:
 			this->D_KeyHeld = false;
 			break;
+		default:
+			break;
 		}
 	}
 	void EveryFrame(uint64_t f)

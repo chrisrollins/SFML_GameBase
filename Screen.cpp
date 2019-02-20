@@ -125,6 +125,8 @@ namespace Engine
 				case sf::Event::SensorChanged:
 					obj->SensorChanged(event);
 					break;
+				default:
+					break;
 				}
 			}
 		};
@@ -196,12 +198,14 @@ namespace Engine
 		for (auto const& pair : this->objects)
 		{
 			auto obj = pair.second;
+			if (obj == this->mainCharacter) { continue; }
 			delete obj;
 		}
 
 		for (auto const& pair : this->g_objects)
 		{
 			auto obj = pair.second;
+			if (obj == this->mainCharacter) { continue; }
 			delete obj;
 		}
 	}
