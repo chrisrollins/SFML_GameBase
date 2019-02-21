@@ -185,7 +185,7 @@ namespace Engine
 			{
 				if (const sf::Transformable* graphicAsTransformable = dynamic_cast<const sf::Transformable*>(mainCharGraphical->getGraphic()))
 				{
-					view.setCenter(graphicAsTransformable->getPosition());
+//                    view.setCenter(graphicAsTransformable->getPosition());
 				}
 			}
 			window.setView(view);
