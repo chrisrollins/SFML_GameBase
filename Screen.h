@@ -3,6 +3,7 @@
 
 #include "SFML/Graphics.hpp"
 #include "GameObject.h"
+#include "TileMap.h"
 #include <map>
 
 namespace Engine
@@ -11,7 +12,7 @@ namespace Engine
 	{
 	public:
 		~Screen();
-		void addMap(sf::Drawable* map);
+		void addMap(TileMap* map);
 		void addMainCharacter(GameObject* mainCharacter);
 		void add(GameObject* gameObject);
 		void remove(GameObject* gameObject);
@@ -24,7 +25,7 @@ namespace Engine
 		GameObjectMap objects;
 		GameObjectMap g_objects; //GraphicalGameObjects go here so during rendering it doesn't have to check the other ones
 		GameObject* mainCharacter = nullptr;
-		sf::Drawable* map = nullptr;
+		TileMap* map;
 	};
 }
 #endif
