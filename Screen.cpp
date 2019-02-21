@@ -16,7 +16,7 @@ namespace Engine
 	const char* Screen::windowTitle = nullptr;
 	static Screen* currentScreen;
 
-	void Screen::addMap(sf::Drawable* map)
+	void Screen::addMap(TileMap* map)
 	{
 		this->map = map;
 	}
