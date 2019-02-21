@@ -2,10 +2,14 @@
 #include <iostream>
 #include <thread>
 #include <vector>
+#include <cassert>
 #include "Screen.h"
 #include "GameObject.h"
 
 using namespace Engine;
+
+//screen object which holds game objects
+Screen startingScreen;
 
 class SampleCircle : public GraphicalGameObject
 {
@@ -117,9 +121,6 @@ int main(int argc, char** argv)
 	Screen::windowHeight = 768;
 	Screen::windowTitle = "Game!";
 
-	//screen object which holds game objects
-	Screen startingScreen;
-	
 	// declare a tilemap object
 	TileMap map;
 	// build map using different tiles

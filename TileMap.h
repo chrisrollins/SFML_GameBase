@@ -1,4 +1,6 @@
-#pragma once
+#ifndef TILEMAP_HEADER
+#define TILEMAP_HEADER
+
 #include "SFML\Graphics.hpp"
 
 class TileMap : public sf::Drawable, public sf::Transformable
@@ -62,3 +64,5 @@ private:
 	sf::VertexArray m_vertices;
 	sf::Texture m_tileset;
 };
+
+#endif
