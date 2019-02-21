@@ -26,12 +26,26 @@ public:
 	}
 };
 
+class SampleSquare : public GraphicalGameObject
+{
+public:
+	SampleSquare() : GraphicalGameObject(sf::RectangleShape(sf::Vector2f(10, 10)))
+	{
+		this->square()->setFillColor(sf::Color::Green);
+	}
+	sf::RectangleShape* square()
+	{
+		return dynamic_cast<sf::RectangleShape*>(this->graphic);
+	}
+};
+
 class SampleMainCharacter : public GraphicalGameObject
 {
 	bool W_KeyHeld = false;
 	bool A_KeyHeld = false;
 	bool S_KeyHeld = false;
 	bool D_KeyHeld = false;
+	std::vector<GraphicalGameObject*> objs;
 public:
 	SampleMainCharacter(sf::RectangleShape r) : GraphicalGameObject(r) { }
 	void KeyPressed(sf::Event e)
@@ -72,6 +86,18 @@ public:
 			break;
 		}
 	}
+	void MouseButtonReleased(sf::Event e)
+	{
+		sf::Vector2f position = this->placeholder()->getPosition();
+		std::cout << "Mouse clicked at (" << e.mouseButton.x << ", " << e.mouseButton.y << ")" << std::endl;
+		std::cout << "character is at (" << position.x << ", " << position.y << ")" << std::endl;
+		int adjustedX = position.x + e.mouseButton.x - (startingScreen.windowWidth / 2);
+		int adjustedY = position.y + e.mouseButton.y - (startingScreen.windowHeight / 2);
+		SampleSquare* s = new SampleSquare(); //use a heap allocated object which has to be cleaned up later.
+		objs.push_back(s);
+		s->square()->setPosition(adjustedX, adjustedY);
+		startingScreen.add(s);
+	}
 	void EveryFrame(uint64_t f)
 	{
 		sf::RectangleShape* r = this->placeholder();
@@ -86,34 +112,6 @@ public:
 	}
 };
 
-class SampleSquare : public GraphicalGameObject
-{
-public:
-	SampleSquare() : GraphicalGameObject(sf::RectangleShape(sf::Vector2f(10, 10)))
-	{
-		this->square()->setFillColor(sf::Color::Green);
-	}
-	sf::RectangleShape* square()
-	{
-		return dynamic_cast<sf::RectangleShape*>(this->graphic);
-	}
-};
-
-class ExampleClickHandler : public GameObject
-{
-public:
-	void MouseButtonReleased(sf::Event e)
-	{
-		std::cout << "Mouse clicked at (" << e.mouseButton.x << ", " << e.mouseButton.y << ")" << std::endl;		
-		SampleSquare* s = new SampleSquare(); //use a heap allocated object which has to be cleaned up later.
-		objs.push_back(s);
-		s->square()->setPosition(e.mouseButton.x, e.mouseButton.y);
-		startingScreen.add(s);
-	}
-private:
-	std::vector<GraphicalGameObject*> objs;
-};
-
 int main(int argc, char** argv)
 {
 	//these are static members that should be set before rendering a screen. the window will be locked at these values after rendering has started.
@@ -123,10 +121,7 @@ int main(int argc, char** argv)
 
 	//screen object which holds game objects
 	//Screen startingScreen;
-
-	//a class which derives from GameObject and has an event handler
-	ExampleClickHandler clicks;
-
+	
 	//a class which derives from GraphicalGameObject and puts a circle on the screen with an event to move it when the user clicks
 	SampleCircle s;
 
@@ -135,7 +130,6 @@ int main(int argc, char** argv)
 
 	//add the objects to the screen
 	startingScreen.add(&s);
-	startingScreen.add(&clicks);
 	startingScreen.addMainCharacter(&c);
 
 	//note: The lifetime of the objects added to the screen must be as long as the screen's lifetime. In this case it's ok to use these local variables because this function waits for the thread returned by the screen.
