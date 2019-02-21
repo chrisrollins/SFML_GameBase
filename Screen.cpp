@@ -135,7 +135,7 @@ namespace Engine
 		unsigned int height = (Screen::windowHeight) ? Screen::windowHeight : 500;
 		const char* title = (Screen::windowTitle) ? Screen::windowTitle : "<no title>";
 		sf::RenderWindow window(sf::VideoMode(width, height), title);
-		sf::View view(sf::Vector2f(width/2, height/2), sf::Vector2f(width, height));
+		sf::View view(sf::Vector2f(width / 2, height / 2), sf::Vector2f(width, height));
 		window.setView(view);
 		sf::Clock clock;
 		uint64_t frameCount = 0;
@@ -169,7 +169,7 @@ namespace Engine
 			}
 
 			window.clear();
-			
+
 			//draw the map
 			if (cs->map) { window.draw(*cs->map); }
 
