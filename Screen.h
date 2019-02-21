@@ -25,7 +25,7 @@ namespace Engine
 		GameObjectMap objects;
 		GameObjectMap g_objects; //GraphicalGameObjects go here so during rendering it doesn't have to check the other ones
 		GameObject* mainCharacter = nullptr;
-		TileMap* map;
+		TileMap* map = nullptr;
 	};
 }
 #endif
