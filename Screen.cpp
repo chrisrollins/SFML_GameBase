@@ -169,14 +169,16 @@ namespace Engine
 			}
 
 			window.clear();
+			
+			//draw the map
+			if (cs->map) { window.draw(*cs->map); }
+
+			//draw the objects
 			for (auto const& pair : cs->g_objects)
 			{
 				GraphicalGameObject* obj = dynamic_cast<GraphicalGameObject*>(pair.second); //does not need to be checked, they are checked on insertion into the maps
 				obj->draw(window);
 			}
-
-			//draw the map
-			if (cs->map) { window.draw(*cs->map); }
 
 			//view moves with character
 			if (GraphicalGameObject* mainCharGraphical = dynamic_cast<GraphicalGameObject*>(mainCharacter))
