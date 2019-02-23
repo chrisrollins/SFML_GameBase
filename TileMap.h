@@ -1,8 +1,9 @@
 #ifndef TILEMAP_HEADER
 #define TILEMAP_HEADER
 
-#include "SFML\Graphics.hpp"
+#include "SFML/Graphics.hpp"
 
+namespace Engine {
 class TileMap : public sf::Drawable, public sf::Transformable
 {
 public:
@@ -64,5 +65,6 @@ private:
 	sf::VertexArray m_vertices;
 	sf::Texture m_tileset;
 };
+}
 
 #endif
