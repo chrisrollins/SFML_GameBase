@@ -66,6 +66,8 @@ public:
 		case sf::Keyboard::D:
 			this->D_KeyHeld = true;
 			break;
+		default:
+                	break;
 		}
 	}
 	void KeyReleased(sf::Event e)
