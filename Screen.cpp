@@ -213,7 +213,7 @@ namespace Engine
 				for (auto const& p2 : cs->g_objects)
 				{	
 					GraphicalGameObject* eventArg = dynamic_cast<GraphicalGameObject*>(p2.second);
-					if (eventArg == eventReciever) { continue; }
+					if (eventArg == eventReciever || !eventArg->collision || !eventReciever->collision) { continue; }
 					sf::Sprite* argSprite = dynamic_cast<sf::Sprite*>(eventArg->getGraphic());
 					if (!argSprite) { continue; }
 					sf::Vector2f rec_p = receiverSprite->getPosition();
