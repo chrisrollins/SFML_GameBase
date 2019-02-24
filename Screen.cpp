@@ -27,6 +27,12 @@ namespace Engine
 		this->mainCharacter = mainCharacter;
 	}
 
+	sf::Vector2f Screen::getMainCharacterPosition() const
+	{
+		if (GraphicalGameObject* mc = dynamic_cast<GraphicalGameObject*>(this->mainCharacter)) { return dynamic_cast<const sf::Transformable*>(mc->getGraphic())->getPosition(); }
+		return sf::Vector2f(0.f, 0.f);
+	}
+
 	void Screen::add(GameObject* gameObject)
 	{
 		GameObjectMap& map = (dynamic_cast<GraphicalGameObject*>(gameObject)) ? this->g_objects : this->objects;
