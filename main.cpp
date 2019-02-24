@@ -41,7 +41,7 @@ public:
 	}
 };
 
-class SampleMainCharacter : public GraphicalGameObject
+class MainCharacter : public GraphicalGameObject
 {
 	bool W_KeyHeld = false;
 	bool A_KeyHeld = false;
@@ -49,9 +49,7 @@ class SampleMainCharacter : public GraphicalGameObject
 	bool D_KeyHeld = false;
 	std::vector<GraphicalGameObject*> objs;
 public:
-	    MainCharacter (sf::Sprite s):GraphicalGameObject(s, 450, 250 ){
-    }
-	//SampleMainCharacter(sf::RectangleShape r) : GraphicalGameObject(r) { }
+	MainCharacter (sf::Sprite s): GraphicalGameObject(s){ }
 	void KeyPressed(sf::Event e)
 	{
 		switch (e.key.code)
@@ -94,7 +92,7 @@ public:
 	}
 	void MouseButtonReleased(sf::Event e)
 	{
-		sf::Vector2f position = this->placeholder()->getPosition();
+		sf::Vector2f position = this->sprite()->getPosition();
 		std::cout << "Mouse clicked at (" << e.mouseButton.x << ", " << e.mouseButton.y << ")" << std::endl;
 		std::cout << "character is at (" << position.x << ", " << position.y << ")" << std::endl;
 		int adjustedX = position.x + e.mouseButton.x - (startingScreen.windowWidth / 2);
@@ -106,15 +104,15 @@ public:
 	}
 	void EveryFrame(uint64_t f)
 	{
-		sf::RectangleShape* r = this->placeholder();
-		if (this->W_KeyHeld) { r->move(0, -10); }
-		if (this->A_KeyHeld) { r->move(-10, 0); }
-		if (this->S_KeyHeld) { r->move(0, 10); }
-		if (this->D_KeyHeld) { r->move(10, 0); }
+		sf::Sprite* s = this->sprite();
+		if (this->W_KeyHeld) { s->move(0, -10); }
+		if (this->A_KeyHeld) { s->move(-10, 0); }
+		if (this->S_KeyHeld) { s->move(0, 10); }
+		if (this->D_KeyHeld) { s->move(10, 0); }
 	}
-	sf::RectangleShape* placeholder()
+	sf::Sprite* sprite()
 	{
-		return dynamic_cast<sf::RectangleShape*>(this->graphic);
+		return dynamic_cast<sf::Sprite*>(this->graphic);
 	}
 };
 
