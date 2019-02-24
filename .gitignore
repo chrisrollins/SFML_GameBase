@@ -1,0 +1,13 @@
+*
+!.gitignore
+!*.cpp
+!*.h
+!*.png
+!*.jpg
+!*.jpeg
+!*.bmp
+!*.gif
+!*.wav
+!*.ogg
+!*.midi
+!*.mp3
