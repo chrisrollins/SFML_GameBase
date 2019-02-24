@@ -54,8 +54,11 @@ namespace Engine
 		GraphicalGameObject(sf::VertexArray);
 		GraphicalGameObject(sf::VertexBuffer);
 		virtual void draw(sf::RenderWindow& win);
+		virtual void Collision(GraphicalGameObject& otherObject);
 		~GraphicalGameObject();
-		const sf::Drawable* getGraphic();
+		sf::Drawable* getGraphic();
+		bool collision = true;
+		int collisionRadius = -1;
 	protected:
 		sf::Drawable* graphic;
 	};

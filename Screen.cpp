@@ -5,6 +5,7 @@
 #include <functional>
 #include <mutex>
 #include <iostream>
+#include <cmath>
 
 static bool renderStarted = false;
 static int currentFPS;
@@ -47,7 +48,7 @@ namespace Engine
 		GameObject* obj = map[id];
 		map.erase(id);
 	}
-
+	
 	void Screen::render(int fps)
 	{
 		if (fps < 1) { fps = 1; }
@@ -179,11 +180,59 @@ namespace Engine
 			//draw the map
 			if (cs->map) { window.draw(*cs->map); }
 
+			#define MAP_WIDTH this->map->width() * this->map->tileSize().x
+			#define MAP_HEIGHT this->map->height() * this->map->tileSize().y
+
 			//draw the objects
 			for (auto const& pair : cs->g_objects)
 			{
 				GraphicalGameObject* obj = dynamic_cast<GraphicalGameObject*>(pair.second); //does not need to be checked, they are checked on insertion into the maps
+
+				//prevent objects from leaving the map
+				if (sf::Transformable* transformable = dynamic_cast<sf::Transformable*>(obj->getGraphic()))
+				{
+					sf::Vector2u size(0, 0);
+					if (sf::Sprite* sprite = dynamic_cast<sf::Sprite*>(obj->getGraphic())) { size = sf::Vector2u(sprite->getTextureRect().width, sprite->getTextureRect().height); }
+					#define X (transformable->getPosition().x)
+					#define Y (transformable->getPosition().y)
+					if (X < 0) { transformable->setPosition(0.f, Y); }
+					if (Y < 0) { transformable->setPosition(X, 0.f); }
+					if (Y + size.y > MAP_HEIGHT) { transformable->setPosition(X, MAP_HEIGHT - size.y); }
+					if (X + size.x > MAP_WIDTH) { transformable->setPosition(MAP_WIDTH - size.x, Y); }
+					#undef X
+					#undef Y					
+				}
 				obj->draw(window);
+			}
+			//trigger collision events
+			for (auto const& p1 : cs->g_objects)
+			{
+				GraphicalGameObject* eventReciever = dynamic_cast<GraphicalGameObject*>(p1.second);
+				sf::Sprite* receiverSprite = dynamic_cast<sf::Sprite*>(eventReciever->getGraphic());
+				if (!receiverSprite) { continue; }
+				for (auto const& p2 : cs->g_objects)
+				{	
+					GraphicalGameObject* eventArg = dynamic_cast<GraphicalGameObject*>(p2.second);
+					if (eventArg == eventReciever) { continue; }
+					sf::Sprite* argSprite = dynamic_cast<sf::Sprite*>(eventArg->getGraphic());
+					if (!argSprite) { continue; }
+					sf::Vector2f rec_p = receiverSprite->getPosition();
+					sf::IntRect rec_tr = receiverSprite->getTextureRect();
+					sf::Vector2f arg_p = argSprite->getPosition();
+					sf::IntRect arg_tr = argSprite->getTextureRect();
+					sf::Vector2i rec_center(rec_p.x - (rec_tr.width / 2), rec_p.y - (rec_tr.height / 2));
+					sf::Vector2i arg_center(arg_p.x - (arg_tr.width / 2), arg_p.y - (arg_tr.height / 2));
+					int a = rec_center.x - arg_center.x;
+					int b = rec_center.y - arg_center.y;
+					double c = sqrt((a * a) + (b * b));					
+					double rec_radius = eventReciever->collisionRadius >= 0 ? eventReciever->collisionRadius : (rec_tr.width + rec_tr.height) / 2;
+					double arg_radius = eventArg->collisionRadius >= 0 ? eventArg->collisionRadius : (arg_tr.width + arg_tr.height) / 2;
+					if (c <= rec_radius + arg_radius)
+					{
+						eventReciever->Collision(*eventArg);
+					}
+				}
+				
 			}
 
 			//view moves with character
@@ -237,6 +286,8 @@ namespace Engine
 					{
 						view.setCenter(MAP_WIDTH - windowWidth / 2, graphicAsTransformable->getPosition().y);
 					}
+					#undef MAP_HEIGHT
+					#undef MAP_WIDTH
 				}
 			}
 			window.setView(view);

@@ -90,8 +90,9 @@ public:
 	void MouseButtonReleased(sf::Event e)
 	{
 		sf::Vector2f position = this->sprite()->getPosition();
-		std::cout << "Mouse clicked at (" << e.mouseButton.x << ", " << e.mouseButton.y << ")" << std::endl;
-		std::cout << "character is at (" << position.x << ", " << position.y << ")" << std::endl;
+		//commented out print statements for now, they hurt performance
+		//std::cout << "Mouse clicked at (" << e.mouseButton.x << ", " << e.mouseButton.y << ")" << std::endl;
+		//std::cout << "character is at (" << position.x << ", " << position.y << ")" << std::endl;
 		int adjustedX = position.x + e.mouseButton.x - (startingScreen.windowWidth / 2);
 		int adjustedY = position.y + e.mouseButton.y - (startingScreen.windowHeight / 2);
 		SampleSquare* s = new SampleSquare(); //use a heap allocated object which has to be cleaned up later.
@@ -104,36 +105,26 @@ public:
 		sf::Sprite* s = this->sprite();
 		if (this->W_KeyHeld) 
 		{ 
-			s->move(0, -10); 
-			if (this->sprite()->getPosition().y < 0)
-			{
-				this->sprite()->setPosition(this->sprite()->getPosition().x, 0.f);
-			}
+			s->move(0, -10);
 		}
 		if (this->A_KeyHeld) 
 		{ 
-			s->move(-10, 0); 
-			if (this->sprite()->getPosition().x < 0)
-			{
-				this->sprite()->setPosition(0.f, this->sprite()->getPosition().y);
-			}
+			s->move(-10, 0);
 		}
 		if (this->S_KeyHeld) 
 		{ 
-			s->move(0, 10); 
-			if (this->sprite()->getPosition().y + this->sprite()->getTexture()->getSize().y > MAP_HEIGHT)
-			{
-				this->sprite()->setPosition(this->sprite()->getPosition().x, MAP_HEIGHT - this->sprite()->getTexture()->getSize().y);
-			}
+			s->move(0, 10);
 		}
 		if (this->D_KeyHeld) 
 		{ 
-			s->move(10, 0); 
-			if (this->sprite()->getPosition().x + this->sprite()->getTexture()->getSize().x > MAP_WIDTH)
-			{
-				this->sprite()->setPosition(MAP_WIDTH - this->sprite()->getTexture()->getSize().x, this->sprite()->getPosition().y);
-			}
+			s->move(10, 0);
 		}
+	}
+	void Collision(GraphicalGameObject& other)
+	{
+		std::cout << "collision" << std::endl;
+		std::cout << " " << std::endl;
+		std::cout << " " << std::endl;
 	}
 	sf::Sprite* sprite()
 	{

@@ -30,7 +30,5 @@ namespace Engine
 	};
 
 	static Screen startingScreen;
-	const int MAP_WIDTH = 64 * 32;
-	const int MAP_HEIGHT = 48 * 32;
 }
 #endif

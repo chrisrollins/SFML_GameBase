@@ -13,6 +13,10 @@ public:
 		// load the tileset texture
 		if (!m_tileset.loadFromFile(tileset))
 			return false;
+		
+		this->_tileSize = tileSize;
+		this->_width = width;
+		this->_height = height;
 
 		// resize the vertex array to fit the level size
 		m_vertices.setPrimitiveType(sf::Quads);
@@ -48,6 +52,21 @@ public:
 		return true;
 	}
 
+	unsigned int width() const
+	{
+		return this->_width;
+	}
+
+	unsigned int height() const
+	{
+		return this->_height;
+	}
+
+	sf::Vector2u tileSize() const
+	{
+		return this->_tileSize;
+	}
+
 private:
 
 	virtual void draw(sf::RenderTarget& target, sf::RenderStates states) const
@@ -62,6 +81,9 @@ private:
 		target.draw(m_vertices, states);
 	}
 
+	sf::Vector2u _tileSize;
+	unsigned int _width;
+	unsigned int _height;
 	sf::VertexArray m_vertices;
 	sf::Texture m_tileset;
 };
