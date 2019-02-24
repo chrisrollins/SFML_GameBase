@@ -191,7 +191,52 @@ namespace Engine
 			{
 				if (const sf::Transformable* graphicAsTransformable = dynamic_cast<const sf::Transformable*>(mainCharGraphical->getGraphic()))
 				{
-					view.setCenter(graphicAsTransformable->getPosition());
+					if (graphicAsTransformable->getPosition().x > windowWidth / 2 && graphicAsTransformable->getPosition().x < MAP_WIDTH - windowWidth / 2
+						&& graphicAsTransformable->getPosition().y > windowHeight / 2 && graphicAsTransformable->getPosition().y < MAP_HEIGHT - windowHeight / 2)
+					{
+						view.setCenter(graphicAsTransformable->getPosition());
+					}
+					else if (graphicAsTransformable->getPosition().x >= 0 && graphicAsTransformable->getPosition().x <= windowWidth / 2 && 
+						graphicAsTransformable->getPosition().y >= 0 && graphicAsTransformable->getPosition().y <= windowHeight / 2) 
+							
+					{
+						view.setCenter(windowWidth / 2, windowHeight / 2);
+					}
+					else if (graphicAsTransformable->getPosition().x >= 0 && graphicAsTransformable->getPosition().x <= windowWidth / 2 &&
+						graphicAsTransformable->getPosition().y >= MAP_HEIGHT - windowHeight / 2 && graphicAsTransformable->getPosition().y <= MAP_HEIGHT)
+					{
+						view.setCenter(windowWidth / 2, MAP_HEIGHT - windowHeight / 2);
+					}
+					else if (graphicAsTransformable->getPosition().x >= MAP_WIDTH - windowWidth / 2 && graphicAsTransformable->getPosition().x <= MAP_WIDTH &&
+						graphicAsTransformable->getPosition().y >= 0 && graphicAsTransformable->getPosition().y <= windowHeight / 2)
+					{
+						view.setCenter(MAP_WIDTH - windowWidth / 2, windowHeight / 2);
+					}
+					else if (graphicAsTransformable->getPosition().x >= MAP_WIDTH - windowWidth / 2 && graphicAsTransformable->getPosition().x <= MAP_WIDTH &&
+						graphicAsTransformable->getPosition().y >= MAP_HEIGHT - windowHeight / 2 && graphicAsTransformable->getPosition().y <= MAP_HEIGHT)
+					{
+						view.setCenter(MAP_WIDTH - windowWidth / 2, MAP_HEIGHT - windowHeight / 2);
+					}
+					else if (graphicAsTransformable->getPosition().x > windowWidth / 2 && graphicAsTransformable->getPosition().x < MAP_WIDTH - windowWidth / 2 &&
+						graphicAsTransformable->getPosition().y >= 0 && graphicAsTransformable->getPosition().y <= windowHeight / 2)
+					{
+						view.setCenter(graphicAsTransformable->getPosition().x, windowHeight / 2);
+					}
+					else if (graphicAsTransformable->getPosition().x > windowWidth / 2 && graphicAsTransformable->getPosition().x < MAP_WIDTH - windowWidth / 2 &&
+						graphicAsTransformable->getPosition().y >= MAP_HEIGHT - windowHeight / 2 && graphicAsTransformable->getPosition().y <= MAP_HEIGHT)
+					{
+						view.setCenter(graphicAsTransformable->getPosition().x, MAP_HEIGHT - windowHeight / 2);
+					}
+					else if (graphicAsTransformable->getPosition().x >= 0 && graphicAsTransformable->getPosition().x <= windowWidth / 2 &&
+						graphicAsTransformable->getPosition().y > windowHeight / 2 && graphicAsTransformable->getPosition().y < MAP_HEIGHT - windowHeight / 2)
+					{
+						view.setCenter(windowWidth / 2, graphicAsTransformable->getPosition().y);
+					}
+					else if (graphicAsTransformable->getPosition().x >= MAP_WIDTH - windowWidth / 2 && graphicAsTransformable->getPosition().x <= MAP_WIDTH &&
+						graphicAsTransformable->getPosition().y > windowHeight / 2 && graphicAsTransformable->getPosition().y < MAP_HEIGHT - windowHeight / 2)
+					{
+						view.setCenter(MAP_WIDTH - windowWidth / 2, graphicAsTransformable->getPosition().y);
+					}
 				}
 			}
 			window.setView(view);
