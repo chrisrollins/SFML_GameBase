@@ -55,8 +55,8 @@ namespace Engine
 	sf::Vector2i Screen::getMousePosition() const
 	{
 		if(!windowPtr) { return sf::Vector2i(0, 0); }
-		sf::Vector2i pixelPos = sf::Mouse::getPosition();
-		sf::Vector2f worldPos = windowPtr->mapPixelToCoords(pixelPos);
+		sf::Vector2i pixelPos = sf::Mouse::getPosition(*windowPtr);
+		sf::Vector2f worldPos = windowPtr->mapPixelToCoords(pixelPos, windowPtr->getView());
 		return sf::Vector2i(worldPos.x, worldPos.y);
 	}
 
