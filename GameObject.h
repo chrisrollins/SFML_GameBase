@@ -8,7 +8,7 @@
 namespace Engine
 {
 	typedef uint64_t GameObjectID;
-
+    class Screen;
 	class GameObject
 	{
 	public:
