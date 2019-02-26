@@ -30,7 +30,7 @@ public:
 		}
 		else if (direction == DIRECTION::DOWN)
 		{
-			this->spritePtr()->setTextureRect(sf::IntRect(textureSize.x / 4, 0, textureSize.x / 4, textureSize.y));
+			this->spritePtr()->setTextureRect(sf::IntRect(textureSize.x / 4 * 3, 0, textureSize.x / 4, textureSize.y));
 			this->spritePtr()->move(0, 2);
 		}
 		else if (direction == DIRECTION::LEFT)
@@ -40,9 +40,15 @@ public:
 		}
 		else // (direction == DIRECTION::RIGHT)
 		{
-			this->spritePtr()->setTextureRect(sf::IntRect(textureSize.x / 4 * 3, 0, textureSize.x / 4, textureSize.y));
+			this->spritePtr()->setTextureRect(sf::IntRect(textureSize.x / 4, 0, textureSize.x / 4, textureSize.y));
 			this->spritePtr()->move(2, 0);
 		}
+	}
+	void Collision(GraphicalGameObject& other)
+	{
+		std::cout << "collision in the bullet" << std::endl;
+		std::cout << " " << std::endl;
+		std::cout << " " << std::endl;
 	}
 	sf::Sprite* spritePtr()
 	{

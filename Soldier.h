@@ -4,8 +4,6 @@
 #include "GameObject.h"
 #include "Bullet.h"
 #include "Screen.h"
-#include <ctime>
-#include <cstdlib>
 
 class Soldier : public Engine::GraphicalGameObject
 {
@@ -25,9 +23,10 @@ private:
 	sf::Vector2u imageCount;
 	sf::Vector2u currentImage;
 public:
-	Soldier(sf::Sprite r) : Engine::GraphicalGameObject(r)
+	Soldier(sf::Sprite r, sf::Vector2f pos) : Engine::GraphicalGameObject(r)
 	{
 		textureSize = this->spritePtr()->getTexture()->getSize();
+		this->spritePtr()->setPosition(pos);
 		textureSize.x /= 3;
 		textureSize.y /= 4;
 		imageCount.x = 0;
@@ -158,6 +157,12 @@ public:
 			isShooting = false;
 		}
 		
+	}
+	void Collision(GraphicalGameObject& other)
+	{
+		std::cout << "collision in the soldier" << std::endl;
+		std::cout << " " << std::endl;
+		std::cout << " " << std::endl;
 	}
 	sf::Sprite* spritePtr()
 	{
