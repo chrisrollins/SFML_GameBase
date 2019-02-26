@@ -39,7 +39,10 @@ namespace Engine
 		GameObjectID getID() { return this->id; }
 	private:
 		GameObject(GameObjectID id);
+	protected:
+		friend class Screen;
 		GameObjectID id;
+		Screen* screen = nullptr;
 	};
 
 	class GraphicalGameObject : public GameObject

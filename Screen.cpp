@@ -9,6 +9,7 @@
 
 static bool renderStarted = false;
 static int currentFPS;
+static sf::RenderWindow* windowPtr = nullptr;
 
 namespace Engine
 {
@@ -38,6 +39,7 @@ namespace Engine
 	{
 		GameObjectMap& map = (dynamic_cast<GraphicalGameObject*>(gameObject)) ? this->g_objects : this->objects;
 		map[gameObject->getID()] = gameObject;
+		gameObject->screen = this;
 	}
 
 	void Screen::remove(GameObject* gameObject)
@@ -47,6 +49,15 @@ namespace Engine
 		GameObjectID id = gameObject->getID();
 		GameObject* obj = map[id];
 		map.erase(id);
+		gameObject->screen = nullptr;
+	}
+
+	sf::Vector2i Screen::getMousePosition() const
+	{
+		if(!windowPtr) { return sf::Vector2i(0, 0); }
+		sf::Vector2i pixelPos = sf::Mouse::getPosition();
+		sf::Vector2f worldPos = windowPtr->mapPixelToCoords(pixelPos);
+		return sf::Vector2i(worldPos.x, worldPos.y);
 	}
 
 	void Screen::render(int fps)
@@ -142,6 +153,7 @@ namespace Engine
 		unsigned int height = (Screen::windowHeight) ? Screen::windowHeight : 500;
 		const char* title = (Screen::windowTitle) ? Screen::windowTitle : "<no title>";
 		sf::RenderWindow window(sf::VideoMode(width, height), title);
+		windowPtr = &window;
 		sf::View view(sf::Vector2f(width / 2, height / 2), sf::Vector2f(width, height));
 		window.setView(view);
 		sf::Clock clock;
@@ -180,8 +192,8 @@ namespace Engine
 			//draw the map
 			if (cs->map) { window.draw(*cs->map); }
 
-#define MAP_WIDTH this->map->width() * this->map->tileSize().x
-#define MAP_HEIGHT this->map->height() * this->map->tileSize().y
+			unsigned int MAP_WIDTH = cs->map->width() * this->map->tileSize().x;
+			unsigned int MAP_HEIGHT = cs->map->height() * this->map->tileSize().y;
 
 			//draw the objects
 			for (auto const& pair : cs->g_objects)
@@ -193,14 +205,14 @@ namespace Engine
 				{
 					sf::Vector2u size(0, 0);
 					if (sf::Sprite* sprite = dynamic_cast<sf::Sprite*>(obj->getGraphic())) { size = sf::Vector2u(sprite->getTextureRect().width, sprite->getTextureRect().height); }
-#define X (transformable->getPosition().x)
-#define Y (transformable->getPosition().y)
+					#define X (transformable->getPosition().x)
+					#define Y (transformable->getPosition().y)
 					if (X < 0) { transformable->setPosition(0.f, Y); }
 					if (Y < 0) { transformable->setPosition(X, 0.f); }
 					if (Y + size.y > MAP_HEIGHT) { transformable->setPosition(X, MAP_HEIGHT - size.y); }
 					if (X + size.x > MAP_WIDTH) { transformable->setPosition(MAP_WIDTH - size.x, Y); }
-#undef X
-#undef Y					
+					#undef X
+					#undef Y					
 				}
 				obj->draw(window);
 			}
@@ -277,8 +289,6 @@ namespace Engine
 					{
 						view.setCenter(MAP_WIDTH - windowWidth / 2, graphicAsTransformable->getPosition().y);
 					}
-#undef MAP_HEIGHT
-#undef MAP_WIDTH
 				}
 			}
 			window.setView(view);

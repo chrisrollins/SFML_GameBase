@@ -89,15 +89,18 @@ public:
 	}
 	void MouseButtonReleased(sf::Event e)
 	{
+		/*
 		sf::Vector2f position = this->sprite()->getPosition();
 		//commented out print statements for now, they hurt performance
 		//std::cout << "Mouse clicked at (" << e.mouseButton.x << ", " << e.mouseButton.y << ")" << std::endl;
 		//std::cout << "character is at (" << position.x << ", " << position.y << ")" << std::endl;
 		int adjustedX = position.x + e.mouseButton.x - (startingScreen.windowWidth / 2);
 		int adjustedY = position.y + e.mouseButton.y - (startingScreen.windowHeight / 2);
+		*/
+		sf::Vector2i mousePos = this->screen->getMousePosition();
 		SampleSquare* s = new SampleSquare(); //use a heap allocated object which has to be cleaned up later.
 		objs.push_back(s);
-		s->square()->setPosition(adjustedX, adjustedY);
+		s->square()->setPosition(mousePos.x, mousePos.y);
 		startingScreen.add(s);
 	}
 	void EveryFrame(uint64_t f)

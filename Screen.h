@@ -18,6 +18,7 @@ namespace Engine
 		void add(GameObject* gameObject);
 		void remove(GameObject* gameObject);
 		void render(int fps = 60);
+		sf::Vector2i getMousePosition() const;
 		unsigned static int windowWidth;
 		unsigned static int windowHeight;
 		static const char* windowTitle;
