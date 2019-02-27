@@ -26,7 +26,6 @@ public:
 		if (blast_life == 100)
 		{
 			Engine::startingScreen.remove(this);
-			delete this;
 		}
 	}
 	void Collision(GraphicalGameObject& other)

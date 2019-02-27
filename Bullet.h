@@ -51,7 +51,6 @@ public:
 		if (this->life == 60)
 		{
 			this->screen->remove(this);
-			delete this;
 		}
 	}
 	void Collision(GraphicalGameObject& other)
