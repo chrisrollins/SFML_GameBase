@@ -6,10 +6,12 @@
 #include <mutex>
 #include <iostream>
 #include <cmath>
+#include <queue>
 
 static bool renderStarted = false;
 static int currentFPS;
 static sf::RenderWindow* windowPtr = nullptr;
+static std::queue<Engine::GameObject*> removeQueue;
 
 namespace Engine
 {
@@ -52,12 +54,7 @@ namespace Engine
 
 	void Screen::remove(GameObject* gameObject)
 	{
-		GameObjectMap& map = (dynamic_cast<GraphicalGameObject*>(gameObject)) ? this->g_objects : this->objects;
-		if (map.find(gameObject->getID()) == map.end()) { return; }
-		GameObjectID id = gameObject->getID();
-		GameObject* obj = map[id];
-		map.erase(id);
-		gameObject->screen = nullptr;
+		removeQueue.push(gameObject);
 	}
 
 	sf::Vector2i Screen::getMousePosition() const
@@ -176,6 +173,17 @@ namespace Engine
 		{
 			clock.restart();
 			Screen* cs = currentScreen;
+			
+			while (!removeQueue.empty())
+			{
+				GameObject* toRemove = removeQueue.front();
+				removeQueue.pop();
+				GameObjectMap& map = (dynamic_cast<GraphicalGameObject*>(toRemove)) ? this->g_objects : this->objects;
+				if (map.find(toRemove->getID()) == map.end()) { continue; }
+				GameObjectID id = toRemove->getID();
+				map.erase(id);
+				delete toRemove;
+			}
 
 			for (auto const& pair : cs->g_objects)
 			{

@@ -15,7 +15,6 @@ private:
 	bool D_KeyHeld = false;
 	float health;
 	bool alive;
-	Bullet* bullet;
 	sf::Vector2f bullet_position;
 	bool isShooting;
 	int bullet_cooldown;
@@ -30,7 +29,6 @@ public:
 		textureSize.x /= 3;
 		textureSize.y /= 4;
 		imageCount.x = 0;
-		bullet = nullptr;
 		isShooting = false;
 		bullet_cooldown = 0;
 	}
@@ -79,7 +77,7 @@ public:
 				bullet_cooldown = 0;
 				bullet_position = this->spritePtr()->getPosition();
 				bullet_position.x += textureSize.x / 4;
-				bullet = new Bullet(bullet_position, DIRECTION::UP);
+				Bullet* bullet = new Bullet(bullet_position, DIRECTION::UP);
 				Engine::startingScreen.add(bullet);
 			}
 			
@@ -97,7 +95,7 @@ public:
 				bullet_cooldown = 0;
 				bullet_position = this->spritePtr()->getPosition();
 				bullet_position.y += textureSize.y / 4;
-				bullet = new Bullet(bullet_position, DIRECTION::LEFT);
+				Bullet* bullet = new Bullet(bullet_position, DIRECTION::LEFT);
 				Engine::startingScreen.add(bullet);
 			}
 		}
@@ -115,7 +113,7 @@ public:
 				bullet_position = this->spritePtr()->getPosition();
 				bullet_position.x += textureSize.x / 4;
 				bullet_position.y += textureSize.y;
-				bullet = new Bullet(bullet_position, DIRECTION::DOWN);
+				Bullet* bullet = new Bullet(bullet_position, DIRECTION::DOWN);
 				Engine::startingScreen.add(bullet);
 			}
 		}
@@ -133,7 +131,7 @@ public:
 				bullet_position = this->spritePtr()->getPosition();
 				bullet_position.x += textureSize.x;
 				bullet_position.y += textureSize.y / 4;
-				bullet = new Bullet(bullet_position, DIRECTION::RIGHT);
+				Bullet* bullet = new Bullet(bullet_position, DIRECTION::RIGHT);
 				Engine::startingScreen.add(bullet);
 			}
 		}
@@ -159,7 +157,6 @@ public:
 		if (dynamic_cast<SkeletonBlast*>(&other))
 		{
 			Engine::startingScreen.remove(this);
-			delete this;
 		}
 	}
 	sf::Sprite* spritePtr()
