@@ -99,7 +99,11 @@ public:
 	{
 		sf::Vector2i mousePos = this->screen->getMousePosition();
 		sf::Vector2f distance = static_cast<sf::Vector2f>(mousePos) - this->sprite()->getPosition();
-		SkeletonBlast* blast = new SkeletonBlast(sf::Sprite(blast_texture), this->sprite()->getPosition(), sf::Vector2f(mousePos.x, mousePos.y));
+		sf::Vector2f shotOrigin = this->sprite()->getPosition();
+		sf::IntRect size = this->sprite()->getTextureRect();
+		shotOrigin.x += size.width / 2;
+		shotOrigin.y += size.height / 4;
+		SkeletonBlast* blast = new SkeletonBlast(sf::Sprite(blast_texture), shotOrigin, sf::Vector2f(mousePos.x, mousePos.y));
 		startingScreen.add(blast);
 	}
 	void EveryFrame(uint64_t f)

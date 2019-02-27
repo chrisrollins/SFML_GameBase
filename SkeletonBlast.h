@@ -11,12 +11,12 @@ private:
 	sf::Vector2f distance;
 	int blast_life;
 public:
-	SkeletonBlast(sf::Sprite r, sf::Vector2f pos, sf::Vector2f distance) : Engine::GraphicalGameObject(r)
+	SkeletonBlast(sf::Sprite r, sf::Vector2f pos, sf::Vector2f clickPos) : Engine::GraphicalGameObject(r)
 	{
-		this->spritePtr()->setPosition(pos);
-		double radians = atan2(distance.y - pos.y, distance.x - pos.x);
+		double radians = atan2(clickPos.y - pos.y, clickPos.x - pos.x);
 		this->distance = sf::Vector2f(cos(radians), sin(radians));
 		this->spritePtr()->rotate(radians * (180 / 3.141592653589793) - 180);
+		this->spritePtr()->setPosition(pos.x + (this->distance.x * 15), pos.y + (this->distance.y * 15));
 		blast_life = 0;
 	}
 	void EveryFrame(uint64_t f)
