@@ -13,10 +13,14 @@ class Bullet : public Engine::GraphicalGameObject
 {
 private:
 	DIRECTION direction;
+	sf::Texture texture;
 	sf::Vector2u textureSize;
+	int life = 0;
 public:
-	Bullet(sf::Sprite r, sf::Vector2f pos, DIRECTION direction) : Engine::GraphicalGameObject(r) 
+	Bullet(sf::Vector2f pos, DIRECTION direction) : Engine::GraphicalGameObject(sf::Sprite()) 
 	{
+		this->texture.loadFromFile("bullet.png");
+		this->spritePtr()->setTexture(this->texture);
 		this->spritePtr()->setPosition(pos);
 		this->direction = direction;
 		textureSize = this->spritePtr()->getTexture()->getSize();
@@ -43,12 +47,18 @@ public:
 			this->spritePtr()->setTextureRect(sf::IntRect(textureSize.x / 4, 0, textureSize.x / 4, textureSize.y));
 			this->spritePtr()->move(2, 0);
 		}
+		this->life++;
+		if (this->life == 60)
+		{
+			this->screen->remove(this);
+			delete this;
+		}
 	}
 	void Collision(GraphicalGameObject& other)
 	{
-		std::cout << "collision in the bullet" << std::endl;
-		std::cout << " " << std::endl;
-		std::cout << " " << std::endl;
+		//std::cout << "collision in the bullet" << std::endl;
+		//std::cout << " " << std::endl;
+		//std::cout << " " << std::endl;
 	}
 	sf::Sprite* spritePtr()
 	{

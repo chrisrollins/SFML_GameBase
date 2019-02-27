@@ -3,34 +3,36 @@
 
 #include "GameObject.h"
 #include "Screen.h"
+#include <cmath>
 
 class SkeletonBlast : public Engine::GraphicalGameObject
 {
 private:
 	sf::Vector2f distance;
-	//int blast_life;
+	int blast_life;
 public:
 	SkeletonBlast(sf::Sprite r, sf::Vector2f pos, sf::Vector2f distance) : Engine::GraphicalGameObject(r)
 	{
 		this->spritePtr()->setPosition(pos);
-		this->distance = distance;
-		//blast_life = 0;
+		double radians = atan2(distance.y - pos.y, distance.x - pos.x);
+		this->distance = sf::Vector2f(cos(radians), sin(radians));
+		blast_life = 0;
 	}
 	void EveryFrame(uint64_t f)
 	{
-		this->spritePtr()->move(distance.x / 80, distance.y / 80);
-		// I was trying to do this, but it will give me an error
-		/*blast_life++;
-		if (blast_life == 60)
+		this->spritePtr()->move(distance.x * 4, distance.y * 4);
+		blast_life++;
+		if (blast_life == 90)
 		{
 			Engine::startingScreen.remove(this);
-		}*/
+			delete this;
+		}
 	}
 	void Collision(GraphicalGameObject& other)
 	{
-		std::cout << "collision in the blast" << std::endl;
-		std::cout << " " << std::endl;
-		std::cout << " " << std::endl;
+		//std::cout << "collision in the blast" << std::endl;
+		//std::cout << " " << std::endl;
+		//std::cout << " " << std::endl;
 	}
 	sf::Sprite* spritePtr()
 	{
