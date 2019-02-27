@@ -11,8 +11,8 @@
 #include "Menu.h"
 
 void Menu::draw(Engine::Screen s){
-    for (Text t : this->TextArray)
-        s.add(t);
+//    for (Text t : this->TextArray)
+//        s.add(t);
 }
 
 void Menu::setFont(Font f){
