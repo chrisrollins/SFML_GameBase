@@ -16,13 +16,14 @@ public:
 		this->spritePtr()->setPosition(pos);
 		double radians = atan2(distance.y - pos.y, distance.x - pos.x);
 		this->distance = sf::Vector2f(cos(radians), sin(radians));
+		this->spritePtr()->rotate(radians * (180 / 3.141592653589793) - 180);
 		blast_life = 0;
 	}
 	void EveryFrame(uint64_t f)
 	{
 		this->spritePtr()->move(distance.x * 4, distance.y * 4);
 		blast_life++;
-		if (blast_life == 90)
+		if (blast_life == 100)
 		{
 			Engine::startingScreen.remove(this);
 			delete this;
