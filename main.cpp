@@ -8,6 +8,7 @@
 #include "Soldier.h"
 #include "MainCharacter.h"
 #include "SampleUIObject.h"
+#include "SampleUIText.h"
 
 using namespace Engine;
 
@@ -137,6 +138,10 @@ int main(int argc, char** argv)
 	//adding a UI object
 	SampleUIObject uiObj;
 	startingScreen.addUIObject(&uiObj);
+
+	//adding a UI text object
+	SampleUIText uiTxt("Hello World!");
+	startingScreen.addUIObject(&uiTxt);
 
 	//note: The lifetime of the objects added to the screen must be as long as the screen's lifetime. In this case it's ok to use these local variables because startingScreen lasts the duration of the program.
 	//For most other cases we have to use heap allocated objects.
