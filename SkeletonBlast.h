@@ -13,6 +13,7 @@ private:
 public:
 	SkeletonBlast(sf::Sprite r, sf::Vector2f pos, sf::Vector2f clickPos) : Engine::GraphicalGameObject(r)
 	{
+		this->ignoreObstacles = true;
 		double radians = atan2(clickPos.y - pos.y, clickPos.x - pos.x);
 		this->distance = sf::Vector2f(cos(radians), sin(radians));
 		this->spritePtr()->rotate(radians * (180 / 3.141592653589793) - 180);
