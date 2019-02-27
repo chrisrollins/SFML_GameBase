@@ -127,8 +127,6 @@ int main(int argc, char** argv)
 	for (int i = 0; i < 20; i++)
 	{
 		soldierSprite[i].setTexture(soldier_texture);
-		std::cout << map.width();
-		std::cout << map.height();
 		float randWidth = rand() % (map.width() * map.tileSize().x);
 		float randHeight = rand() % (map.height() * map.tileSize().y);
 		Soldier* soldier_ptr = new Soldier(soldierSprite[i], sf::Vector2f(randWidth, randHeight));
