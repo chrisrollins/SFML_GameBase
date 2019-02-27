@@ -12,15 +12,15 @@ class SampleUIText : public GraphicalGameObject
 public:
 	SampleUIText(std::string text) : GraphicalGameObject(sf::Text())
 	{
-		sf::Font myFont;
 		if (myFont.loadFromFile("arial.ttf"))
 		{			
 			this->textPtr()->setFont(myFont);
 			this->textPtr()->setString(text);
-			this->textPtr()->setOrigin(0, 0);
+			this->textPtr()->setPosition(0, 0);
 		}
 	}
 private:
+	sf::Font myFont;
 	sf::Text* textPtr() { return dynamic_cast<sf::Text*>(this->getGraphic()); }
 };
 
