@@ -42,6 +42,14 @@ namespace Engine
 		gameObject->screen = this;
 	}
 
+	void Screen::addUIObject(GameObject* uiObj)
+	{
+		if (!(dynamic_cast<GraphicalGameObject*>(uiObj))) { return; }
+		GameObjectMap& map = this->ui_objects;
+		map[uiObj->getID()] = uiObj;
+		uiObj->screen = this;
+	}
+
 	void Screen::remove(GameObject* gameObject)
 	{
 		GameObjectMap& map = (dynamic_cast<GraphicalGameObject*>(gameObject)) ? this->g_objects : this->objects;
@@ -58,6 +66,11 @@ namespace Engine
 		sf::Vector2i pixelPos = sf::Mouse::getPosition(*windowPtr);
 		sf::Vector2f worldPos = windowPtr->mapPixelToCoords(pixelPos, windowPtr->getView());
 		return sf::Vector2i(worldPos.x, worldPos.y);
+	}
+
+	const TileMap* Screen::getMap() const
+	{
+		return this->map;
 	}
 
 	void Screen::render(int fps)
@@ -216,6 +229,20 @@ namespace Engine
 				}
 				obj->draw(window);
 			}
+
+			//draw the UI objects
+			for (auto const& pair : cs->ui_objects)
+			{
+				GraphicalGameObject* obj = dynamic_cast<GraphicalGameObject*>(pair.second);
+				sf::Transformable* transformable = dynamic_cast<sf::Transformable*>(obj->getGraphic());
+				if (!transformable) { continue; }
+				sf::Vector2f viewPos = window.getView().getCenter();
+				sf::Vector2f screenPosition = transformable->getPosition();
+				transformable->setPosition(viewPos - sf::Vector2f(cs->windowWidth / 2, cs->windowHeight / 2) + screenPosition);
+				obj->draw(window);
+				transformable->setPosition(screenPosition);
+			}
+
 			//trigger collision events
 			for (auto const& p1 : cs->g_objects)
 			{
@@ -228,7 +255,6 @@ namespace Engine
 					if (eventArg == eventReciever || !eventArg->collision || !eventReciever->collision) { continue; }
 					sf::Sprite* argSprite = dynamic_cast<sf::Sprite*>(eventArg->getGraphic());
 					if (!argSprite) { continue; }
-
 					sf::FloatRect r1 = receiverSprite->getGlobalBounds();
 					sf::FloatRect r2 = argSprite->getGlobalBounds();
 					if (r1.intersects(r2))

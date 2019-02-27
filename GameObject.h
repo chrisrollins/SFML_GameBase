@@ -61,7 +61,6 @@ namespace Engine
 		~GraphicalGameObject();
 		sf::Drawable* getGraphic();
 		bool collision = true;
-		int collisionRadius = -1;
 	protected:
 		sf::Drawable* graphic;
 	};

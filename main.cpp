@@ -7,6 +7,7 @@
 #include "GameObject.h"
 #include "Soldier.h"
 #include "MainCharacter.h"
+#include "SampleUIObject.h"
 
 using namespace Engine;
 
@@ -132,13 +133,15 @@ int main(int argc, char** argv)
 		Soldier* soldier_ptr = new Soldier(soldierSprite[i], sf::Vector2f(randWidth, randHeight));
 		startingScreen.add(soldier_ptr);
 	}
-	
 
-	//note: The lifetime of the objects added to the screen must be as long as the screen's lifetime. In this case it's ok to use these local variables because this function waits for the thread returned by the screen.
-	//For most other cases we'll probably have to use heap allocated objects.
+	//adding a UI object
+	SampleUIObject uiObj;
+	startingScreen.addUIObject(&uiObj);
+
+	//note: The lifetime of the objects added to the screen must be as long as the screen's lifetime. In this case it's ok to use these local variables because startingScreen lasts the duration of the program.
+	//For most other cases we have to use heap allocated objects.
 
 	//render the screen (replaces whichever screen is currently rendering)
-	//also join the thread which was returned. this prevents the program from exiting.
 	startingScreen.render();
 
 	return 0;

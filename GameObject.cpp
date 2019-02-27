@@ -27,37 +27,31 @@ namespace Engine
 	GraphicalGameObject::GraphicalGameObject(sf::CircleShape cs)
 	{
 		this->graphic = new sf::CircleShape(cs);
-		this->collisionRadius = cs.getRadius();
 	}
 
 	GraphicalGameObject::GraphicalGameObject(sf::ConvexShape cx)
 	{
 		this->graphic = new sf::ConvexShape(cx);
-		this->collisionRadius = (cx.getTextureRect().width + cx.getTextureRect().height) / 2;
 	}
 
 	GraphicalGameObject::GraphicalGameObject(sf::RectangleShape r)
 	{
 		this->graphic = new sf::RectangleShape(r);
-		this->collisionRadius = (r.getTextureRect().width + r.getTextureRect().height) / 2;
 	}
 
 	GraphicalGameObject::GraphicalGameObject(sf::Text t)
 	{
 		this->graphic = new sf::Text(t);
-		this->collisionRadius = 0;
 	}
 
 	GraphicalGameObject::GraphicalGameObject(sf::VertexArray va)
 	{
 		this->graphic = new sf::VertexArray(va);
-		this->collisionRadius = (va.getBounds().width + va.getBounds().height) / 2;
 	}
 
 	GraphicalGameObject::GraphicalGameObject(sf::VertexBuffer vb)
 	{
 		this->graphic = new sf::VertexBuffer(vb);
-		this->collisionRadius = 0;
 	}
 	/////
 

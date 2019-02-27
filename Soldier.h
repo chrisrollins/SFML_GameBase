@@ -2,6 +2,7 @@
 #define SOLDIER_HEADER
 
 #include "GameObject.h"
+#include "SkeletonBlast.h"
 #include "Bullet.h"
 #include "Screen.h"
 
@@ -17,8 +18,7 @@ private:
 	Bullet* bullet;
 	sf::Vector2f bullet_position;
 	bool isShooting;
-	int bullet_life;
-	sf::Texture bullet_texture;
+	int bullet_cooldown;
 	sf::Vector2u textureSize;
 	sf::Vector2u imageCount;
 	sf::Vector2u currentImage;
@@ -30,10 +30,9 @@ public:
 		textureSize.x /= 3;
 		textureSize.y /= 4;
 		imageCount.x = 0;
-		bullet_texture.loadFromFile("bullet.png");
 		bullet = nullptr;
 		isShooting = false;
-		bullet_life = 0;
+		bullet_cooldown = 0;
 	}
 	void EveryFrame(uint64_t f)
 	{
@@ -77,10 +76,10 @@ public:
 			if (f % 100 == 0 && !isShooting)
 			{
 				isShooting = true;
-				bullet_life = 0;
+				bullet_cooldown = 0;
 				bullet_position = this->spritePtr()->getPosition();
 				bullet_position.x += textureSize.x / 4;
-				bullet = new Bullet(sf::Sprite(bullet_texture), bullet_position, DIRECTION::UP);
+				bullet = new Bullet(bullet_position, DIRECTION::UP);
 				Engine::startingScreen.add(bullet);
 			}
 			
@@ -95,10 +94,10 @@ public:
 			if (f % 100 == 0 && !isShooting)
 			{
 				isShooting = true;
-				bullet_life = 0;
+				bullet_cooldown = 0;
 				bullet_position = this->spritePtr()->getPosition();
 				bullet_position.y += textureSize.y / 4;
-				bullet = new Bullet(sf::Sprite(bullet_texture), bullet_position, DIRECTION::LEFT);
+				bullet = new Bullet(bullet_position, DIRECTION::LEFT);
 				Engine::startingScreen.add(bullet);
 			}
 		}
@@ -112,11 +111,11 @@ public:
 			if (f % 100 == 0 && !isShooting)
 			{
 				isShooting = true;
-				bullet_life = 0;
+				bullet_cooldown = 0;
 				bullet_position = this->spritePtr()->getPosition();
 				bullet_position.x += textureSize.x / 4;
 				bullet_position.y += textureSize.y;
-				bullet = new Bullet(sf::Sprite(bullet_texture), bullet_position, DIRECTION::DOWN);
+				bullet = new Bullet(bullet_position, DIRECTION::DOWN);
 				Engine::startingScreen.add(bullet);
 			}
 		}
@@ -130,11 +129,11 @@ public:
 			if (f % 100 == 0 && !isShooting)
 			{
 				isShooting = true;
-				bullet_life = 0;
+				bullet_cooldown = 0;
 				bullet_position = this->spritePtr()->getPosition();
 				bullet_position.x += textureSize.x;
 				bullet_position.y += textureSize.y / 4;
-				bullet = new Bullet(sf::Sprite(bullet_texture), bullet_position, DIRECTION::RIGHT);
+				bullet = new Bullet(bullet_position, DIRECTION::RIGHT);
 				Engine::startingScreen.add(bullet);
 			}
 		}
@@ -146,23 +145,22 @@ public:
 			else
 				imageCount.x++;
 		}
-		
-		// calculate bullet's life time
-		bullet_life++;
-		if (bullet_life == 50)
+				
+		// shooting delay
+		bullet_cooldown++;
+		if (bullet_cooldown == 50)
 		{
-			Engine::startingScreen.remove(bullet);
-			delete bullet;
-			bullet = nullptr;
 			isShooting = false;
 		}
 		
 	}
 	void Collision(GraphicalGameObject& other)
 	{
-		std::cout << "collision in the soldier" << std::endl;
-		std::cout << " " << std::endl;
-		std::cout << " " << std::endl;
+		if (dynamic_cast<SkeletonBlast*>(&other))
+		{
+			Engine::startingScreen.remove(this);
+			delete this;
+		}
 	}
 	sf::Sprite* spritePtr()
 	{
