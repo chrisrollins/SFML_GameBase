@@ -19,6 +19,7 @@ namespace Engine
 	unsigned int Screen::windowHeight = 0;
 	const char* Screen::windowTitle = nullptr;
 	static Screen* currentScreen;
+	bool running = true;
 
 	void Screen::addMap(TileMap* map)
 	{
@@ -68,6 +69,11 @@ namespace Engine
 	const TileMap* Screen::getMap() const
 	{
 		return this->map;
+	}
+
+	void Screen::close()
+	{
+		running = false;
 	}
 
 	void Screen::render(int fps)
@@ -200,12 +206,13 @@ namespace Engine
 			sf::Event event;
 			while (window.pollEvent(event))
 			{
-				handleEvents(cs->g_objects, event);
-				handleEvents(cs->objects, event);
-				if (event.type == sf::Event::Closed)
+				if (event.type == sf::Event::Closed || !running)
 				{
 					window.close();
+					return;
 				}
+				handleEvents(cs->g_objects, event);
+				handleEvents(cs->objects, event);
 			}
 
 			window.clear();
