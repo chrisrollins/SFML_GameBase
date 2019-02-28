@@ -17,11 +17,11 @@ class Score : public SampleUIText{
    
 public:
     Score(std::string text) : SampleUIText(text), number(0){}
-    Score(int s) : number(s), SampleUIText(std::to_string(number)){}
+    Score(int s) : number(s), SampleUIText(std::to_string(s)){}
     Score(std::string text, const sf::Color &C, unsigned int size,
           float position_x, float position_y) : SampleUIText(text, C, size, position_x, position_y) {}
     Score(int s, const sf::Color &C, unsigned int size,
-          float position_x, float position_y) : number(s), SampleUIText(std::to_string(number), C, size, position_x, position_y) {}
+          float position_x, float position_y) : number(s), SampleUIText(std::to_string(s), C, size, position_x, position_y) {}
     void EveryFrame(uint64_t f){
         if(f % 60  == 0){
             number++;
@@ -29,7 +29,7 @@ public:
         }
     }
 private:
-    int number;
+    int number = 0;
 };
 
 #endif /* Score_hpp */
