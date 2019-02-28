@@ -61,6 +61,7 @@ namespace Engine
 		~GraphicalGameObject();
 		sf::Drawable* getGraphic();
 		bool collision = true;
+		bool ignoreObstacles = false;
 	protected:
 		sf::Drawable* graphic;
 	};
