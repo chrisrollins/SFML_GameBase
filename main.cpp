@@ -1,4 +1,4 @@
-﻿#include <SFML/Graphics.hpp>
+#include <SFML/Graphics.hpp>
 #include <iostream>
 #include <thread>
 #include <vector>
@@ -10,6 +10,7 @@
 #include "SampleUIObject.h"
 #include "SampleUIText.h"
 #include "getMap.h"
+#include "Score.h"
 
 using namespace Engine;
 
@@ -135,14 +136,9 @@ int main(int argc, char** argv)
 		Soldier* soldier_ptr = new Soldier(soldierSprite[i], sf::Vector2f(randWidth, randHeight));
 		startingScreen.add(soldier_ptr);
 	}
-
-	//adding a UI object
-	SampleUIObject uiObj;
-	startingScreen.addUIObject(&uiObj);
-
-	//adding a UI text object
-	SampleUIText uiTxt("Hello World!");
-	startingScreen.addUIObject(&uiTxt);
+    
+    Score s(0, sf::Color::Cyan, 32, 1000, 0);
+    startingScreen.addUIObject(&s);
 
 	//note: The lifetime of the objects added to the screen must be as long as the screen's lifetime. In this case it's ok to use these local variables because startingScreen lasts the duration of the program.
 	//For most other cases we have to use heap allocated objects.
