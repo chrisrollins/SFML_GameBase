@@ -19,6 +19,7 @@ namespace Engine
 	unsigned int Screen::windowHeight = 0;
 	const char* Screen::windowTitle = nullptr;
 	static Screen* currentScreen;
+	bool running = true;
 
 	void Screen::addMap(TileMap* map)
 	{
@@ -106,6 +107,11 @@ namespace Engine
 		int row = position.x / map->tileSize().x;
 		int column = position.y / map->tileSize().y;
 		return sf::FloatRect(row * map->tileSize().x, column * map->tileSize().y, map->tileSize().x, map->tileSize().y);
+	}
+
+	void Screen::close()
+	{
+		running = false;
 	}
 
 	void Screen::render(int fps)
@@ -238,12 +244,13 @@ namespace Engine
 			sf::Event event;
 			while (window.pollEvent(event))
 			{
-				handleEvents(cs->g_objects, event);
-				handleEvents(cs->objects, event);
-				if (event.type == sf::Event::Closed)
+				if (event.type == sf::Event::Closed || !running)
 				{
 					window.close();
+					return;
 				}
+				handleEvents(cs->g_objects, event);
+				handleEvents(cs->objects, event);
 			}
 
 			window.clear();
@@ -260,18 +267,21 @@ namespace Engine
 				GraphicalGameObject* obj = dynamic_cast<GraphicalGameObject*>(pair.second); //does not need to be checked, they are checked on insertion into the maps
 
 				//prevent objects from leaving the map
-				if (sf::Transformable* transformable = dynamic_cast<sf::Transformable*>(obj->getGraphic()))
+				if (!obj->ignoreObstacles)
 				{
-					sf::Vector2u size(0, 0);
-					if (sf::Sprite* sprite = dynamic_cast<sf::Sprite*>(obj->getGraphic())) { size = sf::Vector2u(sprite->getTextureRect().width, sprite->getTextureRect().height); }
-					#define X (transformable->getPosition().x)
-					#define Y (transformable->getPosition().y)
-					if (X < 0) { transformable->setPosition(0.f, Y); }
-					if (Y < 0) { transformable->setPosition(X, 0.f); }
-					if (Y + size.y > MAP_HEIGHT) { transformable->setPosition(X, MAP_HEIGHT - size.y); }
-					if (X + size.x > MAP_WIDTH) { transformable->setPosition(MAP_WIDTH - size.x, Y); }
-					#undef X
-					#undef Y					
+					if (sf::Transformable* transformable = dynamic_cast<sf::Transformable*>(obj->getGraphic()))
+					{
+						sf::Vector2u size(0, 0);
+						if (sf::Sprite* sprite = dynamic_cast<sf::Sprite*>(obj->getGraphic())) { size = sf::Vector2u(sprite->getTextureRect().width, sprite->getTextureRect().height); }
+#define X (transformable->getPosition().x)
+#define Y (transformable->getPosition().y)
+						if (X < 0) { transformable->setPosition(0.f, Y); }
+						if (Y < 0) { transformable->setPosition(X, 0.f); }
+						if (Y + size.y > MAP_HEIGHT) { transformable->setPosition(X, MAP_HEIGHT - size.y); }
+						if (X + size.x > MAP_WIDTH) { transformable->setPosition(MAP_WIDTH - size.x, Y); }
+#undef X
+#undef Y					
+					}
 				}
 				obj->draw(window);
 			}
