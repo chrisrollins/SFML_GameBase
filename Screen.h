@@ -22,6 +22,8 @@ namespace Engine
 		void close();
 		sf::Vector2i getMousePosition() const;
 		const TileMap* getMap() const;
+		bool isObstacle(sf::Vector2f position) const;
+		sf::FloatRect currTile(sf::Vector2f position) const;
 		unsigned static int windowWidth;
 		unsigned static int windowHeight;
 		static const char* windowTitle;
