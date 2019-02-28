@@ -19,6 +19,7 @@ private:
 public:
 	Bullet(sf::Vector2f pos, DIRECTION direction) : Engine::GraphicalGameObject(sf::Sprite()) 
 	{
+		this->ignoreObstacles = true;
 		this->texture.loadFromFile("bullet.png");
 		this->spritePtr()->setTexture(this->texture);
 		this->spritePtr()->setPosition(pos);

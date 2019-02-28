@@ -19,6 +19,7 @@ namespace Engine
 		void add(GameObject* gameObject);
 		void remove(GameObject* gameObject);
 		void render(int fps = 60);
+		void close();
 		sf::Vector2i getMousePosition() const;
 		const TileMap* getMap() const;
 		unsigned static int windowWidth;
