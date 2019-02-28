@@ -241,8 +241,23 @@ namespace Engine
 						if (Y < 0) { transformable->setPosition(X, 0.f); }
 						if (Y + size.y > MAP_HEIGHT) { transformable->setPosition(X, MAP_HEIGHT - size.y); }
 						if (X + size.x > MAP_WIDTH) { transformable->setPosition(MAP_WIDTH - size.x, Y); }
+						sf::Vector2f corners[4] = {
+							{X          , Y         },
+							{X + size.x , Y         },
+							{X          , Y + size.y},
+							{X + size.x , Y + size.y}
+						};
+						for (int i = 0; i < 4; i++)
+						{
+							sf::Vector2f corner = corners[i];
+							if (this->map->isObstacle(corner))
+							{
+								transformable->setPosition(obj->lastPos);
+							}
+						}
+						obj->lastPos = { X , Y };
 						#undef X
-						#undef Y					
+						#undef Y
 					}
 				}
 				obj->draw(window);
