@@ -64,6 +64,9 @@ namespace Engine
 		bool ignoreObstacles = false;
 	protected:
 		sf::Drawable* graphic;
+	private:
+		friend class Screen;
+		sf::Vector2f lastPos;
 	};
 }
 

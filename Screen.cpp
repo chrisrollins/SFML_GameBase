@@ -71,44 +71,6 @@ namespace Engine
 		return this->map;
 	}
 
-	bool Screen::isObstacle(sf::Vector2f position) const
-	{
-		int row = position.x / map->tileSize().x;
-		int column = position.y / map->tileSize().y;
-		int tileType = map->getTileAt(row, column);
-		//if (tileType == 0)
-		//{
-		//	std::cout << "grass" << std::endl;
-		//	return false;
-		//}
-		//else if (tileType == 1)
-		//{
-		//	std::cout << "river" << std::endl;
-		//	return true;
-		//}
-		//else if (tileType == 2)
-		//{
-		//	std::cout << "tree" << std::endl;
-		//	return true;
-		//}
-		//else // (tileType == 3)
-		//{
-		//	std::cout << "road" << std::endl;
-		//	return false;
-		//}
-		if (tileType == 1 || tileType == 2)
-			return true;
-		else
-			return false;
-	}
-
-	sf::FloatRect Screen::currTile(sf::Vector2f position) const
-	{
-		int row = position.x / map->tileSize().x;
-		int column = position.y / map->tileSize().y;
-		return sf::FloatRect(row * map->tileSize().x, column * map->tileSize().y, map->tileSize().x, map->tileSize().y);
-	}
-
 	void Screen::close()
 	{
 		running = false;
@@ -279,8 +241,23 @@ namespace Engine
 						if (Y < 0) { transformable->setPosition(X, 0.f); }
 						if (Y + size.y > MAP_HEIGHT) { transformable->setPosition(X, MAP_HEIGHT - size.y); }
 						if (X + size.x > MAP_WIDTH) { transformable->setPosition(MAP_WIDTH - size.x, Y); }
+						sf::Vector2f corners[4] = {
+							{X          , Y         },
+							{X + size.x , Y         },
+							{X          , Y + size.y},
+							{X + size.x , Y + size.y}
+						};
+						for (int i = 0; i < 4; i++)
+						{
+							sf::Vector2f corner = corners[i];
+							if (this->map->isObstacle(corner))
+							{
+								transformable->setPosition(obj->lastPos);
+							}
+						}
+						obj->lastPos = { X , Y };
 						#undef X
-						#undef Y					
+						#undef Y
 					}
 				}
 				obj->draw(window);

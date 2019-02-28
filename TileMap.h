@@ -53,6 +53,45 @@ namespace Engine {
 			return true;
 		}
 
+		bool isObstacle(sf::Vector2f position) const
+		{
+			int row = position.x / this->tileSize().x;
+			int column = position.y / this->tileSize().y;
+			int tileType = this->getTileAt(row, column);
+			//if (tileType == 0)
+			//{
+			//	std::cout << "grass" << std::endl;
+			//	return false;
+			//}
+			//else if (tileType == 1)
+			//{
+			//	std::cout << "river" << std::endl;
+			//	return true;
+			//}
+			//else if (tileType == 2)
+			//{
+			//	std::cout << "tree" << std::endl;
+			//	return true;
+			//}
+			//else // (tileType == 3)
+			//{
+			//	std::cout << "road" << std::endl;
+			//	return false;
+			//}
+			//if (tileType == 1 || tileType == 2)
+			if (tileType == 1)
+				return true;
+			else
+				return false;
+		}
+
+		sf::FloatRect currTile(sf::Vector2f position) const
+		{
+			int row = position.x / this->tileSize().x;
+			int column = position.y / this->tileSize().y;
+			return sf::FloatRect(row * this->tileSize().x, column * this->tileSize().y, this->tileSize().x, this->tileSize().y);
+		}
+
 		unsigned int width() const
 		{
 			return this->_width;
