@@ -9,6 +9,7 @@
 #include "MainCharacter.h"
 #include "SampleUIObject.h"
 #include "SampleUIText.h"
+#include "getMap.h"
 
 using namespace Engine;
 
@@ -37,9 +38,9 @@ int main(int argc, char** argv)
 		}
 		std::cout << std::endl;
 	}*/
-
-	const int level[] =
-	{
+	//map name : map.dat x: 64  y: 48
+	//const int level[] =
+	/*{
 		1, 3, 2, 0, 1, 0, 2, 2, 2, 0, 1, 1, 1, 3, 1, 3, 3, 2, 3, 0, 3, 0, 2, 1, 0, 2, 1, 0, 2, 3, 3, 2, 3, 2, 1, 0, 3, 3, 3, 2, 3, 3, 2, 1, 1, 0, 1, 3,
 		1, 0, 3, 0, 2, 1, 1, 3, 3, 1, 1, 2, 0, 3, 2, 2, 0, 2, 0, 2, 0, 0, 2, 1, 2, 1, 2, 2, 2, 1, 1, 0, 1, 3, 0, 2, 0, 0, 2, 0, 3, 0, 0, 3, 2, 3, 1, 2,
 		2, 2, 1, 1, 1, 3, 3, 2, 0, 2, 1, 2, 1, 2, 1, 1, 0, 0, 2, 1, 1, 1, 1, 0, 2, 2, 1, 0, 3, 3, 3, 2, 3, 0, 2, 2, 1, 0, 2, 2, 3, 3, 3, 1, 1, 3, 1, 3,
@@ -104,7 +105,9 @@ int main(int argc, char** argv)
 		2, 1, 1, 3, 2, 2, 3, 3, 1, 1, 0, 2, 3, 3, 3, 0, 3, 1, 1, 1, 3, 0, 0, 2, 3, 0, 2, 1, 2, 2, 0, 1, 3, 0, 0, 2, 2, 3, 3, 3, 1, 3, 3, 0, 0, 0, 1, 2,
 		2, 1, 2, 1, 2, 0, 0, 2, 2, 1, 2, 1, 3, 0, 3, 1, 1, 0, 2, 1, 1, 2, 1, 1, 0, 0, 2, 2, 2, 2, 3, 1, 3, 2, 1, 3, 0, 3, 2, 1, 1, 1, 1, 2, 1, 3, 2, 1,
 		3, 1, 2, 3, 0, 2, 1, 2, 0, 1, 3, 3, 1, 0, 0, 1, 2, 1, 0, 2, 1, 0, 1, 2, 0, 0, 2, 1, 0, 1, 0, 2, 2, 3, 3, 2, 1, 1, 3, 1, 1, 0, 3, 3, 2, 1, 2, 1,
-	};
+	};*/
+	int level[64*48];
+	getMap("map.dat", 64, 48, level);
 	// sf::Vector2u holds the size of each tile
 	// the two variables after level stands for the num tiles per column/line
 	map.load("map.png", sf::Vector2u(32, 32), level, 64, 48);
