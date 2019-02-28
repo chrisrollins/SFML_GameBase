@@ -1,4 +1,4 @@
-//
+﻿//
 //  Menu.h
 //  group PROJECT
 //
@@ -7,7 +7,7 @@
 //
 
 #include <SFML/Graphics.hpp>
-#include <Screen.h>
+#include "Screen.h"
 #include <vector>
 #ifndef Menu_h
 #define Menu_h

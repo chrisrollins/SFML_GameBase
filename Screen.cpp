@@ -273,14 +273,14 @@ namespace Engine
 					{
 						sf::Vector2u size(0, 0);
 						if (sf::Sprite* sprite = dynamic_cast<sf::Sprite*>(obj->getGraphic())) { size = sf::Vector2u(sprite->getTextureRect().width, sprite->getTextureRect().height); }
-#define X (transformable->getPosition().x)
-#define Y (transformable->getPosition().y)
+						#define X (transformable->getPosition().x)
+						#define Y (transformable->getPosition().y)
 						if (X < 0) { transformable->setPosition(0.f, Y); }
 						if (Y < 0) { transformable->setPosition(X, 0.f); }
 						if (Y + size.y > MAP_HEIGHT) { transformable->setPosition(X, MAP_HEIGHT - size.y); }
 						if (X + size.x > MAP_WIDTH) { transformable->setPosition(MAP_WIDTH - size.x, Y); }
-#undef X
-#undef Y					
+						#undef X
+						#undef Y					
 					}
 				}
 				obj->draw(window);
