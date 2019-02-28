@@ -5,8 +5,6 @@
 
 using namespace Engine;
 
-//this class doesn't work yet but this is the general idea
-
 class SampleUIText : public GraphicalGameObject
 {
 public:

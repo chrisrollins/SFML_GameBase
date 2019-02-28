@@ -54,6 +54,14 @@ public:
 		this->sprite()->setTextureRect(sf::IntRect(imageCount.x * textureSize.x,
 			imageCount.y * textureSize.y, textureSize.x, textureSize.y));
 		blast_texture.loadFromFile("blast.png");
+		sf::IntRect size = this->sprite()->getTextureRect();
+		sf::Vector2f collisionSizeRatio(0.7, 0.4);
+		this->obstacleCollisionSize.width = size.width * collisionSizeRatio.x;
+		this->obstacleCollisionSize.height = size.width * collisionSizeRatio.y;
+		this->obstacleCollisionSize.left = (1 - collisionSizeRatio.x) * size.width;
+		this->obstacleCollisionSize.top = (1 - collisionSizeRatio.x) * size.height;
+		std::cout << this->obstacleCollisionSize.width << ", " << this->obstacleCollisionSize.height << std::endl;
+		std::cout << this->obstacleCollisionSize.left << ", " << this->obstacleCollisionSize.top << std::endl;
 	}
 	void KeyPressed(sf::Event e)
 	{
@@ -144,23 +152,6 @@ public:
 				imageCount.y * textureSize.y, textureSize.x, textureSize.y));
 			s->move(2, 0);
 		}
-
-		// Leia's stupid functions, did not work
-		//sf::Vector2f feet_pos = this->sprite()->getPosition();
-		//feet_pos.x += textureSize.x / 2;
-		//feet_pos.y += textureSize.y;
-		//if (startingScreen.isObstacle(feet_pos))
-		//{
-		//	sf::FloatRect currTile = startingScreen.currTile(feet_pos);
-		//	if (this->W_KeyHeld)
-		//		this->sprite()->setPosition(this->sprite()->getPosition().x, currTile.top + currTile.height - textureSize.y);
-		//	else if (this->S_KeyHeld)
-		//		this->sprite()->setPosition(this->sprite()->getPosition().x, currTile.top - textureSize.y);
-		//	else if (this->A_KeyHeld)
-		//		this->sprite()->setPosition(currTile.left + currTile.width - textureSize.x / 2, this->sprite()->getPosition().y);
-		//	else
-		//		this->sprite()->setPosition(currTile.left - textureSize.x, this->sprite()->getPosition().y);
-		//}
 	}
 	void Collision(GraphicalGameObject& other)
 	{

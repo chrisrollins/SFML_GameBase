@@ -138,7 +138,7 @@ int main(int argc, char** argv)
 	}
     
     Score s(0, sf::Color::Cyan, 32, 1000, 0);
-    startingScreen.addUIObject(&s);
+	startingScreen.addUIObject(&s);
 
 	//note: The lifetime of the objects added to the screen must be as long as the screen's lifetime. In this case it's ok to use these local variables because startingScreen lasts the duration of the program.
 	//For most other cases we have to use heap allocated objects.

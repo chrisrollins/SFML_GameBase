@@ -47,9 +47,7 @@ namespace Engine
 
 	void Screen::addUIObject(GameObject* uiObj)
 	{
-		if (!(dynamic_cast<GraphicalGameObject*>(uiObj))) { return; }
-		GameObjectMap& map = this->ui_objects;
-		map[uiObj->getID()] = uiObj;
+		this->ui_objects[uiObj->getID()] = uiObj;
 		uiObj->screen = this;
 	}
 
@@ -86,9 +84,9 @@ namespace Engine
 		if (renderStarted) { return; }
 		renderStarted = true;
 
-		static std::function<void(GameObjectMap&, sf::Event)> handleEvents = [](GameObjectMap& objects, sf::Event event)
+		static std::function<void(GameObjectMap*, sf::Event)> handleEvents = [](GameObjectMap* objects, sf::Event event)
 		{
-			for (auto const& pair : objects)
+			for (auto const& pair : *objects)
 			{
 				GameObject* obj = pair.second;
 				switch (event.type)
@@ -180,27 +178,31 @@ namespace Engine
 			clock.restart();
 			Screen* cs = currentScreen;
 			
+			//remove objects that are pending to be removed
 			while (!removeQueue.empty())
 			{
 				GameObject* toRemove = removeQueue.front();
 				removeQueue.pop();
-				GameObjectMap& map = (dynamic_cast<GraphicalGameObject*>(toRemove)) ? this->g_objects : this->objects;
-				if (map.find(toRemove->getID()) == map.end()) { continue; }
-				GameObjectID id = toRemove->getID();
-				map.erase(id);
-				delete toRemove;
+				for (auto map : { &cs->objects, &cs->g_objects, &cs->ui_objects })
+				{
+					if (map->find(toRemove->getID()) != map->end())
+					{						
+						GameObjectID id = toRemove->getID(); 
+						map->erase(id); 
+						delete toRemove;
+						break;
+					}
+				}
 			}
 
-			for (auto const& pair : cs->g_objects)
+			//run the EveryFrame event on all objects
+			for (auto map : { &cs->objects, &cs->g_objects, &cs->ui_objects })
 			{
-				GameObject* obj = pair.second;
-				obj->EveryFrame(frameCount);
-			}
-
-			for (auto const& pair : cs->objects)
-			{
-				GameObject* obj = pair.second;
-				obj->EveryFrame(frameCount);
+				for (auto const& pair : *map)
+				{
+					GameObject* obj = pair.second;
+					obj->EveryFrame(frameCount);
+				}
 			}
 
 			sf::Event event;
@@ -211,8 +213,12 @@ namespace Engine
 					window.close();
 					return;
 				}
-				handleEvents(cs->g_objects, event);
-				handleEvents(cs->objects, event);
+
+				//handle events on each object
+				for (auto map : { &cs->objects, &cs->g_objects, &cs->ui_objects })
+				{
+					handleEvents(map, event);
+				}
 			}
 
 			window.clear();
@@ -241,20 +247,19 @@ namespace Engine
 						if (Y < 0) { transformable->setPosition(X, 0.f); }
 						if (Y + size.y > MAP_HEIGHT) { transformable->setPosition(X, MAP_HEIGHT - size.y); }
 						if (X + size.x > MAP_WIDTH) { transformable->setPosition(MAP_WIDTH - size.x, Y); }
+
 						sf::Vector2f corners[4] = {
-							{X          , Y         },
-							{X + size.x , Y         },
-							{X          , Y + size.y},
-							{X + size.x , Y + size.y}
+							{X          , Y          },
+							{X + size.x , Y          },
+							{X          , Y + size.y },
+							{X + size.x , Y + size.y }
 						};
-						for (int i = 0; i < 4; i++)
+
+						for (auto corner : corners)
 						{
-							sf::Vector2f corner = corners[i];
-							if (this->map->isObstacle(corner))
-							{
-								transformable->setPosition(obj->lastPos);
-							}
+							if (this->map->isObstacle(corner)) { transformable->setPosition(obj->lastPos); }
 						}
+
 						obj->lastPos = { X , Y };
 						#undef X
 						#undef Y

@@ -62,6 +62,8 @@ namespace Engine
 		sf::Drawable* getGraphic();
 		bool collision = true;
 		bool ignoreObstacles = false;
+		sf::IntRect obstacleCollisionSize;
+		sf::IntRect objectCollisionSize;
 	protected:
 		sf::Drawable* graphic;
 	private:
