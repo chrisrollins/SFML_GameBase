@@ -29,6 +29,20 @@ public:
         }
         
     }
+    
+    SampleUIText(std::string filename, std::string text, const sf::Color &C, unsigned int size,
+                 float position_x, float position_y) :  GraphicalGameObject(sf::Text()){
+        if (myFont.loadFromFile(filename))
+        {
+            this->textPtr()->setFont(myFont);
+            this->textPtr()->setString(text);
+            this->textPtr()->setPosition(position_x, position_y);
+            this->textPtr()->setFillColor(C);
+            this->textPtr()->setCharacterSize(size);
+        }
+        
+    }
+    
     void setText(std::string text){
         this->textPtr()->setString(text);
     }

@@ -2,10 +2,10 @@
 #include "TestLevel.h"
 
 
-class StartButton : public UIButton
+class EasyLevelButton : public UIButton
 {
 public:
-	StartButton() : UIButton("Start", { 20, 20 }, { 200, 75 }) { }
+	EasyLevelButton() : UIButton("Easy", { 412, 162}, { 200, 75 }) { }
 	void MouseButtonReleased(sf::Event e)
 	{
 		if (e.mouseButton.button == sf::Mouse::Button::Left //if the left mouse button was clicked
@@ -16,10 +16,43 @@ public:
 	}
 };
 
+class NormalLevelButton : public UIButton{
+public:
+    NormalLevelButton() : UIButton("Normal", {412, 242}, {200, 75}) {}
+    void MouseButtonReleased(sf::Event e)
+    {
+        if (e.mouseButton.button == sf::Mouse::Button::Left //if the left mouse button was clicked
+            && this->background.getGlobalBounds().contains(e.mouseButton.x, e.mouseButton.y)) //if the click was inside the button
+        {
+            mainMenu.startTestLevel();
+        }
+    }
+};
+
+class HardLevelButton : public UIButton{
+public:
+    HardLevelButton() : UIButton("Hard", {412, 322}, {200, 75}) {}
+    void MouseButtonReleased(sf::Event e)
+    {
+        if (e.mouseButton.button == sf::Mouse::Button::Left //if the left mouse button was clicked
+            && this->background.getGlobalBounds().contains(e.mouseButton.x, e.mouseButton.y)) //if the click was inside the button
+        {
+            mainMenu.startTestLevel();
+        }
+    }
+};
+
+class Name : public SampleUIText{
+public:
+    Name() : SampleUIText("DoubleFeature.ttf", "The Hungry Games: Cursed Zombie", sf::Color::Red, 50, 32, 0){}
+};
+
+
+
 class QuitButton : public UIButton
 {
 public:
-	QuitButton() : UIButton("Quit", { 20, 105 }, { 200, 75 }) { }
+	QuitButton() : UIButton("Quit", { 412, 602}, { 200, 75 }) { }
 	void MouseButtonReleased(sf::Event e)
 	{
 		if (e.mouseButton.button == sf::Mouse::Button::Left //if the left mouse button was clicked
@@ -35,7 +68,10 @@ namespace Engine
 	Menu::Menu()
 	{
 		this->menuObjects = {
-			new StartButton(),
+            new Name(),
+			new EasyLevelButton(),
+            new NormalLevelButton(),
+            new HardLevelButton,
 			new QuitButton()
 		};
 	}
