@@ -154,7 +154,8 @@ public:
 				imageCount.y * textureSize.y, textureSize.x, textureSize.y));
 			s->move(2, 0);
 		}
-        _health--;
+        if (_health > 0)
+            _health--;
 	}
     int getHealth(){
         return _health;
@@ -162,7 +163,7 @@ public:
 	void Collision(GraphicalGameObject& other)
 	{
         // if collision happened:
-        // _health -= other->getDamage();
+        //_health -= other.getDamage();  // need to add the damage to graphicak game object?
 		//std::cout << "collision in the main character" << std::endl;
 		//std::cout << " " << std::endl;
 		//std::cout << " " << std::endl;
