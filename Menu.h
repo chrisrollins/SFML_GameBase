@@ -1,18 +1,12 @@
-﻿//
-//  Menu.h
-//  group PROJECT
-//
-//  Created by Jakin Wang on 2/26/19.
-//  Copyright © 2019 Jakin Wang. All rights reserved.
-//
+﻿#ifndef MENU_HEADER
+#define MENU_HEADER
 
 #include <SFML/Graphics.hpp>
 #include "Screen.h"
 #include "GameObject.h"
 #include "UIButton.h"
+#include "TestLevel.h"
 #include <vector>
-#ifndef MENU_HEADER
-#define MENU_HEADER
 
 using namespace Engine;
 
@@ -24,10 +18,14 @@ namespace Engine
 		Menu();
 		~Menu();
 		void start();
+		void startTestLevel();
 	private:
 		std::vector<GameObject*> menuObjects;
 		Screen menuScreen;
+		TestLevel testLevel;
 	};
+
+	static Menu mainMenu;
 }
 
 #endif

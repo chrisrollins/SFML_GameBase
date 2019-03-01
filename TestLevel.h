@@ -1,5 +1,5 @@
 #ifndef TEST_LEVEL_HEADER
-#define TESt_LEVEL_HEADER
+#define TEST_LEVEL_HEADER
 
 #include <SFML/Graphics.hpp>
 #include <iostream>
@@ -23,6 +23,8 @@ public:
 	TestLevel() {}
 	void start()
 	{
+		static Screen levelScreen;
+		static TileMap map;
 		// This is for quick generation of random tiles
 		/*const int ROW = 64;
 		const int COLUMN = 48;
@@ -104,7 +106,7 @@ public:
 			2, 1, 2, 1, 2, 0, 0, 2, 2, 1, 2, 1, 3, 0, 3, 1, 1, 0, 2, 1, 1, 2, 1, 1, 0, 0, 2, 2, 2, 2, 3, 1, 3, 2, 1, 3, 0, 3, 2, 1, 1, 1, 1, 2, 1, 3, 2, 1,
 			3, 1, 2, 3, 0, 2, 1, 2, 0, 1, 3, 3, 1, 0, 0, 1, 2, 1, 0, 2, 1, 0, 1, 2, 0, 0, 2, 1, 0, 1, 0, 2, 2, 3, 3, 2, 1, 1, 3, 1, 1, 0, 3, 3, 2, 1, 2, 1,
 		};*/
-		int level[64 * 48];
+		static int level[64 * 48];
 		getMap("map.dat", 64, 48, level);
 		// sf::Vector2u holds the size of each tile
 		// the two variables after level stands for the num tiles per column/line
@@ -112,19 +114,19 @@ public:
 		//add map to the screen
 		levelScreen.addMap(&map);
 
-		sf::Sprite m_Sprite;
+		static sf::Sprite m_Sprite;
 		m_Sprite.setPosition(Screen::windowWidth / 2, Screen::windowHeight / 2);
-		sf::Texture m_Texture;
+		static sf::Texture m_Texture;
 		m_Texture.loadFromFile("skeleton.png");
 		// m_Texture.setSmooth(true);
 		m_Sprite.setTexture(m_Texture);
-		MainCharacter mc(m_Sprite);
+		static MainCharacter mc = MainCharacter(m_Sprite);
 		levelScreen.addMainCharacter(&mc);
 
 		srand(time(0));
-		sf::Texture soldier_texture;
+		static sf::Texture soldier_texture;
 		soldier_texture.loadFromFile("soldier.png");
-		sf::Sprite soldierSprite[20];
+		static sf::Sprite soldierSprite[20];
 		for (int i = 0; i < 20; i++)
 		{
 			soldierSprite[i].setTexture(soldier_texture);
@@ -134,14 +136,10 @@ public:
 			levelScreen.add(soldier_ptr);
 		}
 
-		Score s(0, sf::Color::Cyan, 32, 1000, 0);
+		static Score s(0, sf::Color::Cyan, 32, 1000, 0);
 		levelScreen.addUIObject(&s);
 		levelScreen.render();
 	}
-
-	private:
-		Screen levelScreen;
-		TileMap map;
 };
 
 #endif

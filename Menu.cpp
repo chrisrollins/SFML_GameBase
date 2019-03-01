@@ -1,6 +1,7 @@
 #include "Menu.h"
 #include "TestLevel.h"
 
+
 class StartButton : public UIButton
 {
 public:
@@ -10,12 +11,9 @@ public:
 		if (e.mouseButton.button == sf::Mouse::Button::Left //if the left mouse button was clicked
 			&& this->background.getGlobalBounds().contains(e.mouseButton.x, e.mouseButton.y)) //if the click was inside the button
 		{
-			std::cout << "clicked start" << std::endl;
-			tl.start();
+			mainMenu.startTestLevel();
 		}
 	}
-private:
-	TestLevel tl;
 };
 
 class QuitButton : public UIButton
@@ -27,7 +25,6 @@ public:
 		if (e.mouseButton.button == sf::Mouse::Button::Left //if the left mouse button was clicked
 			&& this->background.getGlobalBounds().contains(e.mouseButton.x, e.mouseButton.y)) //if the click was inside the button
 		{
-			std::cout << "clicked quit" << std::endl;
 			this->screen->close();
 		}
 	}
@@ -58,5 +55,10 @@ namespace Engine
 			menuScreen.addUIObject(obj);
 		}
 		this->menuScreen.render();
+	}
+
+	void Menu::startTestLevel()
+	{
+		this->testLevel.start();
 	}
 }

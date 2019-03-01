@@ -1,3 +1,6 @@
+#ifndef MAIN_CHARACTER_HEADER
+#define MAIN_CHARACTER_HEADER
+
 #include "Screen.h"
 #include "GameObject.h"
 #include "SkeletonBlast.h"
@@ -162,3 +165,5 @@ public:
 		return dynamic_cast<sf::Sprite*>(this->graphic);
 	}
 };
+
+#endif

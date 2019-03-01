@@ -10,8 +10,7 @@ int main(int argc, char** argv)
 	Screen::windowHeight = 768;
 	Screen::windowTitle = "Game!";
 
-	Menu m;
-	m.start();
+	mainMenu.start();
 
 	return 0;
 }
