@@ -44,7 +44,7 @@ public:
 
 class Name : public SampleUIText{
 public:
-    Name() : SampleUIText("DoubleFeature.ttf", "The Hungry Games: Cursed Zombie", sf::Color::Red, 50, 32, 0){}
+    Name() : SampleUIText("DoubleFeature.ttf", "Cursed Zombie", sf::Color::Red, 50, 340, 0){}
 };
 
 
