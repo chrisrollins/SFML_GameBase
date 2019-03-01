@@ -1,40 +1,62 @@
-//
-//  Menu.cpp
-//  group PROJECT
-//
-//  Created by Jakin Wang on 2/26/19.
-//  Copyright © 2019 Jakin Wang. All rights reserved.
-//
-
-#include <stdio.h>
-#include <iostream>
 #include "Menu.h"
+#include "TestLevel.h"
 
-void Menu::draw(Engine::Screen s){
-//    for (Text t : this->TextArray)
-//        s.add(t);
+class StartButton : public UIButton
+{
+public:
+	StartButton() : UIButton("Start", { 20, 20 }, { 200, 75 }) { }
+	void MouseButtonReleased(sf::Event e)
+	{
+		if (e.mouseButton.button == sf::Mouse::Button::Left //if the left mouse button was clicked
+			&& this->background.getGlobalBounds().contains(e.mouseButton.x, e.mouseButton.y)) //if the click was inside the button
+		{
+			std::cout << "clicked start" << std::endl;
+			tl.start();
+		}
+	}
+private:
+	TestLevel tl;
+};
+
+class QuitButton : public UIButton
+{
+public:
+	QuitButton() : UIButton("Quit", { 20, 105 }, { 200, 75 }) { }
+	void MouseButtonReleased(sf::Event e)
+	{
+		if (e.mouseButton.button == sf::Mouse::Button::Left //if the left mouse button was clicked
+			&& this->background.getGlobalBounds().contains(e.mouseButton.x, e.mouseButton.y)) //if the click was inside the button
+		{
+			std::cout << "clicked quit" << std::endl;
+			this->screen->close();
+		}
+	}
+};
+
+namespace Engine
+{
+	Menu::Menu()
+	{
+		this->menuObjects = {
+			new StartButton(),
+			new QuitButton()
+		};
+	}
+
+	Menu::~Menu()
+	{
+		for (auto obj : this->menuObjects)
+		{
+			delete obj;
+		}
+	}
+
+	void Menu::start()
+	{
+		for (auto obj : this->menuObjects)
+		{
+			menuScreen.addUIObject(obj);
+		}
+		this->menuScreen.render();
+	}
 }
-
-void Menu::setFont(Font f){
-    t.setFont(f);
-}
-
-void Menu::setFontOther(Color c , unsigned int size , float position_x, float position_y){
-    t.setFillColor(c);
-    t.setCharacterSize(size);
-    t.setPosition(position_x, position_y);
-}
-
-void Menu::setFontFromFile(std::string filename){
-    if(!f.loadFromFile(filename)){
-        std::cerr << "Error Loading Font!!" << std::endl;
-        exit(1);
-    }
-}
-
-void Menu::setText(Text t){
-    this->t = t;
-}
-
-
-

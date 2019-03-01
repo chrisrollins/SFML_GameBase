@@ -19,6 +19,7 @@ namespace Engine
 	unsigned int Screen::windowHeight = 0;
 	const char* Screen::windowTitle = nullptr;
 	static Screen* currentScreen;
+	static Screen* pendingSwitch;
 	bool running = true;
 
 	void Screen::addMap(TileMap* map)
@@ -78,10 +79,14 @@ namespace Engine
 	{
 		if (fps < 1) { fps = 1; }
 		else if (fps > 1000) { fps = 1000; }
-		currentScreen = this;
 		currentFPS = fps;
 
-		if (renderStarted) { return; }
+		if (renderStarted)
+		{
+			pendingSwitch = this;
+			return;
+		}
+		currentScreen = this;
 		renderStarted = true;
 
 		static std::function<void(GameObjectMap*, sf::Event)> handleEvents = [](GameObjectMap* objects, sf::Event event)
@@ -224,10 +229,16 @@ namespace Engine
 			window.clear();
 
 			//draw the map
-			if (cs->map) { window.draw(*cs->map); }
 
-			unsigned int MAP_WIDTH = cs->map->width() * this->map->tileSize().x;
-			unsigned int MAP_HEIGHT = cs->map->height() * this->map->tileSize().y;
+			unsigned int MAP_WIDTH = 0;
+			unsigned int MAP_HEIGHT = 0;
+
+			if (cs->map)
+			{
+				window.draw(*cs->map);
+				MAP_WIDTH = cs->map->width() * this->map->tileSize().x;
+				MAP_HEIGHT = cs->map->height() * this->map->tileSize().y;
+			}
 
 			//draw the objects
 			for (auto const& pair : cs->g_objects)
@@ -367,24 +378,13 @@ namespace Engine
 			window.setView(view);
 			window.display();
 			frameCount++;
+			if (pendingSwitch) { currentScreen = pendingSwitch; }
 			while (clock.getElapsedTime().asMicroseconds() < (1000000 / currentFPS)) {}
 		}
 	}
 
 	Screen::~Screen()
 	{
-		for (auto const& pair : this->objects)
-		{
-			auto obj = pair.second;
-			if (obj == this->mainCharacter) { continue; }
-			delete obj;
-		}
 
-		for (auto const& pair : this->g_objects)
-		{
-			auto obj = pair.second;
-			if (obj == this->mainCharacter) { continue; }
-			delete obj;
-		}
 	}
 }

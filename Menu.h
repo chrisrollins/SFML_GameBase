@@ -8,22 +8,26 @@
 
 #include <SFML/Graphics.hpp>
 #include "Screen.h"
+#include "GameObject.h"
+#include "UIButton.h"
 #include <vector>
-#ifndef Menu_h
-#define Menu_h
+#ifndef MENU_HEADER
+#define MENU_HEADER
 
-using namespace sf;
+using namespace Engine;
 
-class Menu{
-    std::vector<Text> TextArray;
-    Font f;
-    Text t;
-public:
-    void setText(Text t);
-    void setFont(Font f);
-    void setFontOther(Color c = Color::Blue, unsigned int size = 12, float position_x = 0, float position_y = 0);
-    void setFontFromFile(std::string filename);
-    void draw(Engine::Screen s);
-};
+namespace Engine
+{
+	class Menu
+	{
+	public:
+		Menu();
+		~Menu();
+		void start();
+	private:
+		std::vector<GameObject*> menuObjects;
+		Screen menuScreen;
+	};
+}
 
-#endif /* Menu_h */
+#endif

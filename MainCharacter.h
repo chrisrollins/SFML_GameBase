@@ -110,7 +110,7 @@ public:
 		shotOrigin.x += size.width / 2;
 		shotOrigin.y += size.height / 4;
 		SkeletonBlast* blast = new SkeletonBlast(sf::Sprite(blast_texture), shotOrigin, sf::Vector2f(mousePos.x, mousePos.y));
-		startingScreen.add(blast);
+		this->screen->add(blast);
 	}
 	void EveryFrame(uint64_t f)
 	{

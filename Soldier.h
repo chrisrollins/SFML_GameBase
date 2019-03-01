@@ -78,7 +78,7 @@ public:
 				bullet_position = this->spritePtr()->getPosition();
 				bullet_position.x += textureSize.x / 4;
 				Bullet* bullet = new Bullet(bullet_position, DIRECTION::UP);
-				Engine::startingScreen.add(bullet);
+				this->screen->add(bullet);
 			}
 			
 		}
@@ -96,7 +96,7 @@ public:
 				bullet_position = this->spritePtr()->getPosition();
 				bullet_position.y += textureSize.y / 4;
 				Bullet* bullet = new Bullet(bullet_position, DIRECTION::LEFT);
-				Engine::startingScreen.add(bullet);
+				this->screen->add(bullet);
 			}
 		}
 		if (this->S_KeyHeld)
@@ -114,7 +114,7 @@ public:
 				bullet_position.x += textureSize.x / 4;
 				bullet_position.y += textureSize.y;
 				Bullet* bullet = new Bullet(bullet_position, DIRECTION::DOWN);
-				Engine::startingScreen.add(bullet);
+				this->screen->add(bullet);
 			}
 		}
 		if (this->D_KeyHeld)
@@ -132,7 +132,7 @@ public:
 				bullet_position.x += textureSize.x;
 				bullet_position.y += textureSize.y / 4;
 				Bullet* bullet = new Bullet(bullet_position, DIRECTION::RIGHT);
-				Engine::startingScreen.add(bullet);
+				this->screen->add(bullet);
 			}
 		}
 		// how often the sprite sheet is changing
@@ -156,7 +156,7 @@ public:
 	{
 		if (dynamic_cast<SkeletonBlast*>(&other))
 		{
-			Engine::startingScreen.remove(this);
+			this->screen->remove(this);
 		}
 	}
 	sf::Sprite* spritePtr()
