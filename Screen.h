@@ -33,7 +33,5 @@ namespace Engine
 		GameObject* mainCharacter = nullptr;
 		TileMap* map = nullptr;
 	};
-
-	static Screen startingScreen;
 }
 #endif

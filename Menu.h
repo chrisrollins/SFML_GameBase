@@ -1,29 +1,31 @@
-﻿//
-//  Menu.h
-//  group PROJECT
-//
-//  Created by Jakin Wang on 2/26/19.
-//  Copyright © 2019 Jakin Wang. All rights reserved.
-//
+﻿#ifndef MENU_HEADER
+#define MENU_HEADER
 
 #include <SFML/Graphics.hpp>
 #include "Screen.h"
+#include "GameObject.h"
+#include "UIButton.h"
+#include "TestLevel.h"
 #include <vector>
-#ifndef Menu_h
-#define Menu_h
 
-using namespace sf;
+using namespace Engine;
 
-class Menu{
-    std::vector<Text> TextArray;
-    Font f;
-    Text t;
-public:
-    void setText(Text t);
-    void setFont(Font f);
-    void setFontOther(Color c = Color::Blue, unsigned int size = 12, float position_x = 0, float position_y = 0);
-    void setFontFromFile(std::string filename);
-    void draw(Engine::Screen s);
-};
+namespace Engine
+{
+	class Menu
+	{
+	public:
+		Menu();
+		~Menu();
+		void start();
+		void startTestLevel();
+	private:
+		std::vector<GameObject*> menuObjects;
+		Screen menuScreen;
+		TestLevel testLevel;
+	};
 
-#endif /* Menu_h */
+	static Menu mainMenu;
+}
+
+#endif

@@ -1,3 +1,6 @@
+#ifndef MAIN_CHARACTER_HEADER
+#define MAIN_CHARACTER_HEADER
+
 #include "Screen.h"
 #include "GameObject.h"
 #include "SkeletonBlast.h"
@@ -44,6 +47,7 @@ class MainCharacter : public GraphicalGameObject
 	sf::Vector2u textureSize;
 	sf::Vector2u imageCount;
 	sf::Vector2u currentImage;
+    int _health = 60*60; // 60 frames per 60 seconds
 public:
 	MainCharacter(sf::Sprite s) : GraphicalGameObject(s)
 	{
@@ -110,7 +114,7 @@ public:
 		shotOrigin.x += size.width / 2;
 		shotOrigin.y += size.height / 4;
 		SkeletonBlast* blast = new SkeletonBlast(sf::Sprite(blast_texture), shotOrigin, sf::Vector2f(mousePos.x, mousePos.y));
-		startingScreen.add(blast);
+		this->screen->add(blast);
 	}
 	void EveryFrame(uint64_t f)
 	{
@@ -150,9 +154,15 @@ public:
 				imageCount.y * textureSize.y, textureSize.x, textureSize.y));
 			s->move(2, 0);
 		}
+        _health--;
 	}
+    int getHealth(){
+        return _health;
+    }
 	void Collision(GraphicalGameObject& other)
 	{
+        // if collision happened:
+        // _health -= other->getDamage();
 		//std::cout << "collision in the main character" << std::endl;
 		//std::cout << " " << std::endl;
 		//std::cout << " " << std::endl;
@@ -162,3 +172,5 @@ public:
 		return dynamic_cast<sf::Sprite*>(this->graphic);
 	}
 };
+
+#endif

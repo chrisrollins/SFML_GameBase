@@ -15,11 +15,14 @@ static std::queue<Engine::GameObject*> removeQueue;
 
 namespace Engine
 {
+	typedef std::map<GameObjectID, GameObject*> GameObjectMap;
 	unsigned int Screen::windowWidth = 0;
 	unsigned int Screen::windowHeight = 0;
 	const char* Screen::windowTitle = nullptr;
 	static Screen* currentScreen;
+	static Screen* pendingSwitch;
 	bool running = true;
+	bool windowInitialized = false;
 
 	void Screen::addMap(TileMap* map)
 	{
@@ -73,17 +76,39 @@ namespace Engine
 	{
 		running = false;
 	}
-
+	
 	void Screen::render(int fps)
 	{
 		if (fps < 1) { fps = 1; }
 		else if (fps > 1000) { fps = 1000; }
-		currentScreen = this;
 		currentFPS = fps;
 
-		if (renderStarted) { return; }
-		renderStarted = true;
+		unsigned int width = (Screen::windowWidth) ? Screen::windowWidth : 500;
+		unsigned int height = (Screen::windowHeight) ? Screen::windowHeight : 500;
+		const char* title = (Screen::windowTitle) ? Screen::windowTitle : "<no title>";
+		static sf::RenderWindow window(sf::VideoMode(width, height), title);
+		static sf::View view(sf::Vector2f(width / 2, height / 2), sf::Vector2f(width, height));
+		static sf::Clock clock;
+		static uint64_t frameCount = 0;
+		
+		if (!windowInitialized)
+		{
+			windowPtr = &window;
+			window.setView(view);
+		}
 
+		if (renderStarted)
+		{
+			pendingSwitch = this;
+			return;
+		}
+		else
+		{
+			pendingSwitch = nullptr;
+		}
+		currentScreen = this;
+		renderStarted = true;
+		
 		static std::function<void(GameObjectMap*, sf::Event)> handleEvents = [](GameObjectMap* objects, sf::Event event)
 		{
 			for (auto const& pair : *objects)
@@ -163,27 +188,16 @@ namespace Engine
 			}
 		};
 
-		unsigned int width = (Screen::windowWidth) ? Screen::windowWidth : 500;
-		unsigned int height = (Screen::windowHeight) ? Screen::windowHeight : 500;
-		const char* title = (Screen::windowTitle) ? Screen::windowTitle : "<no title>";
-		sf::RenderWindow window(sf::VideoMode(width, height), title);
-		windowPtr = &window;
-		sf::View view(sf::Vector2f(width / 2, height / 2), sf::Vector2f(width, height));
-		window.setView(view);
-		sf::Clock clock;
-		uint64_t frameCount = 0;
-
-		while (window.isOpen())
+		while (window.isOpen() && !pendingSwitch)
 		{
 			clock.restart();
-			Screen* cs = currentScreen;
-			
+						
 			//remove objects that are pending to be removed
 			while (!removeQueue.empty())
 			{
 				GameObject* toRemove = removeQueue.front();
 				removeQueue.pop();
-				for (auto map : { &cs->objects, &cs->g_objects, &cs->ui_objects })
+				for (auto map : { &currentScreen->objects, &currentScreen->g_objects, &currentScreen->ui_objects })
 				{
 					if (map->find(toRemove->getID()) != map->end())
 					{						
@@ -194,9 +208,9 @@ namespace Engine
 					}
 				}
 			}
-
+			
 			//run the EveryFrame event on all objects
-			for (auto map : { &cs->objects, &cs->g_objects, &cs->ui_objects })
+			for (auto map : { &currentScreen->objects, &currentScreen->g_objects, &currentScreen->ui_objects })
 			{
 				for (auto const& pair : *map)
 				{
@@ -215,7 +229,7 @@ namespace Engine
 				}
 
 				//handle events on each object
-				for (auto map : { &cs->objects, &cs->g_objects, &cs->ui_objects })
+				for (auto map : { &currentScreen->objects, &currentScreen->g_objects, &currentScreen->ui_objects })
 				{
 					handleEvents(map, event);
 				}
@@ -224,13 +238,19 @@ namespace Engine
 			window.clear();
 
 			//draw the map
-			if (cs->map) { window.draw(*cs->map); }
 
-			unsigned int MAP_WIDTH = cs->map->width() * this->map->tileSize().x;
-			unsigned int MAP_HEIGHT = cs->map->height() * this->map->tileSize().y;
+			unsigned int MAP_WIDTH = 0;
+			unsigned int MAP_HEIGHT = 0;
 
+			if (currentScreen->map)
+			{
+				window.draw(*currentScreen->map);
+				MAP_WIDTH = currentScreen->map->width() * currentScreen->map->tileSize().x;
+				MAP_HEIGHT = currentScreen->map->height() * currentScreen->map->tileSize().y;
+			}
+			
 			//draw the objects
-			for (auto const& pair : cs->g_objects)
+			for (auto const& pair : currentScreen->g_objects)
 			{
 				GraphicalGameObject* obj = dynamic_cast<GraphicalGameObject*>(pair.second); //does not need to be checked, they are checked on insertion into the maps
 
@@ -266,7 +286,7 @@ namespace Engine
 
 						for (auto corner : corners)
 						{
-							if (this->map->isObstacle(corner)) { transformable->setPosition(obj->lastPos); }
+							if (currentScreen->map->isObstacle(corner)) { transformable->setPosition(obj->lastPos); }
 						}
 
 						obj->lastPos = { X , Y };
@@ -278,25 +298,25 @@ namespace Engine
 			}
 
 			//draw the UI objects
-			for (auto const& pair : cs->ui_objects)
+			for (auto const& pair : currentScreen->ui_objects)
 			{
 				GraphicalGameObject* obj = dynamic_cast<GraphicalGameObject*>(pair.second);
 				sf::Transformable* transformable = dynamic_cast<sf::Transformable*>(obj->getGraphic());
 				if (!transformable) { continue; }
 				sf::Vector2f viewPos = window.getView().getCenter();
 				sf::Vector2f screenPosition = transformable->getPosition();
-				transformable->setPosition(viewPos - sf::Vector2f(cs->windowWidth / 2, cs->windowHeight / 2) + screenPosition);
+				transformable->setPosition(viewPos - sf::Vector2f(currentScreen->windowWidth / 2, currentScreen->windowHeight / 2) + screenPosition);
 				obj->draw(window);
 				transformable->setPosition(screenPosition);
 			}
 
 			//trigger collision events
-			for (auto const& p1 : cs->g_objects)
+			for (auto const& p1 : currentScreen->g_objects)
 			{
 				GraphicalGameObject* eventReciever = dynamic_cast<GraphicalGameObject*>(p1.second);
 				sf::Sprite* receiverSprite = dynamic_cast<sf::Sprite*>(eventReciever->getGraphic());
 				if (!receiverSprite) { continue; }
-				for (auto const& p2 : cs->g_objects)
+				for (auto const& p2 : currentScreen->g_objects)
 				{
 					GraphicalGameObject* eventArg = dynamic_cast<GraphicalGameObject*>(p2.second);
 					if (eventArg == eventReciever || !eventArg->collision || !eventReciever->collision) { continue; }
@@ -369,22 +389,16 @@ namespace Engine
 			frameCount++;
 			while (clock.getElapsedTime().asMicroseconds() < (1000000 / currentFPS)) {}
 		}
+
+		if (pendingSwitch)
+		{			
+			renderStarted = false;
+			pendingSwitch->render();
+		}
 	}
 
 	Screen::~Screen()
 	{
-		for (auto const& pair : this->objects)
-		{
-			auto obj = pair.second;
-			if (obj == this->mainCharacter) { continue; }
-			delete obj;
-		}
 
-		for (auto const& pair : this->g_objects)
-		{
-			auto obj = pair.second;
-			if (obj == this->mainCharacter) { continue; }
-			delete obj;
-		}
 	}
 }

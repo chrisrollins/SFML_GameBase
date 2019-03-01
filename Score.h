@@ -39,4 +39,4 @@ private:
     int number = 0;
 };
 
-#endif /* Score_hpp */
+#endif
