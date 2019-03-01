@@ -55,13 +55,11 @@ public:
 			imageCount.y * textureSize.y, textureSize.x, textureSize.y));
 		blast_texture.loadFromFile("blast.png");
 		sf::IntRect size = this->sprite()->getTextureRect();
-		sf::Vector2f collisionSizeRatio(0.7, 0.4);
+		sf::Vector2f collisionSizeRatio(0.5, 0.3); //these numbers shrink the collision size of the player, and the code below adjusts it to be positioned at the bottom of the sprite
 		this->obstacleCollisionSize.width = size.width * collisionSizeRatio.x;
-		this->obstacleCollisionSize.height = size.width * collisionSizeRatio.y;
-		this->obstacleCollisionSize.left = (1 - collisionSizeRatio.x) * size.width;
-		this->obstacleCollisionSize.top = (1 - collisionSizeRatio.x) * size.height;
-		std::cout << this->obstacleCollisionSize.width << ", " << this->obstacleCollisionSize.height << std::endl;
-		std::cout << this->obstacleCollisionSize.left << ", " << this->obstacleCollisionSize.top << std::endl;
+		this->obstacleCollisionSize.height = size.height * collisionSizeRatio.y;
+		this->obstacleCollisionSize.left = ((1 - collisionSizeRatio.x) * size.width) / 2;
+		this->obstacleCollisionSize.top = ((1 - collisionSizeRatio.y) * size.height);
 	}
 	void KeyPressed(sf::Event e)
 	{

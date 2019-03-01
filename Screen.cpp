@@ -247,12 +247,21 @@ namespace Engine
 						if (Y < 0) { transformable->setPosition(X, 0.f); }
 						if (Y + size.y > MAP_HEIGHT) { transformable->setPosition(X, MAP_HEIGHT - size.y); }
 						if (X + size.x > MAP_WIDTH) { transformable->setPosition(MAP_WIDTH - size.x, Y); }
+						
+						sf::Vector2f offsets(0, 0);
+						if (obj->obstacleCollisionSize.width > 0 && obj->obstacleCollisionSize.height > 0)
+						{
+							offsets.x = obj->obstacleCollisionSize.left;
+							offsets.y = obj->obstacleCollisionSize.top;
+							size.x = obj->obstacleCollisionSize.width;
+							size.y = obj->obstacleCollisionSize.height;
+						}
 
 						sf::Vector2f corners[4] = {
-							{X          , Y          },
-							{X + size.x , Y          },
-							{X          , Y + size.y },
-							{X + size.x , Y + size.y }
+							{X + offsets.x          , Y + offsets.y          },
+							{X + size.x + offsets.x , Y + offsets.y          },
+							{X + offsets.x          , Y + size.y + offsets.y },
+							{X + size.x + offsets.x , Y + size.y + offsets.y }
 						};
 
 						for (auto corner : corners)
