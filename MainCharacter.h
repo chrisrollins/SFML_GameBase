@@ -47,6 +47,7 @@ class MainCharacter : public GraphicalGameObject
 	sf::Vector2u textureSize;
 	sf::Vector2u imageCount;
 	sf::Vector2u currentImage;
+    int _health = 60*60; // 60 frames per 60 seconds
 public:
 	MainCharacter(sf::Sprite s) : GraphicalGameObject(s)
 	{
@@ -153,9 +154,15 @@ public:
 				imageCount.y * textureSize.y, textureSize.x, textureSize.y));
 			s->move(2, 0);
 		}
+        _health--;
 	}
+    int getHealth(){
+        return _health;
+    }
 	void Collision(GraphicalGameObject& other)
 	{
+        // if collision happened:
+        // _health -= other->getDamage();
 		//std::cout << "collision in the main character" << std::endl;
 		//std::cout << " " << std::endl;
 		//std::cout << " " << std::endl;

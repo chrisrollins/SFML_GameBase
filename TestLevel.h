@@ -14,6 +14,7 @@
 #include "SampleUIText.h"
 #include "getMap.h"
 #include "Score.h"
+#include "HealthBar.h"
 
 using namespace Engine;
 
@@ -122,6 +123,10 @@ public:
 		m_Sprite.setTexture(m_Texture);
 		static MainCharacter mc = MainCharacter(m_Sprite);
 		levelScreen.addMainCharacter(&mc);
+        
+        
+       
+
 
 		srand(time(0));
 		static sf::Texture soldier_texture;
@@ -135,9 +140,14 @@ public:
 			Soldier* soldier_ptr = new Soldier(soldierSprite[i], sf::Vector2f(randWidth, randHeight));
 			levelScreen.add(soldier_ptr);
 		}
+        
+        static HealthBar healthbar;
+        healthbar.setCharacter(&mc);
+        levelScreen.addUIObject(&healthbar);
 
 		static Score s(0, sf::Color::Cyan, 32, 1000, 0);
 		levelScreen.addUIObject(&s);
+        
 		levelScreen.render();
 	}
 };
