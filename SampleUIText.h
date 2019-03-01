@@ -32,6 +32,9 @@ public:
     void setText(std::string text){
         this->textPtr()->setString(text);
     }
+    void setPosition(float position_x, float position_y){
+        this->textPtr()->setPosition(position_x, position_y);
+    }
 protected:
 	sf::Font myFont;
 	sf::Text* textPtr() { return dynamic_cast<sf::Text*>(this->getGraphic()); }
