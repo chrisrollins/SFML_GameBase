@@ -3,7 +3,6 @@
 #include "GameObject.h"
 #include <memory>
 #include <functional>
-#include <mutex>
 #include <iostream>
 #include <cmath>
 #include <queue>
@@ -35,10 +34,9 @@ namespace Engine
 		this->mainCharacter = mainCharacter;
 	}
 
-	sf::Vector2f Screen::getMainCharacterPosition() const
+	GameObject* Screen::getMainCharacter() const
 	{
-		if (GraphicalGameObject* mc = dynamic_cast<GraphicalGameObject*>(this->mainCharacter)) { return dynamic_cast<const sf::Transformable*>(mc->getGraphic())->getPosition(); }
-		return sf::Vector2f(0.f, 0.f);
+		return this->mainCharacter;
 	}
 
 	void Screen::add(GameObject* gameObject)
@@ -319,7 +317,7 @@ namespace Engine
 				for (auto const& p2 : currentScreen->g_objects)
 				{
 					GraphicalGameObject* eventArg = dynamic_cast<GraphicalGameObject*>(p2.second);
-					if (eventArg == eventReciever || !eventArg->collision || !eventReciever->collision) { continue; }
+					if (eventArg == eventReciever || !eventArg->triggerCollisionEvents || !eventReciever->triggerCollisionEvents) { continue; }
 					sf::Sprite* argSprite = dynamic_cast<sf::Sprite*>(eventArg->getGraphic());
 					if (!argSprite) { continue; }
 					sf::FloatRect r1 = receiverSprite->getGlobalBounds();

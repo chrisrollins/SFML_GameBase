@@ -1,6 +1,7 @@
 #ifndef MAIN_CHARACTER_HEADER
 #define MAIN_CHARACTER_HEADER
 
+#include <cmath>
 #include "Screen.h"
 #include "GameObject.h"
 #include "SkeletonBlast.h"
@@ -51,6 +52,11 @@ class MainCharacter : public GraphicalGameObject
 	sf::Vector2u currentImage;
     int _health = 30*60; // 60 frames per 60 seconds
     int maxHealth = 30*60;
+	int baseSpeed = 2;
+	int speed = 2;
+	int maxSpeed = 5;
+	int speedDecayDelay = 0;
+	int speedRestoreDelay = 0;
 public:
 	MainCharacter(sf::Sprite s) : GraphicalGameObject(s)
 	{
@@ -134,65 +140,89 @@ public:
 			imageCount.y = 3;
 			this->sprite()->setTextureRect(sf::IntRect(imageCount.x * textureSize.x,
 				imageCount.y * textureSize.y, textureSize.x, textureSize.y));
-			s->move(0, -2);
+			s->move(0, -1 * this->speed);
 		}
 		if (this->A_KeyHeld)
 		{
 			imageCount.y = 1;
 			this->sprite()->setTextureRect(sf::IntRect(imageCount.x * textureSize.x,
 				imageCount.y * textureSize.y, textureSize.x, textureSize.y));
-			s->move(-2, 0);
+			s->move(-1 * this->speed, 0);
 		}
 		if (this->S_KeyHeld)
 		{
 			imageCount.y = 0;
 			this->sprite()->setTextureRect(sf::IntRect(imageCount.x * textureSize.x,
 				imageCount.y * textureSize.y, textureSize.x, textureSize.y));
-			s->move(0, 2);
+			s->move(0, this->speed);
 		}
 		if (this->D_KeyHeld)
 		{
 			imageCount.y = 2;
 			this->sprite()->setTextureRect(sf::IntRect(imageCount.x * textureSize.x,
 				imageCount.y * textureSize.y, textureSize.x, textureSize.y));
-			s->move(2, 0);
+			s->move(this->speed, 0);
 		}
         if (_health > 0)
             _health--;
+
+		//speed goes back to base speed gradually
+		if (f % 6 == 0)
+		{			
+			if (this->speed > this->baseSpeed)
+			{
+				speedRestoreDelay = 0;
+				if (this->speedDecayDelay > 0) { this->speedDecayDelay--; }
+				else { this->changeSpeed(-1); }
+			}
+			else if (this->speed < this->baseSpeed)
+			{
+				speedDecayDelay = 0;
+				if (this->speedRestoreDelay > 0) { this->speedRestoreDelay--; }
+				else { this->changeSpeed(1); }
+			}
+		}
 	}
-    int getHealth(){
+    int getHealth()
+	{
         return _health;
     }
-    int getMaxHealth(){
-        return maxHealth;}
-    
+    int getMaxHealth()
+	{
+        return maxHealth;
+	}
+	void changeHealth(int change)
+	{		
+		this->_health += change;
+		if (this->_health > this->maxHealth) { this->_health = this->maxHealth; }
+	}
+	void changeSpeed(int change)
+	{
+		this->speed += change;
+		if (this->speed > this->maxSpeed) { this->speed = this->maxSpeed; }
+		else if (this->speed < 1) { this->speed = 1; }
+	}
 	void Collision(GraphicalGameObject& other)
 	{
         if (_health>0){
             if (dynamic_cast<Bullet*>(&other))
             {
-                _health-=10;
+				this->changeHealth(-5);
             }
             else if (dynamic_cast<Soldier*>(&other))
             {
-                _health-=10;
+				this->changeHealth(-10);
+				this->changeSpeed(-1);
             }
-            else if (dynamic_cast<SkeletonBlast*>(&other)){
-                
-            }
-            else //if (dynamic_cast<Citizen*>(&other))
+            else if (dynamic_cast<Citizen*>(&other))
             {
-                //this->screen->remove(&other);
-                if(_health<=maxHealth-20)
-                _health+=20;
-            }
-        
+                this->screen->remove(&other);
+				float missingHealthMultiplier = 2.0f - (this->_health / this->maxHealth);
+				this->changeHealth(60 * missingHealthMultiplier);
+				this->changeSpeed(1);
+				this->speedDecayDelay = 60;
+            }        
         }
-        // if collision happened:
-        //_health -= other.getDamage();  // need to add the damage to graphicak game object?
-		//std::cout << "collision in the main character" << std::endl;
-		//std::cout << " " << std::endl;
-		//std::cout << " " << std::endl;
 	}
 	sf::Sprite* sprite()
 	{

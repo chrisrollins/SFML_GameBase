@@ -60,7 +60,8 @@ namespace Engine
 		virtual void Collision(GraphicalGameObject& otherObject);
 		~GraphicalGameObject();
 		sf::Drawable* getGraphic();
-		bool collision = true;
+		bool triggerCollisionEvents = true;
+		bool blockingCollision = true;
 		bool ignoreObstacles = false;
 		sf::FloatRect obstacleCollisionSize;
 		sf::FloatRect objectCollisionSize;
