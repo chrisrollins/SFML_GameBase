@@ -9,6 +9,7 @@
 #include "Screen.h"
 #include "GameObject.h"
 #include "Soldier.h"
+#include "Citizen.h"
 #include "MainCharacter.h"
 #include "SampleUIObject.h"
 #include "SampleUIText.h"
@@ -107,11 +108,11 @@ public:
 			2, 1, 2, 1, 2, 0, 0, 2, 2, 1, 2, 1, 3, 0, 3, 1, 1, 0, 2, 1, 1, 2, 1, 1, 0, 0, 2, 2, 2, 2, 3, 1, 3, 2, 1, 3, 0, 3, 2, 1, 1, 1, 1, 2, 1, 3, 2, 1,
 			3, 1, 2, 3, 0, 2, 1, 2, 0, 1, 3, 3, 1, 0, 0, 1, 2, 1, 0, 2, 1, 0, 1, 2, 0, 0, 2, 1, 0, 1, 0, 2, 2, 3, 3, 2, 1, 1, 3, 1, 1, 0, 3, 3, 2, 1, 2, 1,
 		};*/
-		static int level[64 * 48];
-		getMap("map.dat", 64, 48, level);
+		//static int level[64 * 48];`
+		//getMap("map.dat", 64, 48, level);
 		// sf::Vector2u holds the size of each tile
 		// the two variables after level stands for the num tiles per column/line
-		map.load("map.png", sf::Vector2u(32, 32), level, 64, 48);
+		map.load("map.png", "map1.txt", sf::Vector2u(32, 32));
 		//add map to the screen
 		levelScreen.addMap(&map);
 
@@ -123,31 +124,70 @@ public:
 		m_Sprite.setTexture(m_Texture);
 		static MainCharacter mc = MainCharacter(m_Sprite);
 		levelScreen.addMainCharacter(&mc);
-        
-        
-       
-
-
-		srand(time(0));
-		static sf::Texture soldier_texture;
-		soldier_texture.loadFromFile("soldier.png");
-		static sf::Sprite soldierSprite[20];
-		for (int i = 0; i < 20; i++)
-		{
-			soldierSprite[i].setTexture(soldier_texture);
+		
+		static sf::Texture citizen_boy_texture;
+		citizen_boy_texture.loadFromFile("boy.png");
+		static sf::Texture citizen_girl_texture;
+		citizen_girl_texture.loadFromFile("girl.png");
+		static sf::Texture citizen_man_texture;
+		citizen_man_texture.loadFromFile("man.png");
+		static sf::Texture citizen_woman_texture;
+		citizen_woman_texture.loadFromFile("woman.png");
+		static sf::Texture citizen_oldman_texture;
+		citizen_oldman_texture.loadFromFile("oldman.png");
+		static sf::Texture citizen_oldwoman_texture;
+		citizen_oldwoman_texture.loadFromFile("oldwoman.png");
+		std::vector<Citizen*> citizen_ptr;
+		sf::Sprite citizen;
+		for (int i = 0; i < 20; i++) {
+			int textureRand = rand() % 6;
+			switch (textureRand)
+			{
+			case 0:
+				citizen.setTexture(citizen_boy_texture);
+				break;
+			case 1:
+				citizen.setTexture(citizen_girl_texture);
+				break;
+			case 2:
+				citizen.setTexture(citizen_man_texture);
+				break;
+			case 3:
+				citizen.setTexture(citizen_woman_texture);
+				break;
+			case 4:
+				citizen.setTexture(citizen_oldman_texture);
+				break;
+			case 5:
+				citizen.setTexture(citizen_oldwoman_texture);
+				break;
+			}
 			float randWidth = rand() % (map.width() * map.tileSize().x);
 			float randHeight = rand() % (map.height() * map.tileSize().y);
-			Soldier* soldier_ptr = new Soldier(soldierSprite[i], sf::Vector2f(randWidth, randHeight));
-			levelScreen.add(soldier_ptr);
+			citizen_ptr.push_back(new Citizen(citizen, sf::Vector2f(randWidth, randHeight)));
+			levelScreen.add(citizen_ptr[i]);
 		}
-        
-        static HealthBar healthbar;
-        healthbar.setCharacter(&mc);
-        levelScreen.addUIObject(&healthbar);
+
+		static sf::Texture soldier_texture;
+		soldier_texture.loadFromFile("soldier.png");
+		sf::Sprite soldier;
+		soldier.setTexture(soldier_texture);
+		std::vector<Soldier*> soldier_ptr;
+		for (int i = 0; i < 20; i++)
+		{
+			float randWidth = rand() % (map.width() * map.tileSize().x);
+			float randHeight = rand() % (map.height() * map.tileSize().y);
+			soldier_ptr.push_back(new Soldier(soldier, sf::Vector2f(randWidth, randHeight)));
+			levelScreen.add(soldier_ptr[i]);
+		}
+
+		static HealthBar healthbar;
+		healthbar.setCharacter(&mc);
+		levelScreen.addUIObject(&healthbar);
 
 		static Score s(0, sf::Color::Cyan, 32, 1000, 0);
 		levelScreen.addUIObject(&s);
-        
+
 		levelScreen.render();
 	}
 };

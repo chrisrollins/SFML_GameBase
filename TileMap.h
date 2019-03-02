@@ -2,41 +2,45 @@
 #define TILEMAP_HEADER
 
 #include "SFML/Graphics.hpp"
+#include <iostream>
+#include <fstream>
+#include <stdlib.h>
 
 namespace Engine {
 	class TileMap : public sf::Drawable, public sf::Transformable
 	{
 	public:
 
-		bool load(const std::string& tileset, sf::Vector2u tileSize, const int* tiles, unsigned int width, unsigned int height)
+		bool load(const std::string& tileset, const std::string& mapTable, sf::Vector2u tileSize)
 		{
 			// load the tileset texture
 			if (!m_tileset.loadFromFile(tileset))
 				return false;
 
 			this->_tileSize = tileSize;
-			this->_width = width;
-			this->_height = height;
-			this->tiles = tiles;
 
+			int * tileTable;
+			tileTable = readFromFile(mapTable);
+
+			this->tiles = tileTable;
 			// resize the vertex array to fit the level size
 			m_vertices.setPrimitiveType(sf::Quads);
-			m_vertices.resize(width * height * 4);
+			m_vertices.resize(_width * _height * 4);
 
 			// populate the vertex array, with one quad per tile
-			for (unsigned int i = 0; i < width; ++i)
+			for (unsigned int i = 0; i < _width; ++i)
 			{
-				for (unsigned int j = 0; j < height; ++j)
+				for (unsigned int j = 0; j < _height; ++j)
 				{
 					// get the current tile number
-					int tileNumber = tiles[i + j * width];
+					int tileNumber = tiles[i + j * _width];
 
 					// find its position in the tileset texture
 					int tu = tileNumber % (m_tileset.getSize().x / tileSize.x);
 					int tv = tileNumber / (m_tileset.getSize().x / tileSize.x);
 
 					// get a pointer to the current tile's quad
-					sf::Vertex* quad = &m_vertices[(i + j * width) * 4];
+					sf::Vertex* quad = &m_vertices[(i + j * _width) * 4];
 
 					// define its 4 corners
 					quad[0].position = sf::Vector2f(i * tileSize.x, j * tileSize.y);
@@ -81,7 +85,8 @@ namespace Engine {
 			//	return false;
 			//}
 			//if (tileType == 1 || tileType == 2)
-			if (tileType == 1)
+			if (tileType == 5 || tileType == 6 || tileType == 7 || tileType == 19 || tileType == 20
+				|| tileType == 21 || tileType == 33 || tileType == 34 || tileType == 35)
 				return true;
 			else
 				return false;
@@ -114,6 +119,31 @@ namespace Engine {
 			return tiles[i + j * this->width()];
 		}
 
+		int * readFromFile(std::string mapTable) {
+
+			std::ifstream fin(mapTable.c_str());
+
+			if (!fin) {
+				std::cout << "Unable to open input file " << mapTable << std::endl;
+				exit(1);
+			}
+			//read width and size from the file
+			fin >> this->_width;
+			fin >> this->_height;
+
+			//determine the size of the array
+			int size = this->_height*this->_width;
+			int *tileTable = nullptr; // pointer to int
+			tileTable = new int[size];
+			//std::cout <<this->_width<< std::endl;
+			//std::cout <<this->_height<< std::endl;
+			for (int i = 0; i < size; i++) {
+				fin >> tileTable[i];
+			}
+			fin.close();
+			return tileTable;
+		}
+
 	private:
 
 		virtual void draw(sf::RenderTarget& target, sf::RenderStates states) const
@@ -131,7 +161,7 @@ namespace Engine {
 		sf::Vector2u _tileSize;
 		unsigned int _width;
 		unsigned int _height;
-		const int* tiles;
+		int * tiles;
 		sf::VertexArray m_vertices;
 		sf::Texture m_tileset;
 	};
