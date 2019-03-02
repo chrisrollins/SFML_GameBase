@@ -11,18 +11,18 @@ namespace Engine {
 	{
 	public:
 
-		bool load(const std::string& tileset,const std::string& mapTable, sf::Vector2u tileSize)
+		bool load(const std::string& tileset, const std::string& mapTable, sf::Vector2u tileSize)
 		{
 			// load the tileset texture
 			if (!m_tileset.loadFromFile(tileset))
 				return false;
 
 			this->_tileSize = tileSize;
-            
-            int * tileTable;
-            tileTable = readFromFile(mapTable);
-            
-            this->tiles = tileTable;
+
+			int * tileTable;
+			tileTable = readFromFile(mapTable);
+
+			this->tiles = tileTable;
 			// resize the vertex array to fit the level size
 			m_vertices.setPrimitiveType(sf::Quads);
 			m_vertices.resize(_width * _height * 4);
@@ -85,7 +85,8 @@ namespace Engine {
 			//	return false;
 			//}
 			//if (tileType == 1 || tileType == 2)
-			if (tileType == 1)
+			if (tileType == 5 || tileType == 6 || tileType == 7 || tileType == 19 || tileType == 20
+				|| tileType == 21 || tileType == 33 || tileType == 34 || tileType == 35)
 				return true;
 			else
 				return false;
@@ -117,31 +118,31 @@ namespace Engine {
 		{
 			return tiles[i + j * this->width()];
 		}
-        
-       int * readFromFile(std::string mapTable){
-           
-            std::ifstream fin(mapTable.c_str());
-            
-            if (!fin){
-                std::cout <<"Unable to open input file " << mapTable << std::endl;
-                exit(1);
-            }
-            //read width and size from the file
-            fin >> this->_width;
-            fin >> this->_height;
-           
-           //determine the size of the array
-           int size =this->_height*this->_width;
-           int *tileTable=nullptr; // pointer to int
-           tileTable = new int[size];
-            //std::cout <<this->_width<< std::endl;
-            //std::cout <<this->_height<< std::endl;
-           for(int i = 0; i < size; i++){
-               fin >> tileTable[i];
-           }
-           fin.close();
-           return tileTable;
-        }
+
+		int * readFromFile(std::string mapTable) {
+
+			std::ifstream fin(mapTable.c_str());
+
+			if (!fin) {
+				std::cout << "Unable to open input file " << mapTable << std::endl;
+				exit(1);
+			}
+			//read width and size from the file
+			fin >> this->_width;
+			fin >> this->_height;
+
+			//determine the size of the array
+			int size = this->_height*this->_width;
+			int *tileTable = nullptr; // pointer to int
+			tileTable = new int[size];
+			//std::cout <<this->_width<< std::endl;
+			//std::cout <<this->_height<< std::endl;
+			for (int i = 0; i < size; i++) {
+				fin >> tileTable[i];
+			}
+			fin.close();
+			return tileTable;
+		}
 
 	private:
 
