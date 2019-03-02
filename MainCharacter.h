@@ -4,6 +4,7 @@
 #include "Screen.h"
 #include "GameObject.h"
 #include "SkeletonBlast.h"
+#include "Citizen.h"
 
 using namespace Engine;
 
@@ -37,6 +38,7 @@ using namespace Engine;
 //	}
 //};
 
+
 class MainCharacter : public GraphicalGameObject
 {
 	bool W_KeyHeld = false;
@@ -47,7 +49,8 @@ class MainCharacter : public GraphicalGameObject
 	sf::Vector2u textureSize;
 	sf::Vector2u imageCount;
 	sf::Vector2u currentImage;
-    int _health = 60*60; // 60 frames per 60 seconds
+    int _health = 30*60; // 60 frames per 60 seconds
+    int maxHealth = 30*60;
 public:
 	MainCharacter(sf::Sprite s) : GraphicalGameObject(s)
 	{
@@ -160,8 +163,31 @@ public:
     int getHealth(){
         return _health;
     }
+    int getMaxHealth(){
+        return maxHealth;}
+    
 	void Collision(GraphicalGameObject& other)
 	{
+        if (_health>0){
+            if (dynamic_cast<Bullet*>(&other))
+            {
+                _health-=10;
+            }
+            else if (dynamic_cast<Soldier*>(&other))
+            {
+                _health-=10;
+            }
+            else if (dynamic_cast<SkeletonBlast*>(&other)){
+                
+            }
+            else //if (dynamic_cast<Citizen*>(&other))
+            {
+                //this->screen->remove(&other);
+                if(_health<=maxHealth-20)
+                _health+=20;
+            }
+        
+        }
         // if collision happened:
         //_health -= other.getDamage();  // need to add the damage to graphicak game object?
 		//std::cout << "collision in the main character" << std::endl;
