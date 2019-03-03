@@ -22,21 +22,47 @@ private:
 	sf::Vector2u imageCount;
 	sf::Vector2u currentImage;
 public:
-	Soldier(sf::Sprite r, sf::Vector2f pos) : Engine::GraphicalGameObject(r)
+	Soldier(sf::Sprite r) : Engine::GraphicalGameObject(r)
 	{
 		textureSize = this->spritePtr()->getTexture()->getSize();
-		this->spritePtr()->setPosition(pos);
 		textureSize.x /= 3;
 		textureSize.y /= 4;
 		imageCount.x = 0;
 		isShooting = false;
 		bullet_cooldown = 0;
+		switch (rand() % 4)
+		{
+		case 0:
+			W_KeyHeld = true;
+			A_KeyHeld = false;
+			S_KeyHeld = false;
+			D_KeyHeld = false;
+			break;
+		case 1:
+			A_KeyHeld = true;
+			W_KeyHeld = false;
+			S_KeyHeld = false;
+			D_KeyHeld = false;
+			break;
+		case 2:
+			S_KeyHeld = true;
+			A_KeyHeld = false;
+			W_KeyHeld = false;
+			D_KeyHeld = false;
+			break;
+		case 3:
+			D_KeyHeld = true;
+			A_KeyHeld = false;
+			S_KeyHeld = false;
+			W_KeyHeld = false;
+			break;
+		}
 	}
 	void EveryFrame(uint64_t f)
 	{
 		if (f % 120 == 0)
 		{
-			switch (rand() % 4) 
+			switch (rand() % 4)
 			{
 			case 0:
 				W_KeyHeld = true;
@@ -80,7 +106,7 @@ public:
 				Bullet* bullet = new Bullet(bullet_position, DIRECTION::UP);
 				this->screen->add(bullet);
 			}
-			
+
 		}
 		if (this->A_KeyHeld)
 		{
@@ -143,14 +169,14 @@ public:
 			else
 				imageCount.x++;
 		}
-				
+
 		// shooting delay
 		bullet_cooldown++;
 		if (bullet_cooldown == 50)
 		{
 			isShooting = false;
 		}
-		
+
 	}
 	void Collision(GraphicalGameObject& other)
 	{

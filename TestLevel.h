@@ -8,14 +8,15 @@
 #include <ctime>
 #include "Screen.h"
 #include "GameObject.h"
+#include "MainCharacter.h"
 #include "Soldier.h"
 #include "Citizen.h"
-#include "MainCharacter.h"
 #include "SampleUIObject.h"
 #include "SampleUIText.h"
 #include "getMap.h"
 #include "Score.h"
 #include "HealthBar.h"
+#include "RespawnManager.h"
 
 using namespace Engine;
 
@@ -27,162 +28,78 @@ public:
 	{
 		static Screen levelScreen;
 		static TileMap map;
-		// This is for quick generation of random tiles
-		/*const int ROW = 64;
-		const int COLUMN = 48;
-		int test[ROW][COLUMN];
-		for (int i = 0; i < 64; i++)
-		{
-			for (int j = 0; j < 48; j++)
-			{
-				test[i][j] = rand() % 4;
-				std::cout << test[i][j] << ", ";
-			}
-			std::cout << std::endl;
-		}*/
-		//map name : map.dat x: 64  y: 48
-		//const int level[] =
-		/*{
-			1, 3, 2, 0, 1, 0, 2, 2, 2, 0, 1, 1, 1, 3, 1, 3, 3, 2, 3, 0, 3, 0, 2, 1, 0, 2, 1, 0, 2, 3, 3, 2, 3, 2, 1, 0, 3, 3, 3, 2, 3, 3, 2, 1, 1, 0, 1, 3,
-			1, 0, 3, 0, 2, 1, 1, 3, 3, 1, 1, 2, 0, 3, 2, 2, 0, 2, 0, 2, 0, 0, 2, 1, 2, 1, 2, 2, 2, 1, 1, 0, 1, 3, 0, 2, 0, 0, 2, 0, 3, 0, 0, 3, 2, 3, 1, 2,
-			2, 2, 1, 1, 1, 3, 3, 2, 0, 2, 1, 2, 1, 2, 1, 1, 0, 0, 2, 1, 1, 1, 1, 0, 2, 2, 1, 0, 3, 3, 3, 2, 3, 0, 2, 2, 1, 0, 2, 2, 3, 3, 3, 1, 1, 3, 1, 3,
-			1, 1, 1, 2, 1, 0, 2, 2, 2, 2, 1, 0, 0, 3, 2, 3, 2, 3, 0, 1, 0, 3, 3, 1, 2, 2, 3, 0, 2, 0, 0, 1, 0, 3, 0, 0, 1, 2, 1, 3, 2, 2, 0, 0, 3, 3, 0, 1,
-			0, 3, 3, 1, 2, 1, 1, 2, 1, 0, 3, 3, 0, 1, 3, 0, 2, 3, 0, 0, 0, 1, 1, 2, 3, 1, 1, 3, 3, 3, 2, 3, 0, 0, 2, 2, 0, 0, 2, 1, 1, 2, 1, 1, 0, 2, 2, 0,
-			2, 3, 2, 1, 2, 3, 3, 0, 0, 3, 2, 2, 0, 3, 0, 2, 2, 2, 3, 1, 1, 2, 0, 0, 1, 2, 2, 3, 1, 3, 1, 0, 0, 1, 3, 0, 0, 2, 3, 1, 1, 0, 1, 1, 3, 3, 2, 1,
-			2, 1, 0, 2, 1, 1, 0, 0, 1, 2, 1, 1, 0, 1, 0, 0, 1, 3, 2, 1, 1, 0, 1, 0, 2, 1, 3, 3, 3, 0, 3, 1, 1, 1, 2, 1, 1, 3, 1, 0, 2, 1, 0, 2, 3, 2, 2, 1,
-			0, 3, 2, 3, 1, 3, 1, 1, 0, 0, 0, 1, 1, 0, 1, 2, 2, 2, 1, 0, 0, 2, 1, 1, 3, 2, 1, 2, 0, 3, 0, 3, 1, 0, 2, 2, 1, 1, 2, 1, 2, 2, 0, 2, 3, 1, 2, 3,
-			2, 1, 1, 2, 2, 0, 2, 2, 0, 3, 1, 2, 3, 1, 2, 1, 1, 2, 3, 0, 0, 1, 2, 0, 1, 3, 2, 3, 3, 1, 3, 0, 3, 0, 1, 1, 3, 0, 1, 1, 1, 3, 0, 2, 2, 2, 0, 0,
-			3, 0, 1, 2, 2, 2, 3, 1, 3, 0, 0, 3, 1, 2, 0, 2, 3, 0, 3, 1, 0, 2, 2, 2, 3, 2, 2, 1, 3, 0, 2, 0, 3, 0, 0, 3, 0, 2, 2, 1, 2, 3, 0, 3, 3, 2, 0, 1,
-			2, 2, 1, 3, 1, 2, 1, 3, 1, 0, 3, 0, 2, 2, 3, 0, 1, 1, 3, 1, 0, 0, 2, 0, 2, 2, 3, 3, 3, 3, 1, 0, 2, 0, 0, 3, 0, 3, 2, 1, 0, 1, 2, 2, 1, 3, 1, 0,
-			2, 3, 3, 0, 1, 0, 1, 0, 1, 3, 1, 2, 0, 0, 1, 0, 1, 0, 3, 0, 3, 0, 0, 2, 3, 1, 0, 0, 2, 1, 2, 1, 1, 3, 1, 1, 0, 2, 1, 0, 1, 0, 1, 1, 3, 1, 1, 1,
-			3, 0, 0, 3, 1, 2, 0, 2, 2, 0, 1, 1, 0, 3, 3, 3, 3, 3, 3, 0, 3, 2, 3, 2, 2, 3, 1, 3, 3, 1, 1, 2, 2, 2, 1, 3, 2, 2, 3, 1, 1, 2, 1, 2, 0, 1, 0, 1,
-			2, 0, 1, 0, 1, 1, 3, 3, 2, 2, 3, 1, 0, 2, 0, 3, 0, 1, 0, 1, 3, 0, 2, 2, 1, 0, 0, 3, 1, 3, 0, 0, 1, 2, 1, 1, 2, 1, 1, 2, 3, 0, 0, 2, 3, 3, 0, 1,
-			0, 1, 3, 1, 3, 0, 0, 1, 1, 0, 1, 3, 3, 1, 1, 0, 1, 2, 1, 1, 3, 3, 1, 0, 0, 1, 0, 3, 2, 0, 3, 0, 3, 2, 2, 2, 3, 3, 0, 3, 1, 3, 2, 3, 2, 3, 1, 0,
-			0, 2, 3, 1, 3, 0, 2, 0, 2, 1, 3, 3, 3, 2, 2, 3, 0, 0, 3, 0, 1, 3, 1, 0, 2, 2, 1, 2, 3, 1, 1, 0, 1, 0, 1, 0, 2, 2, 1, 3, 0, 0, 0, 3, 2, 3, 1, 3,
-			3, 3, 0, 1, 3, 1, 0, 3, 3, 0, 3, 1, 1, 3, 1, 1, 0, 2, 0, 0, 1, 2, 2, 0, 2, 2, 1, 3, 2, 0, 0, 3, 0, 3, 3, 2, 1, 2, 1, 1, 0, 0, 3, 3, 1, 2, 0, 3,
-			2, 2, 3, 1, 3, 1, 1, 0, 0, 3, 0, 2, 3, 1, 2, 0, 0, 0, 2, 2, 1, 1, 0, 1, 2, 0, 3, 1, 1, 0, 0, 1, 2, 2, 0, 0, 0, 2, 2, 3, 3, 3, 2, 1, 1, 3, 1, 2,
-			2, 2, 2, 2, 1, 1, 0, 0, 0, 2, 1, 2, 3, 2, 3, 0, 0, 0, 1, 1, 1, 0, 0, 0, 2, 2, 2, 3, 1, 0, 3, 0, 3, 1, 2, 1, 1, 0, 2, 1, 2, 0, 2, 3, 3, 1, 2, 3,
-			0, 3, 3, 3, 1, 1, 0, 0, 1, 1, 2, 1, 2, 2, 1, 2, 1, 2, 0, 1, 3, 1, 3, 1, 1, 1, 2, 0, 3, 0, 1, 3, 3, 3, 2, 3, 0, 0, 2, 2, 1, 2, 0, 2, 0, 3, 3, 1,
-			3, 3, 2, 2, 1, 0, 1, 0, 0, 1, 1, 0, 1, 2, 3, 3, 0, 0, 2, 0, 3, 1, 2, 3, 1, 3, 1, 3, 0, 1, 0, 1, 2, 2, 1, 1, 2, 0, 0, 1, 3, 0, 3, 0, 1, 1, 2, 0,
-			0, 2, 2, 3, 1, 0, 0, 2, 1, 2, 1, 0, 1, 3, 2, 1, 0, 1, 1, 2, 3, 3, 2, 0, 2, 2, 3, 3, 1, 0, 0, 2, 2, 1, 0, 0, 2, 1, 0, 0, 2, 1, 0, 0, 3, 0, 3, 2,
-			3, 2, 2, 0, 3, 0, 1, 3, 2, 3, 2, 2, 3, 2, 2, 0, 2, 1, 2, 2, 2, 0, 1, 1, 3, 2, 2, 3, 2, 2, 0, 0, 2, 3, 0, 0, 2, 0, 3, 3, 2, 3, 0, 1, 2, 1, 0, 3,
-			0, 2, 1, 1, 2, 1, 0, 0, 0, 3, 2, 3, 3, 0, 1, 2, 2, 2, 2, 2, 0, 1, 2, 3, 3, 3, 1, 3, 3, 0, 2, 2, 1, 0, 1, 2, 1, 0, 1, 1, 2, 3, 2, 1, 1, 2, 1, 0,
-			1, 2, 1, 0, 2, 0, 3, 1, 3, 1, 1, 0, 1, 3, 0, 2, 0, 0, 1, 1, 0, 1, 0, 2, 0, 2, 0, 0, 1, 0, 2, 3, 3, 3, 1, 1, 3, 1, 1, 1, 0, 2, 3, 1, 0, 2, 1, 2,
-			1, 0, 3, 1, 1, 1, 0, 0, 2, 3, 0, 2, 2, 2, 2, 3, 2, 0, 2, 3, 3, 0, 2, 0, 2, 3, 0, 2, 0, 1, 2, 3, 1, 1, 1, 3, 2, 2, 3, 2, 1, 0, 0, 3, 0, 0, 2, 3,
-			0, 3, 0, 3, 3, 2, 0, 2, 3, 2, 1, 2, 2, 0, 3, 0, 3, 0, 0, 2, 3, 1, 3, 2, 3, 0, 3, 0, 3, 2, 2, 0, 0, 3, 2, 0, 2, 1, 0, 2, 1, 1, 3, 2, 1, 0, 0, 3,
-			0, 3, 0, 3, 2, 3, 1, 0, 3, 3, 0, 1, 0, 1, 2, 1, 3, 1, 1, 2, 0, 3, 2, 1, 0, 2, 1, 1, 1, 3, 1, 1, 2, 0, 0, 2, 1, 2, 1, 1, 2, 2, 0, 1, 2, 3, 1, 3,
-			3, 3, 1, 3, 2, 2, 2, 2, 2, 3, 2, 0, 3, 2, 1, 0, 3, 2, 2, 2, 0, 0, 2, 1, 2, 3, 3, 1, 2, 1, 1, 2, 2, 2, 2, 1, 3, 0, 3, 2, 1, 3, 1, 3, 2, 2, 1, 0,
-			2, 0, 0, 0, 1, 0, 2, 3, 2, 3, 1, 0, 2, 0, 0, 1, 0, 2, 0, 0, 3, 0, 3, 0, 0, 1, 3, 1, 3, 1, 1, 0, 0, 0, 3, 3, 2, 1, 3, 0, 2, 2, 1, 3, 0, 2, 3, 0,
-			0, 3, 3, 1, 3, 2, 0, 1, 0, 3, 0, 2, 0, 1, 1, 1, 0, 1, 3, 0, 2, 1, 2, 3, 3, 1, 1, 1, 0, 1, 2, 0, 2, 2, 2, 3, 2, 1, 3, 1, 0, 0, 0, 0, 3, 0, 1, 3,
-			2, 3, 0, 2, 2, 3, 3, 1, 0, 2, 3, 3, 0, 0, 0, 1, 2, 1, 2, 0, 0, 3, 0, 3, 0, 0, 2, 0, 3, 0, 0, 1, 2, 2, 1, 2, 1, 3, 2, 1, 1, 3, 0, 0, 2, 2, 3, 2,
-			1, 2, 3, 1, 1, 3, 2, 0, 1, 3, 0, 1, 1, 0, 0, 3, 1, 2, 0, 3, 3, 1, 2, 0, 3, 2, 0, 2, 1, 1, 1, 0, 2, 3, 1, 0, 2, 1, 3, 3, 1, 1, 0, 0, 0, 3, 3, 2,
-			2, 3, 3, 2, 0, 1, 1, 1, 1, 1, 2, 2, 2, 0, 3, 3, 1, 2, 3, 1, 2, 1, 1, 1, 2, 2, 3, 0, 0, 3, 2, 2, 2, 1, 3, 3, 1, 3, 1, 2, 3, 3, 0, 2, 0, 3, 1, 2,
-			2, 2, 3, 0, 2, 0, 1, 1, 0, 3, 1, 3, 2, 3, 1, 2, 0, 1, 0, 1, 1, 3, 3, 0, 2, 3, 0, 2, 3, 2, 2, 1, 2, 3, 3, 0, 1, 0, 3, 0, 2, 2, 2, 1, 1, 3, 3, 3,
-			0, 1, 1, 1, 1, 2, 2, 1, 1, 3, 3, 2, 3, 1, 0, 1, 1, 0, 0, 1, 3, 2, 3, 1, 0, 0, 1, 0, 1, 3, 2, 1, 2, 2, 0, 2, 3, 2, 0, 1, 0, 2, 1, 0, 1, 0, 1, 2,
-			1, 3, 2, 0, 0, 2, 0, 1, 2, 2, 3, 1, 2, 3, 0, 2, 3, 1, 3, 1, 2, 0, 3, 3, 3, 0, 2, 3, 0, 3, 2, 3, 0, 3, 0, 1, 1, 1, 3, 0, 1, 2, 0, 2, 1, 0, 2, 1,
-			2, 0, 3, 1, 3, 1, 1, 0, 3, 1, 1, 1, 1, 2, 3, 1, 1, 0, 0, 3, 1, 1, 0, 1, 0, 2, 0, 3, 1, 0, 0, 0, 3, 1, 0, 3, 0, 3, 0, 0, 3, 1, 3, 3, 3, 1, 0, 3,
-			1, 2, 0, 3, 0, 0, 3, 1, 3, 0, 3, 0, 2, 0, 1, 0, 3, 2, 1, 2, 0, 0, 1, 2, 0, 0, 0, 0, 2, 1, 0, 2, 2, 1, 1, 0, 3, 0, 0, 3, 3, 2, 1, 0, 1, 0, 3, 0,
-			1, 1, 0, 0, 3, 2, 3, 2, 1, 2, 0, 0, 2, 0, 1, 2, 2, 2, 3, 3, 1, 3, 3, 0, 3, 3, 1, 3, 1, 1, 0, 1, 1, 1, 3, 2, 1, 3, 0, 2, 2, 0, 3, 1, 0, 0, 1, 2,
-			1, 3, 2, 3, 2, 0, 3, 0, 3, 2, 0, 2, 3, 1, 1, 2, 3, 1, 3, 2, 3, 2, 2, 3, 3, 0, 1, 0, 3, 3, 1, 2, 2, 1, 1, 1, 3, 3, 1, 2, 3, 1, 2, 1, 1, 2, 2, 0,
-			0, 3, 0, 0, 1, 3, 2, 0, 1, 3, 1, 0, 3, 3, 1, 3, 1, 1, 1, 1, 2, 3, 1, 2, 0, 3, 3, 3, 1, 2, 3, 2, 0, 2, 2, 3, 1, 2, 0, 2, 3, 2, 0, 3, 1, 2, 0, 1,
-			2, 1, 3, 2, 2, 2, 3, 1, 1, 0, 2, 1, 2, 3, 3, 1, 1, 2, 0, 0, 1, 2, 0, 0, 1, 3, 2, 1, 0, 2, 0, 3, 2, 3, 1, 0, 0, 3, 3, 3, 3, 0, 1, 2, 1, 0, 3, 1,
-			1, 3, 0, 3, 0, 1, 1, 0, 0, 0, 3, 3, 0, 2, 3, 2, 0, 1, 3, 1, 2, 2, 0, 3, 1, 3, 2, 3, 1, 1, 3, 1, 3, 1, 0, 3, 3, 3, 0, 2, 3, 3, 3, 1, 1, 2, 2, 2,
-			0, 1, 3, 2, 3, 3, 3, 2, 3, 1, 2, 3, 2, 1, 3, 2, 3, 1, 1, 0, 0, 2, 2, 3, 2, 2, 1, 2, 0, 1, 1, 2, 3, 2, 3, 2, 0, 2, 0, 3, 1, 3, 1, 3, 1, 2, 3, 3,
-			2, 1, 3, 3, 2, 3, 0, 3, 2, 0, 2, 3, 0, 1, 3, 2, 3, 3, 0, 3, 3, 0, 3, 3, 0, 3, 2, 3, 0, 3, 3, 1, 3, 2, 1, 0, 2, 2, 1, 1, 1, 1, 2, 3, 2, 1, 2, 3,
-			3, 2, 2, 1, 2, 3, 0, 2, 3, 2, 3, 2, 2, 0, 2, 3, 3, 0, 1, 2, 2, 3, 0, 2, 2, 1, 1, 3, 1, 1, 0, 1, 0, 2, 1, 1, 1, 0, 2, 3, 2, 1, 2, 1, 0, 2, 1, 2,
-			0, 0, 1, 2, 1, 3, 0, 1, 2, 3, 3, 3, 1, 2, 2, 3, 0, 3, 1, 3, 2, 0, 3, 2, 2, 2, 0, 3, 0, 3, 0, 1, 0, 0, 2, 0, 3, 0, 2, 3, 3, 1, 3, 2, 2, 2, 0, 2,
-			2, 1, 1, 2, 0, 1, 1, 0, 2, 3, 1, 1, 1, 0, 3, 1, 3, 2, 0, 3, 1, 0, 2, 0, 0, 3, 3, 0, 1, 2, 2, 1, 3, 0, 3, 3, 0, 1, 1, 1, 2, 2, 1, 2, 3, 1, 2, 2,
-			3, 1, 3, 3, 2, 1, 0, 3, 2, 3, 1, 3, 1, 2, 3, 1, 1, 0, 1, 1, 3, 2, 2, 1, 3, 1, 3, 3, 3, 3, 0, 3, 2, 0, 2, 1, 2, 1, 0, 0, 3, 2, 2, 0, 2, 3, 1, 2,
-			3, 1, 0, 1, 2, 2, 2, 2, 0, 3, 1, 3, 0, 0, 2, 1, 3, 1, 2, 1, 2, 3, 1, 0, 1, 0, 1, 1, 1, 3, 2, 3, 2, 0, 3, 2, 1, 0, 3, 3, 1, 3, 1, 3, 2, 1, 0, 3,
-			3, 3, 3, 2, 1, 2, 1, 3, 0, 1, 0, 2, 1, 0, 3, 0, 0, 3, 0, 1, 2, 3, 2, 2, 3, 3, 0, 3, 2, 3, 2, 2, 1, 2, 1, 1, 3, 0, 2, 0, 3, 2, 1, 3, 2, 0, 0, 2,
-			0, 3, 1, 2, 3, 1, 3, 3, 1, 2, 2, 2, 3, 1, 0, 2, 1, 2, 0, 1, 0, 0, 1, 0, 2, 1, 2, 3, 1, 1, 0, 1, 2, 1, 3, 0, 3, 1, 2, 3, 3, 0, 2, 1, 1, 2, 2, 2,
-			0, 3, 0, 3, 1, 2, 1, 2, 1, 0, 1, 2, 1, 2, 1, 0, 3, 3, 2, 3, 3, 3, 3, 2, 1, 1, 2, 3, 1, 0, 3, 2, 0, 1, 0, 2, 1, 2, 0, 3, 1, 1, 2, 1, 2, 2, 1, 0,
-			2, 3, 2, 1, 2, 3, 1, 3, 0, 1, 0, 1, 2, 2, 0, 3, 0, 0, 1, 3, 1, 0, 0, 3, 1, 2, 3, 0, 1, 3, 1, 1, 3, 0, 3, 3, 0, 1, 1, 3, 3, 0, 1, 3, 0, 0, 1, 1,
-			1, 0, 3, 2, 0, 0, 2, 1, 1, 2, 2, 2, 1, 0, 1, 2, 3, 1, 0, 0, 1, 1, 0, 1, 3, 3, 1, 0, 0, 2, 2, 3, 1, 1, 2, 2, 2, 2, 2, 2, 1, 0, 1, 0, 2, 1, 0, 3,
-			1, 0, 2, 2, 2, 0, 3, 2, 2, 0, 3, 0, 0, 0, 2, 2, 3, 3, 2, 0, 3, 2, 0, 1, 2, 2, 2, 1, 0, 2, 0, 1, 1, 0, 1, 1, 2, 0, 1, 2, 2, 0, 1, 0, 3, 2, 3, 1,
-			3, 3, 2, 3, 0, 1, 0, 3, 3, 3, 2, 2, 0, 3, 3, 0, 3, 1, 1, 2, 1, 2, 1, 0, 3, 0, 1, 0, 2, 0, 3, 1, 2, 3, 3, 0, 0, 1, 1, 3, 1, 3, 0, 3, 1, 0, 2, 3,
-			0, 3, 2, 1, 0, 3, 2, 1, 3, 2, 0, 3, 3, 2, 3, 2, 3, 1, 1, 2, 3, 0, 0, 2, 3, 2, 2, 3, 0, 1, 1, 3, 3, 2, 3, 1, 2, 1, 1, 0, 0, 0, 2, 2, 1, 0, 3, 3,
-			2, 3, 0, 2, 2, 0, 1, 3, 1, 0, 2, 2, 3, 3, 0, 3, 1, 2, 1, 3, 0, 2, 2, 1, 2, 0, 3, 0, 0, 2, 2, 1, 0, 3, 0, 0, 0, 3, 0, 3, 3, 1, 1, 1, 1, 0, 2, 0,
-			1, 3, 0, 2, 0, 0, 1, 2, 3, 0, 2, 2, 1, 1, 2, 3, 0, 3, 0, 3, 1, 3, 1, 2, 2, 1, 3, 0, 3, 1, 1, 2, 3, 1, 0, 3, 0, 1, 1, 1, 1, 3, 1, 0, 3, 3, 1, 2,
-			2, 1, 1, 3, 2, 2, 3, 3, 1, 1, 0, 2, 3, 3, 3, 0, 3, 1, 1, 1, 3, 0, 0, 2, 3, 0, 2, 1, 2, 2, 0, 1, 3, 0, 0, 2, 2, 3, 3, 3, 1, 3, 3, 0, 0, 0, 1, 2,
-			2, 1, 2, 1, 2, 0, 0, 2, 2, 1, 2, 1, 3, 0, 3, 1, 1, 0, 2, 1, 1, 2, 1, 1, 0, 0, 2, 2, 2, 2, 3, 1, 3, 2, 1, 3, 0, 3, 2, 1, 1, 1, 1, 2, 1, 3, 2, 1,
-			3, 1, 2, 3, 0, 2, 1, 2, 0, 1, 3, 3, 1, 0, 0, 1, 2, 1, 0, 2, 1, 0, 1, 2, 0, 0, 2, 1, 0, 1, 0, 2, 2, 3, 3, 2, 1, 1, 3, 1, 1, 0, 3, 3, 2, 1, 2, 1,
-		};*/
-		//static int level[64 * 48];`
-		//getMap("map.dat", 64, 48, level);
-		// sf::Vector2u holds the size of each tile
-		// the two variables after level stands for the num tiles per column/line
+
 		map.load("map.png", "map1.txt", sf::Vector2u(32, 32));
-		//add map to the screen
 		levelScreen.addMap(&map);
 
-		static sf::Sprite m_Sprite;
+		sf::Sprite m_Sprite;
 		m_Sprite.setPosition(Screen::windowWidth / 2, Screen::windowHeight / 2);
 		static sf::Texture m_Texture;
-		m_Texture.loadFromFile("skeleton.png");
-		// m_Texture.setSmooth(true);
+		m_Texture.loadFromFile("zombie.png");
 		m_Sprite.setTexture(m_Texture);
-		static MainCharacter mc = MainCharacter(m_Sprite);
-		levelScreen.addMainCharacter(&mc);
-		
+		MainCharacter* mc_ptr = new MainCharacter(m_Sprite);
+		levelScreen.addMainCharacter(mc_ptr);
+
 		static sf::Texture citizen_boy_texture;
 		citizen_boy_texture.loadFromFile("boy.png");
+		Citizen* boy_ptr = nullptr;
+		sf::Sprite boy;
+		boy.setTexture(citizen_boy_texture);
+		// 2: the initial number
+		// 300: respawn this object per 300 frames
+		static RespawnManager<Citizen> boyMng(boy, boy_ptr, 2, 300, &levelScreen, &map);
+		levelScreen.add(&boyMng);
+
 		static sf::Texture citizen_girl_texture;
 		citizen_girl_texture.loadFromFile("girl.png");
+		Citizen* girl_ptr = nullptr;
+		sf::Sprite girl;
+		girl.setTexture(citizen_girl_texture);
+		static RespawnManager<Citizen> girlMng(girl, girl_ptr, 2, 300, &levelScreen, &map);
+		levelScreen.add(&girlMng);
+
 		static sf::Texture citizen_man_texture;
 		citizen_man_texture.loadFromFile("man.png");
+		Citizen* man_ptr = nullptr;
+		sf::Sprite man;
+		man.setTexture(citizen_man_texture);
+		static RespawnManager<Citizen> manMng(man, man_ptr, 2, 300, &levelScreen, &map);
+		levelScreen.add(&manMng);
+
 		static sf::Texture citizen_woman_texture;
 		citizen_woman_texture.loadFromFile("woman.png");
+		Citizen* woman_ptr = nullptr;
+		sf::Sprite woman;
+		woman.setTexture(citizen_woman_texture);
+		static RespawnManager<Citizen> womanMng(woman, woman_ptr, 2, 300, &levelScreen, &map);
+		levelScreen.add(&womanMng);
+
 		static sf::Texture citizen_oldman_texture;
 		citizen_oldman_texture.loadFromFile("oldman.png");
+		Citizen* oldman_ptr = nullptr;
+		sf::Sprite oldman;
+		oldman.setTexture(citizen_oldman_texture);
+		static RespawnManager<Citizen> oldmanMng(oldman, oldman_ptr, 2, 300, &levelScreen, &map);
+		levelScreen.add(&oldmanMng);
+
 		static sf::Texture citizen_oldwoman_texture;
 		citizen_oldwoman_texture.loadFromFile("oldwoman.png");
-		std::vector<Citizen*> citizen_ptr;
-		sf::Sprite citizen;
-		for (int i = 0; i < 20; i++) {
-			int textureRand = rand() % 6;
-			switch (textureRand)
-			{
-			case 0:
-				citizen.setTexture(citizen_boy_texture);
-				break;
-			case 1:
-				citizen.setTexture(citizen_girl_texture);
-				break;
-			case 2:
-				citizen.setTexture(citizen_man_texture);
-				break;
-			case 3:
-				citizen.setTexture(citizen_woman_texture);
-				break;
-			case 4:
-				citizen.setTexture(citizen_oldman_texture);
-				break;
-			case 5:
-				citizen.setTexture(citizen_oldwoman_texture);
-				break;
-			}
-			float randWidth = rand() % (map.width() * map.tileSize().x);
-			float randHeight = rand() % (map.height() * map.tileSize().y);
-			citizen_ptr.push_back(new Citizen(citizen, sf::Vector2f(randWidth, randHeight)));
-			levelScreen.add(citizen_ptr[i]);
-		}
+		Citizen* oldwoman_ptr = nullptr;
+		sf::Sprite oldwoman;
+		oldwoman.setTexture(citizen_oldwoman_texture);
+		static RespawnManager<Citizen> oldwomanMng(oldwoman, oldwoman_ptr, 2, 300, &levelScreen, &map);
+		levelScreen.add(&oldwomanMng);
 
 		static sf::Texture soldier_texture;
 		soldier_texture.loadFromFile("soldier.png");
+		Soldier* soldier_ptr = nullptr;
 		sf::Sprite soldier;
 		soldier.setTexture(soldier_texture);
-		std::vector<Soldier*> soldier_ptr;
-		for (int i = 0; i < 20; i++)
-		{
-			float randWidth = rand() % (map.width() * map.tileSize().x);
-			float randHeight = rand() % (map.height() * map.tileSize().y);
-			soldier_ptr.push_back(new Soldier(soldier, sf::Vector2f(randWidth, randHeight)));
-			levelScreen.add(soldier_ptr[i]);
-		}
+		static RespawnManager<Soldier> soldierMng(soldier, soldier_ptr, 10, 200, &levelScreen, &map);
+		levelScreen.add(&soldierMng);
 
 		static HealthBar healthbar;
-		healthbar.setCharacter(&mc);
+		healthbar.setCharacter(mc_ptr);
 		levelScreen.addUIObject(&healthbar);
 
 		static Score s(0, sf::Color::Cyan, 32, 1000, 0);
