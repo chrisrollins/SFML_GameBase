@@ -6,44 +6,59 @@
 #include "Screen.h"
 #include "Tilemap.h"
 #include <ctime>
+#include <map>
+#include <vector>
 
 template <typename T>
 class RespawnManager : public Engine::GameObject
 {
 public:
-	RespawnManager(sf::Sprite sprite, T* ptr, int initialNum, int respawnSpeed, static Screen* screen, static TileMap* map)
+
+	RespawnManager(sf::Sprite& sprite, std::vector<sf::Vector2f> respawnPositions, int max, int respawnSpeed)
 	{
+		this->max = max;
 		this->respawnSpeed = respawnSpeed;
 		this->sprite = sprite;
-		this->screen_ptr = screen;
-		this->map_ptr = map;
-		srand(time(0));
-		for (int i = 0; i < initialNum; i++)
-		{
-			float randWidth = rand() % (map->width() * map->tileSize().x);
-			float randHeight = rand() % (map->height() * map->tileSize().y);
-			sprite.setPosition(randWidth, randHeight);
-			ptr = new T(sprite);
-			screen->add(ptr);
-		}
+		this->respawnPositions = respawnPositions;
+	}
+
+	void died(T* character)
+	{
+		this->characters.erase(character->getID());
 	}
 
 private:
+	std::vector<sf::Vector2f> respawnPositions;
+	std::map<GameObjectID, T*> characters;
+	int max;
 	int respawnSpeed;
+	int cooldown = 0;
 	sf::Sprite sprite;
-	Screen* screen_ptr;
-	TileMap* map_ptr;
 	void EveryFrame(uint64_t frameNumber)
 	{
+		if (this->characters.size() >= this->max) { return; } //don't spawn if at max
 		srand(time(0));
-		if (frameNumber % respawnSpeed == 0)
+		if (cooldown == 0)
 		{
-			float randWidth = rand() % (map_ptr->width() * map_ptr->tileSize().x);
-			float randHeight = rand() % (map_ptr->height() * map_ptr->tileSize().y);
-			sprite.setPosition(randWidth, randHeight);
-			T* ptr = new T(sprite);
-			screen_ptr->add(ptr);
+			cooldown = respawnSpeed;
+			const TileMap* map = this->screen->getMap();
+			int randPosition = rand() % this->respawnPositions.size();
+			sf::Vector2f position = this->respawnPositions[randPosition];
+			std::cout << position.x << ", "<< position.y << std::endl;
+			sprite.setPosition(position);
+			this->add(sprite);
 		}
+		else
+		{
+			cooldown--;
+		}
+	}
+
+	void add(sf::Sprite& sprite)
+	{
+		T* ptr = new T(sprite);
+		this->screen->add(ptr);
+		this->characters[ptr->getID()] = ptr;
 	}
 };
 #endif

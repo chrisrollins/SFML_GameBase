@@ -99,6 +99,8 @@ namespace Engine {
 			return sf::FloatRect(row * this->tileSize().x, column * this->tileSize().y, this->tileSize().x, this->tileSize().y);
 		}
 
+
+
 		unsigned int width() const
 		{
 			return this->_width;
@@ -161,7 +163,7 @@ namespace Engine {
 		sf::Vector2u _tileSize;
 		unsigned int _width;
 		unsigned int _height;
-		int * tiles;
+		int* tiles;
 		sf::VertexArray m_vertices;
 		sf::Texture m_tileset;
 	};

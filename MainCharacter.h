@@ -11,37 +11,6 @@
 
 using namespace Engine;
 
-//class SampleCircle : public GraphicalGameObject
-//{
-//public:
-//	SampleCircle() : GraphicalGameObject(sf::CircleShape(50.0f))
-//	{
-//		this->circle()->setFillColor(sf::Color::Blue);
-//	}
-//	void MouseButtonReleased(sf::Event e)
-//	{
-//		this->circle()->setPosition(e.mouseButton.x, e.mouseButton.y);
-//	}
-//	sf::CircleShape* circle()
-//	{
-//		return dynamic_cast<sf::CircleShape*>(this->graphic);
-//	}
-//};
-
-//class SampleSquare : public GraphicalGameObject
-//{
-//public:
-//	SampleSquare() : GraphicalGameObject(sf::RectangleShape(sf::Vector2f(10, 10)))
-//	{
-//		this->square()->setFillColor(sf::Color::Green);
-//	}
-//	sf::RectangleShape* square()
-//	{
-//		return dynamic_cast<sf::RectangleShape*>(this->graphic);
-//	}
-//};
-
-
 class MainCharacter : public GraphicalGameObject
 {
 	bool W_KeyHeld = false;
@@ -53,7 +22,6 @@ class MainCharacter : public GraphicalGameObject
 	sf::Vector2u imageCount;
 	sf::Vector2u currentImage;
 	bool meleeAttack;
-	bool isWalking; // used so that the zombie stands still when the key is not pressed
 	int deathCount; // to control death animation
 	bool isDead; // true when the zombie turns to invisible
 	DIRECTION direction;
@@ -61,9 +29,10 @@ class MainCharacter : public GraphicalGameObject
 	int maxHealth = 30 * 60;
 	int baseSpeed = 2;
 	int speed = 2;
-	int maxSpeed = 5;
+	int maxSpeed = 4;
 	int speedDecayDelay = 0;
 	int speedRestoreDelay = 0;
+	int colorRestoreDelay = 0;
 public:
 	MainCharacter(sf::Sprite s) : GraphicalGameObject(s)
 	{
@@ -75,19 +44,17 @@ public:
 			imageCount.y * textureSize.y, textureSize.x, textureSize.y));
 		blast_texture.loadFromFile("blast.png");
 		sf::IntRect size = this->sprite()->getTextureRect();
-		sf::Vector2f collisionSizeRatio(0.5, 0.3); //these numbers shrink the collision size of the player, and the code below adjusts it to be positioned at the bottom of the sprite
+		sf::Vector2f collisionSizeRatio(0.4, 0.3); //these numbers shrink the collision size of the player, and the code below adjusts it to be positioned at the bottom of the sprite
 		this->obstacleCollisionSize.width = size.width * collisionSizeRatio.x;
 		this->obstacleCollisionSize.height = size.height * collisionSizeRatio.y;
 		this->obstacleCollisionSize.left = ((1 - collisionSizeRatio.x) * size.width) / 2;
 		this->obstacleCollisionSize.top = ((1 - collisionSizeRatio.y) * size.height);
 		meleeAttack = false;
-		isWalking = false;
 		deathCount = 0;
 		isDead = false;
 	}
 	void KeyPressed(sf::Event e)
 	{
-		isWalking = true;
 		switch (e.key.code)
 		{
 		case sf::Keyboard::W:
@@ -108,7 +75,6 @@ public:
 	}
 	void KeyReleased(sf::Event e)
 	{
-		isWalking = false;
 		switch (e.key.code)
 		{
 		case sf::Keyboard::W:
@@ -137,8 +103,9 @@ public:
 		{
 			if (e.mouseButton.button == sf::Mouse::Left)
 			{
+				this->speed = 0;
+				this->speedRestoreDelay = 6;
 				meleeAttack = true;
-				isWalking = false;
 				if (direction == DIRECTION::UP)
 				{
 					imageCount.y = 8;
@@ -164,7 +131,7 @@ public:
 			}
 			else
 			{
-				isWalking = false;
+				std::cout << this->sprite()->getPosition().x << ", " << this->sprite()->getPosition().y << std::endl;
 				sf::Vector2i mousePos = this->screen->getMousePosition();
 				sf::Vector2f distance = static_cast<sf::Vector2f>(mousePos) - this->sprite()->getPosition();
 				sf::Vector2f shotOrigin = this->sprite()->getPosition();
@@ -210,7 +177,7 @@ public:
 						imageCount.x++;
 				}
 			}
-			if (!meleeAttack && isWalking)
+			if (!meleeAttack)
 			{
 				if (f % 20 == 0)
 				{
@@ -241,6 +208,7 @@ public:
 				}
 			}
 			_health--;
+			
 			//speed goes back to base speed gradually
 			if (f % 6 == 0)
 			{
@@ -257,11 +225,18 @@ public:
 					else { this->changeSpeed(1); }
 				}
 			}
+
+			//color goes back to base
+			if (!this->isDead)
+			{
+				if (colorRestoreDelay > 0) { colorRestoreDelay--; }
+				else { this->sprite()->setColor(sf::Color(255, 255, 255)); }
+			}
 		}
 		else
 		{
 			imageCount.x = deathCount;
-			if (f % 20 == 0 && !isDead)
+			if (f % 20 == 0 && !this->isDead)
 			{
 				deathCount++;
 			}
@@ -301,9 +276,14 @@ public:
 	{
 		return maxHealth;
 	}
+	void takeDamage(int damage)
+	{
+		this->changeHealth(-1 * damage);		
+		this->sprite()->setColor(sf::Color(255, 100, 100));
+		this->colorRestoreDelay = 2;
+	}
 	void changeHealth(int change)
 	{
-
 		this->_health += change;
 		if (this->_health > this->maxHealth) { this->_health = this->maxHealth; }
 	}
@@ -311,28 +291,27 @@ public:
 	{
 		this->speed += change;
 		if (this->speed > this->maxSpeed) { this->speed = this->maxSpeed; }
-		else if (this->speed < 1) { this->speed = 1; }
+		else if (this->speed < 0) { this->speed = 0; }
 	}
 	void Collision(GraphicalGameObject& other)
 	{
 		if (_health > 0) {
 			if (dynamic_cast<Bullet*>(&other))
 			{
-				this->changeHealth(-5);
+				this->takeDamage(5);
 			}
 			else if (dynamic_cast<Soldier*>(&other))
 			{
-				this->changeHealth(-10);
-				this->changeSpeed(-1);
+				this->takeDamage(10);
+				this->speed = 1;
 			}
 			else if (dynamic_cast<Citizen*>(&other))
 			{
-				this->screen->remove(&other);
-				float missingHealthMultiplier = 2.0f - (this->_health / this->maxHealth);
-				this->changeHealth(60 * missingHealthMultiplier);
+				this->screen->remove(&other);				
+				float missingHealthMultiplier = 1.2f - (0.2 * (static_cast<float>(this->_health) / static_cast<float>(this->maxHealth)));
+				this->changeHealth(50 * missingHealthMultiplier);
 				this->changeSpeed(1);
 				this->speedDecayDelay = 60;
-
 			}
 		}
 	}
