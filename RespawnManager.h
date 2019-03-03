@@ -1,10 +1,10 @@
 #ifndef RespawnManager_h
 #define RespawnManager_h
 
-#include "SFML\Graphics.hpp"
+#include "SFML/Graphics.hpp"
 #include "GameObject.h"
 #include "Screen.h"
-#include "Tilemap.h"
+#include "TileMap.h"
 #include <ctime>
 #include <map>
 #include <vector>
