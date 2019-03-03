@@ -59,7 +59,7 @@ namespace Engine
 
 	sf::Vector2i Screen::getMousePosition() const
 	{
-		if(!windowPtr) { return sf::Vector2i(0, 0); }
+		if (!windowPtr) { return sf::Vector2i(0, 0); }
 		sf::Vector2i pixelPos = sf::Mouse::getPosition(*windowPtr);
 		sf::Vector2f worldPos = windowPtr->mapPixelToCoords(pixelPos, windowPtr->getView());
 		return sf::Vector2i(worldPos.x, worldPos.y);
@@ -74,7 +74,7 @@ namespace Engine
 	{
 		running = false;
 	}
-	
+
 	void Screen::render(int fps)
 	{
 		if (fps < 1) { fps = 1; }
@@ -88,7 +88,7 @@ namespace Engine
 		static sf::View view(sf::Vector2f(width / 2, height / 2), sf::Vector2f(width, height));
 		static sf::Clock clock;
 		static uint64_t frameCount = 0;
-		
+
 		if (!windowInitialized)
 		{
 			windowPtr = &window;
@@ -106,7 +106,7 @@ namespace Engine
 		}
 		currentScreen = this;
 		renderStarted = true;
-		
+
 		static std::function<void(GameObjectMap*, sf::Event)> handleEvents = [](GameObjectMap* objects, sf::Event event)
 		{
 			for (auto const& pair : *objects)
@@ -189,7 +189,7 @@ namespace Engine
 		while (window.isOpen() && !pendingSwitch)
 		{
 			clock.restart();
-						
+
 			//remove objects that are pending to be removed
 			while (!removeQueue.empty())
 			{
@@ -198,15 +198,15 @@ namespace Engine
 				for (auto map : { &currentScreen->objects, &currentScreen->g_objects, &currentScreen->ui_objects })
 				{
 					if (map->find(toRemove->getID()) != map->end())
-					{						
-						GameObjectID id = toRemove->getID(); 
-						map->erase(id); 
+					{
+						GameObjectID id = toRemove->getID();
+						map->erase(id);
 						delete toRemove;
 						break;
 					}
 				}
 			}
-			
+
 			//run the EveryFrame event on all objects
 			for (auto map : { &currentScreen->objects, &currentScreen->g_objects, &currentScreen->ui_objects })
 			{
@@ -225,7 +225,12 @@ namespace Engine
 					window.close();
 					return;
 				}
-
+				if (event.type == sf::Event::Resized)
+				{
+					// update the view to the new size of the window
+					sf::FloatRect visibleArea(0.f, 0.f, event.size.width, event.size.height);
+					view = sf::View(visibleArea);
+				}
 				//handle events on each object
 				for (auto map : { &currentScreen->objects, &currentScreen->g_objects, &currentScreen->ui_objects })
 				{
@@ -246,7 +251,7 @@ namespace Engine
 				MAP_WIDTH = currentScreen->map->width() * currentScreen->map->tileSize().x;
 				MAP_HEIGHT = currentScreen->map->height() * currentScreen->map->tileSize().y;
 			}
-			
+
 			//draw the objects
 			for (auto const& pair : currentScreen->g_objects)
 			{
@@ -259,13 +264,13 @@ namespace Engine
 					{
 						sf::Vector2u size(0, 0);
 						if (sf::Sprite* sprite = dynamic_cast<sf::Sprite*>(obj->getGraphic())) { size = sf::Vector2u(sprite->getTextureRect().width, sprite->getTextureRect().height); }
-						#define X (transformable->getPosition().x)
-						#define Y (transformable->getPosition().y)
+#define X (transformable->getPosition().x)
+#define Y (transformable->getPosition().y)
 						if (X < 0) { transformable->setPosition(0.f, Y); }
 						if (Y < 0) { transformable->setPosition(X, 0.f); }
 						if (Y + size.y > MAP_HEIGHT) { transformable->setPosition(X, MAP_HEIGHT - size.y); }
 						if (X + size.x > MAP_WIDTH) { transformable->setPosition(MAP_WIDTH - size.x, Y); }
-						
+
 						sf::Vector2f offsets(0, 0);
 						if (obj->obstacleCollisionSize.width > 0 && obj->obstacleCollisionSize.height > 0)
 						{
@@ -288,8 +293,8 @@ namespace Engine
 						}
 
 						obj->lastPos = { X , Y };
-						#undef X
-						#undef Y
+#undef X
+#undef Y
 					}
 				}
 				obj->draw(window);
@@ -389,7 +394,7 @@ namespace Engine
 		}
 
 		if (pendingSwitch)
-		{			
+		{
 			renderStarted = false;
 			pendingSwitch->render();
 		}

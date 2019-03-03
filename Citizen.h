@@ -2,8 +2,8 @@
 #define CITIZEN_HEADER
 
 #include "GameObject.h"
-#include "Screen.h"
 #include "SkeletonBlast.h"
+#include "Screen.h"
 
 class Citizen : public Engine::GraphicalGameObject
 {
@@ -18,13 +18,12 @@ private:
 	sf::Vector2u imageCount;
 	sf::Vector2u currentImage;
 public:
-	Citizen(sf::Sprite r, sf::Vector2f pos) : Engine::GraphicalGameObject(r)
+	Citizen(sf::Sprite r) : Engine::GraphicalGameObject(r)
 	{
 		textureSize = this->spritePtr()->getTexture()->getSize();
-		this->spritePtr()->setPosition(pos);
 		textureSize.x /= 3;
 		textureSize.y /= 4;
-		imageCount.x = 0; 
+		imageCount.x = 0;
 		switch (rand() % 4)
 		{
 		case 0:
@@ -126,7 +125,7 @@ public:
 				imageCount.x++;
 		}
 	}
-	void Collision(GraphicalGameObject& other)
+	void Collision(Engine::GraphicalGameObject& other)
 	{
 		if (dynamic_cast<SkeletonBlast*>(&other))
 		{
