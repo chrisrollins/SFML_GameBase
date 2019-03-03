@@ -11,37 +11,6 @@
 
 using namespace Engine;
 
-//class SampleCircle : public GraphicalGameObject
-//{
-//public:
-//	SampleCircle() : GraphicalGameObject(sf::CircleShape(50.0f))
-//	{
-//		this->circle()->setFillColor(sf::Color::Blue);
-//	}
-//	void MouseButtonReleased(sf::Event e)
-//	{
-//		this->circle()->setPosition(e.mouseButton.x, e.mouseButton.y);
-//	}
-//	sf::CircleShape* circle()
-//	{
-//		return dynamic_cast<sf::CircleShape*>(this->graphic);
-//	}
-//};
-
-//class SampleSquare : public GraphicalGameObject
-//{
-//public:
-//	SampleSquare() : GraphicalGameObject(sf::RectangleShape(sf::Vector2f(10, 10)))
-//	{
-//		this->square()->setFillColor(sf::Color::Green);
-//	}
-//	sf::RectangleShape* square()
-//	{
-//		return dynamic_cast<sf::RectangleShape*>(this->graphic);
-//	}
-//};
-
-
 class MainCharacter : public GraphicalGameObject
 {
 	bool W_KeyHeld = false;
@@ -75,7 +44,7 @@ public:
 			imageCount.y * textureSize.y, textureSize.x, textureSize.y));
 		blast_texture.loadFromFile("blast.png");
 		sf::IntRect size = this->sprite()->getTextureRect();
-		sf::Vector2f collisionSizeRatio(0.5, 0.3); //these numbers shrink the collision size of the player, and the code below adjusts it to be positioned at the bottom of the sprite
+		sf::Vector2f collisionSizeRatio(0.4, 0.3); //these numbers shrink the collision size of the player, and the code below adjusts it to be positioned at the bottom of the sprite
 		this->obstacleCollisionSize.width = size.width * collisionSizeRatio.x;
 		this->obstacleCollisionSize.height = size.height * collisionSizeRatio.y;
 		this->obstacleCollisionSize.left = ((1 - collisionSizeRatio.x) * size.width) / 2;
@@ -162,6 +131,7 @@ public:
 			}
 			else
 			{
+				std::cout << this->sprite()->getPosition().x << ", " << this->sprite()->getPosition().y << std::endl;
 				sf::Vector2i mousePos = this->screen->getMousePosition();
 				sf::Vector2f distance = static_cast<sf::Vector2f>(mousePos) - this->sprite()->getPosition();
 				sf::Vector2f shotOrigin = this->sprite()->getPosition();
@@ -337,10 +307,9 @@ public:
 			}
 			else if (dynamic_cast<Citizen*>(&other))
 			{
-				this->screen->remove(&other);
-				float missingHealthMultiplier = 1.5f - (0.5 * (static_cast<float>(this->_health) / static_cast<float>(this->maxHealth)));
-				std::cout << missingHealthMultiplier << std::endl;
-				this->changeHealth(30 * missingHealthMultiplier);
+				this->screen->remove(&other);				
+				float missingHealthMultiplier = 1.2f - (0.2 * (static_cast<float>(this->_health) / static_cast<float>(this->maxHealth)));
+				this->changeHealth(50 * missingHealthMultiplier);
 				this->changeSpeed(1);
 				this->speedDecayDelay = 60;
 			}

@@ -2,13 +2,17 @@
 #define SOLDIER_HEADER
 
 #include "GameObject.h"
+#include "RespawnManager.h"
 #include "SkeletonBlast.h"
 #include "Bullet.h"
 #include "Screen.h"
 
+template<typename T> class RespawnManager;
+
 class Soldier : public Engine::GraphicalGameObject
 {
 private:
+	friend class RespawnManager<Soldier>;
 	bool W_KeyHeld = false;
 	bool A_KeyHeld = false;
 	bool S_KeyHeld = false;
@@ -21,6 +25,7 @@ private:
 	sf::Vector2u textureSize;
 	sf::Vector2u imageCount;
 	sf::Vector2u currentImage;
+	RespawnManager<Soldier>* respawnManager = nullptr;
 public:
 	Soldier(sf::Sprite r) : Engine::GraphicalGameObject(r)
 	{
@@ -182,6 +187,7 @@ public:
 	{
 		if (dynamic_cast<SkeletonBlast*>(&other))
 		{
+			if (this->respawnManager) { this->respawnManager->died(this); }
 			this->screen->remove(this);
 		}
 	}
@@ -189,11 +195,6 @@ public:
 	{
 		return dynamic_cast<sf::Sprite*>(this->graphic);
 	}
-	bool isAlive() const;
-	void setAlive(bool alive);
-	void takeDamage(float amount);
-	void setHealth(float health);
-	float getHealth() const;
 };
 
 #endif
