@@ -4,7 +4,6 @@
 
 namespace Engine
 {
-
 	GameObjectID generateID()
 	{
 		static GameObjectID count;

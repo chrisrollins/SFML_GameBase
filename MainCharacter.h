@@ -293,14 +293,17 @@ public:
 				imageCount.y * textureSize.y, textureSize.x, textureSize.y));
 		}
 	}
-	int getHealth() {
+	int getHealth()
+	{
 		return _health;
 	}
-	int getMaxHealth() {
+	int getMaxHealth()
+	{
 		return maxHealth;
 	}
 	void changeHealth(int change)
 	{
+
 		this->_health += change;
 		if (this->_health > this->maxHealth) { this->_health = this->maxHealth; }
 	}
@@ -329,13 +332,9 @@ public:
 				this->changeHealth(60 * missingHealthMultiplier);
 				this->changeSpeed(1);
 				this->speedDecayDelay = 60;
+
 			}
 		}
-		// if collision happened:
-		//_health -= other.getDamage();  // need to add the damage to graphicak game object?
-		//std::cout << "collision in the main character" << std::endl;
-		//std::cout << " " << std::endl;
-		//std::cout << " " << std::endl;
 	}
 	sf::Sprite* sprite()
 	{

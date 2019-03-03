@@ -4,7 +4,6 @@
 #include "GameObject.h"
 #include "SkeletonBlast.h"
 #include "Screen.h"
-#include "MainCharacter.h"
 
 class Citizen : public Engine::GraphicalGameObject
 {
