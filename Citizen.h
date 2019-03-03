@@ -3,7 +3,6 @@
 
 #include "GameObject.h"
 #include "Screen.h"
-#include "MainCharacter.h"
 #include "SkeletonBlast.h"
 
 class Citizen : public Engine::GraphicalGameObject
@@ -129,7 +128,7 @@ public:
 	}
 	void Collision(GraphicalGameObject& other)
 	{
-		if (dynamic_cast<SkeletonBlast*>(&other) || dynamic_cast<MainCharacter*>(&other))
+		if (dynamic_cast<SkeletonBlast*>(&other))
 		{
 			this->screen->remove(this);
 		}

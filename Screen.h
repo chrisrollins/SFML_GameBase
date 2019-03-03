@@ -15,7 +15,7 @@ namespace Engine
 		void addMap(TileMap* map);
 		void addMainCharacter(GameObject* mainCharacter);
 		void addUIObject(GameObject* uiObj);
-		sf::Vector2f getMainCharacterPosition() const;
+		GameObject* getMainCharacter() const;
 		void add(GameObject* gameObject);
 		void remove(GameObject* gameObject);
 		void render(int fps = 60);
