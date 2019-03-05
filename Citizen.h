@@ -3,7 +3,7 @@
 
 #include "GameObject.h"
 #include "RespawnManager.h"
-#include "SkeletonBlast.h"
+#include "ZombieBlast.h"
 #include "Screen.h"
 
 template<typename T> class RespawnManager;
@@ -133,7 +133,7 @@ public:
 	}
 	void Collision(Engine::GraphicalGameObject& other)
 	{
-		if (dynamic_cast<SkeletonBlast*>(&other))
+		if (dynamic_cast<ZombieBlast*>(&other))
 		{
 			if (this->respawnManager) { this->respawnManager->died(this); }
 			this->screen->remove(this);
