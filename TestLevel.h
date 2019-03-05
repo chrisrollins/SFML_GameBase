@@ -9,11 +9,10 @@
 #include "Screen.h"
 #include "GameObject.h"
 #include "MainCharacter.h"
-#include "Soldier.h"
+#include "Mage.h"
 #include "Citizen.h"
 #include "SampleUIObject.h"
 #include "SampleUIText.h"
-#include "getMap.h"
 #include "Score.h"
 #include "HealthBar.h"
 #include "RespawnManager.h"
@@ -29,7 +28,7 @@ public:
 		static Screen levelScreen;
 		static TileMap map;
 
-		map.load("map.png", "map1.txt", sf::Vector2u(32, 32));
+		map.load("map.png", "map.txt");
 		levelScreen.addMap(&map);
 
 		sf::Sprite m_Sprite;
@@ -40,57 +39,55 @@ public:
 		MainCharacter* mc_ptr = new MainCharacter(m_Sprite);
 		levelScreen.addMainCharacter(mc_ptr);
 
-		std::vector<sf::Vector2f> respawnPositions = { {140, 180}, {600, 675}, {425, 1000}, {1100, 900}, {1000, 300} };
-
 		static sf::Texture citizen_boy_texture;
 		citizen_boy_texture.loadFromFile("boy.png");
 		sf::Sprite boy;
 		boy.setTexture(citizen_boy_texture);
-		// 4: the max number
+		// 3: the max number
 		// 200: respawn this object per 200 frames
-		static RespawnManager<Citizen> boyMng(boy, respawnPositions, 6, 200);
+		static RespawnManager<Citizen> boyMng(boy, 5, 200);
 		levelScreen.add(&boyMng);
 
 		static sf::Texture citizen_girl_texture;
 		citizen_girl_texture.loadFromFile("girl.png");
 		sf::Sprite girl;
 		girl.setTexture(citizen_girl_texture);
-		static RespawnManager<Citizen> girlMng(girl, respawnPositions, 6, 200);
+		static RespawnManager<Citizen> girlMng(girl, 3, 200);
 		levelScreen.add(&girlMng);
 
 		static sf::Texture citizen_man_texture;
 		citizen_man_texture.loadFromFile("man.png");
 		sf::Sprite man;
 		man.setTexture(citizen_man_texture);
-		static RespawnManager<Citizen> manMng(man, respawnPositions, 5, 200);
+		static RespawnManager<Citizen> manMng(man, 3, 200);
 		levelScreen.add(&manMng);
 
 		static sf::Texture citizen_woman_texture;
 		citizen_woman_texture.loadFromFile("woman.png");
 		sf::Sprite woman;
 		woman.setTexture(citizen_woman_texture);
-		static RespawnManager<Citizen> womanMng(woman, respawnPositions, 5, 200);
+		static RespawnManager<Citizen> womanMng(woman, 3, 200);
 		levelScreen.add(&womanMng);
 
 		static sf::Texture citizen_oldman_texture;
 		citizen_oldman_texture.loadFromFile("oldman.png");
 		sf::Sprite oldman;
 		oldman.setTexture(citizen_oldman_texture);
-		static RespawnManager<Citizen> oldmanMng(oldman, respawnPositions, 3, 200);
+		static RespawnManager<Citizen> oldmanMng(oldman, 3, 200);
 		levelScreen.add(&oldmanMng);
 
 		static sf::Texture citizen_oldwoman_texture;
 		citizen_oldwoman_texture.loadFromFile("oldwoman.png");
 		sf::Sprite oldwoman;
 		oldwoman.setTexture(citizen_oldwoman_texture);
-		static RespawnManager<Citizen> oldwomanMng(oldwoman, respawnPositions, 3, 200);
+		static RespawnManager<Citizen> oldwomanMng(oldwoman, 3, 200);
 		levelScreen.add(&oldwomanMng);
 
-		static sf::Texture soldier_texture;
-		soldier_texture.loadFromFile("soldier.png");
-		sf::Sprite soldier;
-		soldier.setTexture(soldier_texture);
-		static RespawnManager<Soldier> soldierMng(soldier, respawnPositions, 12, 175);
+		static sf::Texture mage_texture;
+		mage_texture.loadFromFile("mage.png");
+		sf::Sprite mage;
+		mage.setTexture(mage_texture);
+		static RespawnManager<Mage> soldierMng(mage, 12, 175);
 		levelScreen.add(&soldierMng);
 
 		static HealthBar healthbar;
