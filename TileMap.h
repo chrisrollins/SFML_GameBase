@@ -11,13 +11,11 @@ namespace Engine {
 	{
 	public:
 
-		bool load(const std::string& tileset, const std::string& mapTable, sf::Vector2u tileSize)
+		bool load(const std::string& tileset, const std::string& mapTable)
 		{
 			// load the tileset texture
 			if (!m_tileset.loadFromFile(tileset))
 				return false;
-
-			this->_tileSize = tileSize;
 
 			int * tileTable;
 			tileTable = readFromFile(mapTable);
@@ -36,23 +34,23 @@ namespace Engine {
 					int tileNumber = tiles[i + j * _width];
 
 					// find its position in the tileset texture
-					int tu = tileNumber % (m_tileset.getSize().x / tileSize.x);
-					int tv = tileNumber / (m_tileset.getSize().x / tileSize.x);
+					int tu = tileNumber % (m_tileset.getSize().x / this->_tileSize.x);
+					int tv = tileNumber / (m_tileset.getSize().x / this->_tileSize.x);
 
 					// get a pointer to the current tile's quad
 					sf::Vertex* quad = &m_vertices[(i + j * _width) * 4];
 
 					// define its 4 corners
-					quad[0].position = sf::Vector2f(i * tileSize.x, j * tileSize.y);
-					quad[1].position = sf::Vector2f((i + 1) * tileSize.x, j * tileSize.y);
-					quad[2].position = sf::Vector2f((i + 1) * tileSize.x, (j + 1) * tileSize.y);
-					quad[3].position = sf::Vector2f(i * tileSize.x, (j + 1) * tileSize.y);
+					quad[0].position = sf::Vector2f(i * this->_tileSize.x, j * this->_tileSize.y);
+					quad[1].position = sf::Vector2f((i + 1) * this->_tileSize.x, j * this->_tileSize.y);
+					quad[2].position = sf::Vector2f((i + 1) * this->_tileSize.x, (j + 1) * this->_tileSize.y);
+					quad[3].position = sf::Vector2f(i * this->_tileSize.x, (j + 1) * this->_tileSize.y);
 
 					// define its 4 texture coordinates
-					quad[0].texCoords = sf::Vector2f(tu * tileSize.x, tv * tileSize.y);
-					quad[1].texCoords = sf::Vector2f((tu + 1) * tileSize.x, tv * tileSize.y);
-					quad[2].texCoords = sf::Vector2f((tu + 1) * tileSize.x, (tv + 1) * tileSize.y);
-					quad[3].texCoords = sf::Vector2f(tu * tileSize.x, (tv + 1) * tileSize.y);
+					quad[0].texCoords = sf::Vector2f(tu * this->_tileSize.x, tv * this->_tileSize.y);
+					quad[1].texCoords = sf::Vector2f((tu + 1) * this->_tileSize.x, tv * this->_tileSize.y);
+					quad[2].texCoords = sf::Vector2f((tu + 1) * this->_tileSize.x, (tv + 1) * this->_tileSize.y);
+					quad[3].texCoords = sf::Vector2f(tu * this->_tileSize.x, (tv + 1) * this->_tileSize.y);
 				}
 			}
 
@@ -64,27 +62,6 @@ namespace Engine {
 			int row = position.x / this->tileSize().x;
 			int column = position.y / this->tileSize().y;
 			int tileType = this->getTileAt(row, column);
-			//if (tileType == 0)
-			//{
-			//	std::cout << "grass" << std::endl;
-			//	return false;
-			//}
-			//else if (tileType == 1)
-			//{
-			//	std::cout << "river" << std::endl;
-			//	return true;
-			//}
-			//else if (tileType == 2)
-			//{
-			//	std::cout << "tree" << std::endl;
-			//	return true;
-			//}
-			//else // (tileType == 3)
-			//{
-			//	std::cout << "road" << std::endl;
-			//	return false;
-			//}
-			//if (tileType == 1 || tileType == 2)
 			if (tileType == 5 || tileType == 6 || tileType == 7 || tileType == 19 || tileType == 20
 				|| tileType == 21 || tileType == 33 || tileType == 34 || tileType == 35)
 				return true;
@@ -98,8 +75,6 @@ namespace Engine {
 			int column = position.y / this->tileSize().y;
 			return sf::FloatRect(row * this->tileSize().x, column * this->tileSize().y, this->tileSize().x, this->tileSize().y);
 		}
-
-
 
 		unsigned int width() const
 		{
@@ -132,9 +107,11 @@ namespace Engine {
 			//read width and size from the file
 			fin >> this->_width;
 			fin >> this->_height;
+			fin >> this->_tileSize.x;
+			fin >> this->_tileSize.y;
 
 			//determine the size of the array
-			int size = this->_height*this->_width;
+			int size = this->_height * this->_width;
 			int *tileTable = nullptr; // pointer to int
 			tileTable = new int[size];
 			//std::cout <<this->_width<< std::endl;
