@@ -29,7 +29,7 @@ public:
 
 private:
 	std::vector<sf::Vector2f> respawnPositions;
-	std::map<GameObjectID, T*> characters;
+	std::map<Engine::GameObjectID, T*> characters;
 	int max;
 	int respawnSpeed;
 	int cooldown = 0;
@@ -41,7 +41,7 @@ private:
 		if (cooldown == 0)
 		{
 			cooldown = respawnSpeed;
-			const TileMap* map = this->screen->getMap();
+			const Engine::TileMap* map = this->screen->getMap();
 			int randPosition = rand() % this->respawnPositions.size();
 			sf::Vector2f position = this->respawnPositions[randPosition];
 			std::cout << position.x << ", "<< position.y << std::endl;
@@ -62,4 +62,3 @@ private:
 	}
 };
 #endif
-
