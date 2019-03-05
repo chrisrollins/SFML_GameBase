@@ -9,17 +9,18 @@
 #include <map>
 #include <vector>
 
+using namespace Engine;
+
 template <typename T>
-class RespawnManager : public Engine::GameObject
+class RespawnManager : public GameObject
 {
 public:
 
-	RespawnManager(sf::Sprite& sprite, std::vector<sf::Vector2f> respawnPositions, int max, int respawnSpeed)
+	RespawnManager(sf::Sprite& sprite, int max, int respawnSpeed)
 	{
 		this->max = max;
 		this->respawnSpeed = respawnSpeed;
 		this->sprite = sprite;
-		this->respawnPositions = respawnPositions;
 	}
 
 	void died(T* character)
@@ -37,14 +38,18 @@ private:
 	void EveryFrame(uint64_t frameNumber)
 	{
 		if (this->characters.size() >= this->max) { return; } //don't spawn if at max
-		srand(time(0));
+		srand(frameNumber * 7); // use frameNumber as seed
 		if (cooldown == 0)
 		{
 			cooldown = respawnSpeed;
-			const Engine::TileMap* map = this->screen->getMap();
-			int randPosition = rand() % this->respawnPositions.size();
-			sf::Vector2f position = this->respawnPositions[randPosition];
-			std::cout << position.x << ", "<< position.y << std::endl;
+			const TileMap* map = this->screen->getMap();
+			sf::Vector2f position;
+			do
+			{
+				// add and subtract numbers here to prevent the sprite from respawning near the edge
+				position.x = rand() % static_cast<int>(map->tileSize().x * map->width() - 500) + 250;
+				position.y = rand() % static_cast<int>(map->tileSize().y * map->height() - 500) + 250;
+			} while (map->isObstacle(position));
 			sprite.setPosition(position);
 			this->add(sprite);
 		}
