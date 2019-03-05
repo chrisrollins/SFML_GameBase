@@ -4,10 +4,10 @@
 #include <cmath>
 #include "Screen.h"
 #include "GameObject.h"
-#include "SkeletonBlast.h"
+#include "ZombieBlast.h"
 #include "Citizen.h"
 #include "Bullet.h"
-#include "Soldier.h"
+#include "Mage.h"
 
 using namespace Engine;
 
@@ -27,7 +27,7 @@ class MainCharacter : public GraphicalGameObject
 	DIRECTION direction;
 	int _health = 30 * 60; // 60 frames per second
 	int maxHealth = 30 * 60;
-	int baseSpeed = 2;
+	int baseSpeed = 3;
 	int speed = 2;
 	int maxSpeed = 4;
 	int speedDecayDelay = 0;
@@ -138,7 +138,7 @@ public:
 				sf::IntRect size = this->sprite()->getTextureRect();
 				shotOrigin.x += size.width / 2;
 				shotOrigin.y += size.height / 4;
-				SkeletonBlast* blast = new SkeletonBlast(sf::Sprite(blast_texture), shotOrigin, sf::Vector2f(mousePos.x, mousePos.y));
+				ZombieBlast* blast = new ZombieBlast(sf::Sprite(blast_texture), shotOrigin, sf::Vector2f(mousePos.x, mousePos.y));
 				this->screen->add(blast);
 			}
 		}
@@ -208,7 +208,7 @@ public:
 				}
 			}
 			_health--;
-			
+
 			//speed goes back to base speed gradually
 			if (f % 6 == 0)
 			{
@@ -236,7 +236,7 @@ public:
 		else
 		{
 			imageCount.x = deathCount;
-			if (f % 20 == 0 && !this->isDead)
+			if (f % 50 == 0 && !this->isDead)
 			{
 				deathCount++;
 			}
@@ -278,7 +278,7 @@ public:
 	}
 	void takeDamage(int damage)
 	{
-		this->changeHealth(-1 * damage);		
+		this->changeHealth(-1 * damage);
 		this->sprite()->setColor(sf::Color(255, 100, 100));
 		this->colorRestoreDelay = 2;
 	}
@@ -300,14 +300,14 @@ public:
 			{
 				this->takeDamage(5);
 			}
-			else if (dynamic_cast<Soldier*>(&other))
+			else if (dynamic_cast<Mage*>(&other))
 			{
 				this->takeDamage(10);
 				this->speed = 1;
 			}
 			else if (dynamic_cast<Citizen*>(&other))
 			{
-				this->screen->remove(&other);				
+				this->screen->remove(&other);
 				float missingHealthMultiplier = 1.2f - (0.2 * (static_cast<float>(this->_health) / static_cast<float>(this->maxHealth)));
 				this->changeHealth(50 * missingHealthMultiplier);
 				this->changeSpeed(1);
