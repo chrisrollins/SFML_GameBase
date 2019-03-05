@@ -17,7 +17,7 @@ private:
 	sf::Vector2u textureSize;
 	int life = 0;
 public:
-	Bullet(sf::Vector2f pos, DIRECTION direction) : Engine::GraphicalGameObject(sf::Sprite()) 
+	Bullet(sf::Vector2f pos, DIRECTION direction) : Engine::GraphicalGameObject(sf::Sprite())
 	{
 		this->ignoreObstacles = true;
 		this->blockingCollision = false;
