@@ -203,8 +203,8 @@ namespace Engine
 					if (map->find(toRemove->getID()) != map->end())
 					{
 						GameObjectID id = toRemove->getID();
-						map->erase(id);
 						toRemove->RemovedFromScreen();
+						map->erase(id);
 						delete toRemove;
 						break;
 					}
