@@ -27,7 +27,7 @@ public:
 	{
 		static Screen levelScreen;
 		static TileMap map;
-
+		
 		map.load("map.png", "map.txt");
 		levelScreen.addMap(&map);
 

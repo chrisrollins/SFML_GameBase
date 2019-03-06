@@ -19,7 +19,7 @@ public:
 	void setCharacter(MainCharacter * mc) {
 		this->character = mc;
 
-		this->currPtr()->setSize(sf::Vector2f(this->character->getHealth() / 6, 10));
+		this->currPtr()->setSize(sf::Vector2f(this->character->getHealth() / 600, 10));
 		this->currPtr()->setPosition(50, 50);
 		this->currPtr()->setFillColor(sf::Color(sf::Color::Green)); //the last number in the sf::Color constructor is alpha (transparency). if it is less than 255 the object will be transparent.
 
@@ -27,9 +27,9 @@ public:
 	}
 	void EveryFrame(uint64_t f) {
 		if (this->character->getHealth() > this->character->getMaxHealth())
-			this->currPtr()->setSize(sf::Vector2f(this->character->getMaxHealth() / 6, 10));
+			this->currPtr()->setSize(sf::Vector2f(this->character->getMaxHealth() / 600, 10));
 		else
-			this->currPtr()->setSize(sf::Vector2f(this->character->getHealth() / 6, 10));
+			this->currPtr()->setSize(sf::Vector2f(this->character->getHealth() / 600, 10));
 
 		if (this->character->getHealth() > 15 * 60)
 			this->currPtr()->setFillColor(sf::Color(sf::Color::Green)); //the last number in the sf::Color constructor is alpha (transparency). if it is less than 255 the object will be transparent.

@@ -1,6 +1,6 @@
 #include "Menu.h"
 #include "TestLevel.h"
-
+#include "DifficultySettings.h"
 
 class EasyLevelButton : public UIButton
 {
@@ -11,6 +11,7 @@ public:
 		if (e.mouseButton.button == sf::Mouse::Button::Left //if the left mouse button was clicked
 			&& this->background.getGlobalBounds().contains(e.mouseButton.x, e.mouseButton.y)) //if the click was inside the button
 		{
+			DifficultySettings::setDifficulty(DifficultySettings::EASY);
 			mainMenu.startTestLevel();
 		}
 	}
@@ -24,6 +25,7 @@ public:
         if (e.mouseButton.button == sf::Mouse::Button::Left //if the left mouse button was clicked
             && this->background.getGlobalBounds().contains(e.mouseButton.x, e.mouseButton.y)) //if the click was inside the button
         {
+			DifficultySettings::setDifficulty(DifficultySettings::NORMAL);
             mainMenu.startTestLevel();
         }
     }
@@ -37,6 +39,7 @@ public:
         if (e.mouseButton.button == sf::Mouse::Button::Left //if the left mouse button was clicked
             && this->background.getGlobalBounds().contains(e.mouseButton.x, e.mouseButton.y)) //if the click was inside the button
         {
+			DifficultySettings::setDifficulty(DifficultySettings::HARD);
             mainMenu.startTestLevel();
         }
     }

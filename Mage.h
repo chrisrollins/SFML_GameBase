@@ -1,5 +1,5 @@
-#ifndef SOLDIER_HEADER
-#define SOLDIER_HEADER
+#ifndef MAGE_HEADER
+#define MAGE_HEADER
 
 #include "GameObject.h"
 #include "RespawnManager.h"
@@ -9,6 +9,8 @@
 #include <ctime>
 
 template<typename T> class RespawnManager;
+
+static int numMagesAlive;
 
 class Mage : public Engine::GraphicalGameObject
 {
@@ -65,6 +67,7 @@ public:
 			W_KeyHeld = false;
 			break;
 		}
+		numMagesAlive++;
 	}
 	void EveryFrame(uint64_t f)
 	{
@@ -224,8 +227,13 @@ public:
 				if (this->respawnManager) { this->respawnManager->died(this); }
 				std::cout << this->W_KeyHeld << this->A_KeyHeld << this->S_KeyHeld << this->D_KeyHeld << std::endl;
 				alive = false;
+				numMagesAlive--;
 			}
 		}
+	}
+	bool isAlive()
+	{
+		return this->alive;
 	}
 	sf::Sprite* spritePtr()
 	{
