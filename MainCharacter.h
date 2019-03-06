@@ -31,9 +31,10 @@ class MainCharacter : public GraphicalGameObject
 	DIRECTION direction;
 	int _health = 30 * 60 * 100;
 	int maxHealth = 30 * 60 * 100;
-	int healthDrain = 30;
-	int eatHeal = 5000;
-	int attackHealthCost = 0;
+	int healthDrain = 14;
+	int additionalDrainPerMage = 6;
+	int eatHeal = 3300;
+	int attackHealthCost = 20;
 	int baseSpeed = 3;
 	int speed = 3;
 	int maxSpeed = 4;
@@ -296,7 +297,8 @@ public:
 		float highHealthDrainPenalty = DifficultySettings::Player::highHealthDrainPenalty;
 		float drainPenalty = 1.0f + (highHealthDrainPenalty * (static_cast<float>(this->_health) / static_cast<float>(this->maxHealth)));
 		int baseDrain = this->healthDrain * drainPenalty;
-		int totalDrain = baseDrain + (numMagesAlive * (5 + DifficultySettings::Mage::healthDrainModifier));
+		int mageDrain = numMagesAlive * (this->additionalDrainPerMage + DifficultySettings::Mage::healthDrainModifier);
+		int totalDrain = baseDrain + mageDrain;
 		this->changeHealth(-1 * totalDrain);
 	}
 	int getHealth()

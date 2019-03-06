@@ -25,6 +25,7 @@ private:
 	bool alive;
 	int deathCount;
 	bool isShooting;
+	uint64_t internalClock = 0;
 	sf::Vector2f bullet_position;
 	int bullet_cooldown;
 	sf::Vector2u textureSize;
@@ -78,10 +79,11 @@ public:
 	}
 	void EveryFrame(uint64_t f)
 	{
+		internalClock++;
 		srand(time(0));
 		if (alive)
 		{
-			if (f % 120 == 0)
+			if (internalClock % 120 == 0)
 			{
 				switch (rand() % 4)
 				{
@@ -118,7 +120,7 @@ public:
 				this->spritePtr()->move(0, -0.5);
 				this->spritePtr()->setTextureRect(sf::IntRect(imageCount.x * textureSize.x,
 					imageCount.y * textureSize.y, textureSize.x, textureSize.y));
-				if (f % 100 == 0 && !isShooting)
+				if (internalClock % 100 == 0 && !isShooting)
 				{
 					imageCount.y = 7;
 					isShooting = true;
@@ -137,7 +139,7 @@ public:
 				this->spritePtr()->move(-0.5, 0);
 				this->spritePtr()->setTextureRect(sf::IntRect(imageCount.x * textureSize.x,
 					imageCount.y * textureSize.y, textureSize.x, textureSize.y));
-				if (f % 100 == 0 && !isShooting)
+				if (internalClock % 100 == 0 && !isShooting)
 				{
 					imageCount.y = 5;
 					isShooting = true;
@@ -155,7 +157,7 @@ public:
 				this->spritePtr()->move(0, 0.5);
 				this->spritePtr()->setTextureRect(sf::IntRect(imageCount.x * textureSize.x,
 					imageCount.y * textureSize.y, textureSize.x, textureSize.y));
-				if (f % 100 == 0 && !isShooting)
+				if (internalClock % 100 == 0 && !isShooting)
 				{
 					imageCount.y = 4;
 					isShooting = true;
@@ -175,7 +177,7 @@ public:
 				this->spritePtr()->move(0.5, 0);
 				this->spritePtr()->setTextureRect(sf::IntRect(imageCount.x * textureSize.x,
 					imageCount.y * textureSize.y, textureSize.x, textureSize.y));
-				if (f % 100 == 0 && !isShooting)
+				if (internalClock % 100 == 0 && !isShooting)
 				{
 					imageCount.y = 6;
 					isShooting = true;
@@ -194,7 +196,7 @@ public:
 				isShooting = false;
 			}
 			// how often the sprite sheet is changing
-			if (f % 15 == 0)
+			if (internalClock % 15 == 0)
 			{
 				if (imageCount.x == 3)
 					imageCount.x = 0;
@@ -215,7 +217,7 @@ public:
 			if (this->D_KeyHeld)
 				imageCount.y = 10;
 			imageCount.x = deathCount;
-			if (f % 30 == 0)
+			if (internalClock % 30 == 0)
 			{
 				deathCount++;
 			}

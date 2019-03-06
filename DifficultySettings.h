@@ -48,56 +48,57 @@ namespace DifficultySettings
 	inline void setDifficulty(DIFFICULTY diff)
 	{
 		currentDifficulty = diff;
-		Score::cumulativeBonusMultiplierCurrent = 1.0;
+		Score::cumulativeBonusMultiplierCurrent = 1.0f;
 		switch (diff)
 		{
 		case DIFFICULTY::TEST:
-			Player::missingHealthHealBonus = 0.5;
+			Player::missingHealthHealBonus = 0.6f;
 			Player::healthDrainModifier = -1000;
 			Player::maxHealthModifier = 100000;
 			Score::baseMultiplier = 0.f;
-			Score::cumulativeBonusMultiplier = 0.0;
-			Score::cumulativeBonusMultiplierMax = 0.0;
+			Score::cumulativeBonusMultiplier = 0.0f;
+			Score::cumulativeBonusMultiplierMax = 0.0f;
 			break;
 		case DIFFICULTY::EASY:
-			Player::missingHealthHealBonus = 0.25f;
+			Player::missingHealthHealBonus = 0.35f;
+			Player::highHealthDrainPenalty = 0.15f;
 			Score::baseMultiplier = 1.0f;
 			Score::cumulativeBonusMultiplier = 0.03f;
 			Score::cumulativeBonusMultiplierMax = 1.15f;
 			break;
 		case DIFFICULTY::NORMAL:
-			Player::missingHealthHealBonus = 0.2f;
+			Player::missingHealthHealBonus = 0.3f;
 			Player::healthDrainModifier = 1;
-			Player::highHealthDrainPenalty = 0.25f;
-			Player::maxHealthModifier = -7250;
-			Player::eatHealModifier = -500;
-			Player::attackHealthCostModifier = 75;
+			Player::highHealthDrainPenalty = 0.5f;
+			Player::maxHealthModifier = -7500;
+			Player::eatHealModifier = -300;
+			Player::attackHealthCostModifier = 70;
 			Mage::attackDamageModifier = 10;
 			Mage::attackRateModifier = 5;
-			Mage::touchDamageModifier = 15;
+			Mage::touchDamageModifier = 20;
 			Mage::movementSpeedModifier = 1;
-			Mage::healthDrainModifier = 2;
+			Mage::healthDrainModifier = 3;
 			Citizen::movementSpeedModifier = 1;
 			Score::baseMultiplier = 2.0f;
 			Score::cumulativeBonusMultiplier = 0.06f;
-			Score::cumulativeBonusMultiplierMax = 1.4f;
+			Score::cumulativeBonusMultiplierMax = 1.3f;
 			break;
 		case DIFFICULTY::HARD:
-			Player::missingHealthHealBonus = 0.1f;
-			Player::healthDrainModifier = 3;
-			Player::highHealthDrainPenalty = 2.45f;
-			Player::maxHealthModifier = -9750;
-			Player::eatHealModifier = -800;
-			Player::attackHealthCostModifier = 175;
-			Mage::attackDamageModifier = 75;
+			Player::missingHealthHealBonus = 0.22f;
+			Player::healthDrainModifier = 1;
+			Player::highHealthDrainPenalty = 5.0f;
+			Player::maxHealthModifier = -9300;
+			Player::eatHealModifier = -450;
+			Player::attackHealthCostModifier = 200;
+			Mage::attackDamageModifier = 80;
 			Mage::attackRateModifier = 5;
-			Mage::touchDamageModifier = 100;
+			Mage::touchDamageModifier = 95;
 			Mage::movementSpeedModifier = 2;
 			Mage::healthDrainModifier = 7;
 			Citizen::movementSpeedModifier = 1;
 			Score::baseMultiplier = 9.0f;
-			Score::cumulativeBonusMultiplier = 0.1f;
-			Score::cumulativeBonusMultiplierMax = 2.8f;
+			Score::cumulativeBonusMultiplier = 0.07f;
+			Score::cumulativeBonusMultiplierMax = 2.7f;
 			break;
 		default:
 			break;
