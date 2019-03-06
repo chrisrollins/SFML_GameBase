@@ -232,14 +232,6 @@ public:
 			this->drain(f);
 			if (f % 120 == 0) { this->score += DifficultySettings::Score::applyMultipliers(1); }
 
-			if (f % 300 == 0)
-			{
-				std::cout << "base: " << DifficultySettings::Score::baseMultiplier << std::endl;
-				std::cout << "cumulative current: " << DifficultySettings::Score::cumulativeBonusMultiplierCurrent << std::endl;
-				std::cout << "cumulative max: " << DifficultySettings::Score::cumulativeBonusMultiplierMax << std::endl;
-				std::cout << "applyMultipliers(1): " << DifficultySettings::Score::applyMultipliers(1) << std::endl;
-			}
-
 			//speed goes back to base speed gradually
 			if (f % 6 == 0)
 			{
