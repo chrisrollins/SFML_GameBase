@@ -29,7 +29,6 @@ public:
 	}
 
 private:
-	std::vector<sf::Vector2f> respawnPositions;
 	std::map<Engine::GameObjectID, T*> characters;
 	int max;
 	int respawnSpeed;
@@ -38,10 +37,11 @@ private:
 	void EveryFrame(uint64_t frameNumber)
 	{
 		if (this->characters.size() >= this->max) { return; } //don't spawn if at max
-		srand(frameNumber * 7); // use frameNumber as seed
+		srand(frameNumber * this->getID()); // use frameNumber and ID as seed
 		if (cooldown == 0)
 		{
-			cooldown = respawnSpeed;
+			cooldown = respawnSpeed + ((rand() % 120) - 60); //randomize respawn rate +/- 1 second
+			if (cooldown <= 10) { cooldown = 10; }
 			const TileMap* map = this->screen->getMap();
 			sf::Vector2f position;
 			do
@@ -61,7 +61,7 @@ private:
 
 	void add(sf::Sprite& sprite)
 	{
-		T* ptr = new T(sprite);
+		T* ptr = new T(sprite, this);
 		this->screen->add(ptr);
 		this->characters[ptr->getID()] = ptr;
 	}

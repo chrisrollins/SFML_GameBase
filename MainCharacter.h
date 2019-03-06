@@ -2,6 +2,7 @@
 #define MAIN_CHARACTER_HEADER
 
 #include <cmath>
+#include "Score.h"
 #include "Screen.h"
 #include "GameObject.h"
 #include "ZombieBlast.h"
@@ -39,6 +40,7 @@ class MainCharacter : public GraphicalGameObject
 	int speedDecayDelay = 0;
 	int speedRestoreDelay = 0;
 	int colorRestoreDelay = 0;
+	Score score;
 public:
 	MainCharacter(sf::Sprite s) : GraphicalGameObject(s)
 	{
@@ -59,11 +61,19 @@ public:
 		deathCount = 0;
 		isDead = false;
 
+		//set up the score object
+		this->score = 0;
+		Engine::scorePtr = &this->score;
+
 		//difficulty adjustments
 		this->maxHealth += DifficultySettings::Player::maxHealthModifier;
 		this->eatHeal += DifficultySettings::Player::eatHealModifier;
 		this->healthDrain += DifficultySettings::Player::healthDrainModifier;
 		this->attackHealthCost += DifficultySettings::Player::attackHealthCostModifier;
+	}
+	void AddedToScreen()
+	{
+		this->screen->addUIObject(&this->score);
 	}
 	void KeyPressed(sf::Event e)
 	{
@@ -220,6 +230,15 @@ public:
 			}
 			meleeAttackCounter++;
 			this->drain(f);
+			if (f % 120 == 0) { this->score += DifficultySettings::Score::applyMultipliers(1); }
+
+			if (f % 300 == 0)
+			{
+				std::cout << "base: " << DifficultySettings::Score::baseMultiplier << std::endl;
+				std::cout << "cumulative current: " << DifficultySettings::Score::cumulativeBonusMultiplierCurrent << std::endl;
+				std::cout << "cumulative max: " << DifficultySettings::Score::cumulativeBonusMultiplierMax << std::endl;
+				std::cout << "applyMultipliers(1): " << DifficultySettings::Score::applyMultipliers(1) << std::endl;
+			}
 
 			//speed goes back to base speed gradually
 			if (f % 6 == 0)
@@ -331,16 +350,21 @@ public:
 				this->takeDamage(1000 + DifficultySettings::Mage::touchDamageModifier);
 				this->speed = 1;
 			}
-			else if (dynamic_cast<Citizen*>(&other))
+			else if (Citizen* citizen = dynamic_cast<Citizen*>(&other))
 			{
-				this->screen->remove(&other);
+				citizen->die();
 				float missingHealthBonus = DifficultySettings::Player::missingHealthHealBonus;
 				float missingHealthMultiplier = (1.0f + missingHealthBonus) - (missingHealthBonus * (static_cast<float>(this->_health) / static_cast<float>(this->maxHealth)));
 				this->changeHealth(this->eatHeal * missingHealthMultiplier);
 				this->changeSpeed(1);
 				this->speedDecayDelay = 60;
+				this->score += DifficultySettings::Score::applyMultipliers(10);
 			}
 		}
+	}
+	void changeScore(int change)
+	{
+		this->score += change;
 	}
 	sf::Sprite* sprite()
 	{

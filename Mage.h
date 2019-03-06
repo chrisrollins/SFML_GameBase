@@ -6,7 +6,9 @@
 #include "ZombieBlast.h"
 #include "Bullet.h"
 #include "Screen.h"
+#include "DifficultySettings.h"
 #include <ctime>
+#include <cmath>
 
 template<typename T> class RespawnManager;
 
@@ -30,7 +32,12 @@ private:
 	sf::Vector2u currentImage;
 	RespawnManager<Mage>* respawnManager = nullptr;
 public:
-	Mage(sf::Sprite r) : Engine::GraphicalGameObject(r)
+	Mage(sf::Sprite s, RespawnManager<Mage>* respawnManager) : Mage(s)
+	{
+		this->respawnManager = respawnManager;
+	}
+
+	Mage(sf::Sprite s) : Engine::GraphicalGameObject(s)
 	{
 		textureSize = this->spritePtr()->getTexture()->getSize();
 		textureSize.x /= 4;
@@ -228,6 +235,8 @@ public:
 				std::cout << this->W_KeyHeld << this->A_KeyHeld << this->S_KeyHeld << this->D_KeyHeld << std::endl;
 				alive = false;
 				numMagesAlive--;
+				DifficultySettings::Score::cumulativeBonusMultiplierCurrent = fmin(DifficultySettings::Score::cumulativeBonusMultiplierMax, DifficultySettings::Score::cumulativeBonusMultiplierCurrent + DifficultySettings::Score::cumulativeBonusMultiplier);
+				(*Engine::scorePtr) += DifficultySettings::Score::applyMultipliers(20);
 			}
 		}
 	}

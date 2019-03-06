@@ -36,6 +36,8 @@ namespace Engine
 		virtual void TouchEnded(sf::Event event);             ///< A touch event ended (data in event.touch)
 		virtual void SensorChanged(sf::Event event);          ///< A sensor value changed (data in event.sensor)
 		virtual void EveryFrame(uint64_t frameNumber); //runs every frame if implemented
+		virtual void AddedToScreen(); //triggers when the object is added to the screen
+		virtual void RemovedFromScreen(); //triggers when the object is removed from the screen
 		GameObjectID getID() { return this->id; }
 	private:
 		GameObject(GameObjectID id);

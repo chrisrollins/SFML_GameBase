@@ -32,6 +32,7 @@ namespace Engine
 	{
 		this->add(mainCharacter);
 		this->mainCharacter = mainCharacter;
+		mainCharacter->AddedToScreen();
 	}
 
 	GameObject* Screen::getMainCharacter() const
@@ -44,12 +45,14 @@ namespace Engine
 		GameObjectMap& map = (dynamic_cast<GraphicalGameObject*>(gameObject)) ? this->g_objects : this->objects;
 		map[gameObject->getID()] = gameObject;
 		gameObject->screen = this;
+		gameObject->AddedToScreen();
 	}
 
 	void Screen::addUIObject(GameObject* uiObj)
 	{
 		this->ui_objects[uiObj->getID()] = uiObj;
 		uiObj->screen = this;
+		uiObj->AddedToScreen();
 	}
 
 	void Screen::remove(GameObject* gameObject)
@@ -201,6 +204,7 @@ namespace Engine
 					{
 						GameObjectID id = toRemove->getID();
 						map->erase(id);
+						toRemove->RemovedFromScreen();
 						delete toRemove;
 						break;
 					}

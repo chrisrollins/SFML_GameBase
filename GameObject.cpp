@@ -166,4 +166,12 @@ namespace Engine
 	{
 
 	}
+	void GameObject::AddedToScreen()
+	{
+
+	}
+	void GameObject::RemovedFromScreen()
+	{
+
+	}
 }

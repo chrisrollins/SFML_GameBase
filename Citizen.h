@@ -24,7 +24,12 @@ private:
 	RespawnManager<Citizen>* respawnManager = nullptr;
 public:
 
-	Citizen(sf::Sprite r) : Engine::GraphicalGameObject(r)
+	Citizen(sf::Sprite s, RespawnManager<Citizen>* respawnManager) : Citizen(s)
+	{
+		this->respawnManager = respawnManager;
+	}
+
+	Citizen(sf::Sprite s) : Engine::GraphicalGameObject(s)
 	{
 		textureSize = this->spritePtr()->getTexture()->getSize();
 		textureSize.x /= 3;
@@ -135,9 +140,14 @@ public:
 	{
 		if (dynamic_cast<ZombieBlast*>(&other))
 		{
-			if (this->respawnManager) { this->respawnManager->died(this); }
-			this->screen->remove(this);
+			(*Engine::scorePtr) += DifficultySettings::Score::applyMultipliers(1);
+			this->die();
 		}
+	}
+	void die()
+	{
+		if (this->respawnManager) { this->respawnManager->died(this); }
+		this->screen->remove(this);
 	}
 	sf::Sprite* spritePtr()
 	{

@@ -93,10 +93,7 @@ public:
 		static HealthBar healthbar;
 		healthbar.setCharacter(mc_ptr);
 		levelScreen.addUIObject(&healthbar);
-
-		static Score s(0, sf::Color::Cyan, 32, 1000, 0);
-		levelScreen.addUIObject(&s);
-
+		
 		levelScreen.render();
 	}
 };
