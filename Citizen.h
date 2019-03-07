@@ -5,6 +5,8 @@
 #include "RespawnManager.h"
 #include "ZombieBlast.h"
 #include "Screen.h"
+#include "DifficultySettings.h"
+#include "Score.h"
 
 template<typename T> class RespawnManager;
 
