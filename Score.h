@@ -61,6 +61,11 @@ namespace Engine
 				count++;
 				n /= 10;
 			}
+			if (f % 60 == 0)
+			{
+				DifficultySettings::Score::baseMultiplier += DifficultySettings::Score::multiplierPerSecond;
+				if (DifficultySettings::Score::baseMultiplier < 0.5f) { DifficultySettings::Score::baseMultiplier = 0.5f; }
+			}
 			this->setPosition(1000 - (count + 11) * 16, 0);
 		}
 	private:

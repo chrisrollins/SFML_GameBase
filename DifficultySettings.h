@@ -9,6 +9,7 @@ namespace DifficultySettings
 	{
 		static int maxHealthModifier;
 		static int eatHealModifier;
+		static int eatDrainFreezeDuration;
 		static float missingHealthHealBonus;
 		static int healthDrainModifier;
 		static float highHealthDrainPenalty;
@@ -31,13 +32,15 @@ namespace DifficultySettings
 
 	namespace Score
 	{
+		static float multiplierPerSecond;
 		static float baseMultiplier;
 		static float cumulativeBonusMultiplier;
 		static float cumulativeBonusMultiplierCurrent;
 		static float cumulativeBonusMultiplierMax;
 		inline int applyMultipliers(int baseIncrease)
 		{
-			return baseIncrease * cumulativeBonusMultiplierCurrent * baseMultiplier;
+			int result = baseIncrease * cumulativeBonusMultiplierCurrent * baseMultiplier;
+			return (result > 0) ? result : 1;
 		}
 	}
 
@@ -55,21 +58,26 @@ namespace DifficultySettings
 			Player::missingHealthHealBonus = 0.6f;
 			Player::healthDrainModifier = -1000;
 			Player::maxHealthModifier = 100000;
+			Player::eatDrainFreezeDuration = 7;
 			Score::baseMultiplier = 0.f;
 			Score::cumulativeBonusMultiplier = 0.0f;
 			Score::cumulativeBonusMultiplierMax = 0.0f;
+			Score::multiplierPerSecond = 0.0f;
 			break;
 		case DIFFICULTY::EASY:
-			Player::missingHealthHealBonus = 0.35f;
+			Player::missingHealthHealBonus = 0.6f;
 			Player::highHealthDrainPenalty = 0.15f;
+			Player::eatDrainFreezeDuration = 9;
 			Score::baseMultiplier = 1.0f;
 			Score::cumulativeBonusMultiplier = 0.03f;
 			Score::cumulativeBonusMultiplierMax = 1.15f;
+			Score::multiplierPerSecond = -0.003f;
 			break;
 		case DIFFICULTY::NORMAL:
 			Player::missingHealthHealBonus = 0.3f;
 			Player::healthDrainModifier = 1;
 			Player::highHealthDrainPenalty = 0.5f;
+			Player::eatDrainFreezeDuration = 8;
 			Player::maxHealthModifier = -7500;
 			Player::eatHealModifier = -300;
 			Player::attackHealthCostModifier = 70;
@@ -79,26 +87,29 @@ namespace DifficultySettings
 			Mage::movementSpeedModifier = 1;
 			Mage::healthDrainModifier = 3;
 			Citizen::movementSpeedModifier = 1;
-			Score::baseMultiplier = 2.0f;
+			Score::baseMultiplier = 1.97f;
 			Score::cumulativeBonusMultiplier = 0.06f;
 			Score::cumulativeBonusMultiplierMax = 1.3f;
+			Score::multiplierPerSecond = 0.0005f;
 			break;
 		case DIFFICULTY::HARD:
-			Player::missingHealthHealBonus = 0.22f;
+			Player::missingHealthHealBonus = 0.20f;
 			Player::healthDrainModifier = 1;
 			Player::highHealthDrainPenalty = 5.0f;
+			Player::eatDrainFreezeDuration = 7;
 			Player::maxHealthModifier = -9300;
 			Player::eatHealModifier = -450;
-			Player::attackHealthCostModifier = 200;
+			Player::attackHealthCostModifier = 260;
 			Mage::attackDamageModifier = 80;
 			Mage::attackRateModifier = 5;
 			Mage::touchDamageModifier = 95;
 			Mage::movementSpeedModifier = 2;
 			Mage::healthDrainModifier = 7;
 			Citizen::movementSpeedModifier = 1;
-			Score::baseMultiplier = 9.0f;
+			Score::baseMultiplier = 8.0f;
 			Score::cumulativeBonusMultiplier = 0.07f;
-			Score::cumulativeBonusMultiplierMax = 2.7f;
+			Score::cumulativeBonusMultiplierMax = 5.4f;
+			Score::multiplierPerSecond = 0.006f;
 			break;
 		default:
 			break;

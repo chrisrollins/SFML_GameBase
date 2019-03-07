@@ -31,10 +31,11 @@ class MainCharacter : public GraphicalGameObject
 	DIRECTION direction;
 	int _health = 30 * 60 * 100;
 	int maxHealth = 30 * 60 * 100;
-	int healthDrain = 14;
+	int healthDrain = 16;
 	int additionalDrainPerMage = 6;
-	int eatHeal = 3300;
-	int attackHealthCost = 20;
+	int eatHeal = 4500;
+	int eatDrainFreezeCountdown = 0;
+	int attackHealthCost = 30;
 	int baseSpeed = 3;
 	int speed = 3;
 	int maxSpeed = 4;
@@ -230,7 +231,7 @@ public:
 				}
 			}
 			meleeAttackCounter++;
-			this->drain(f);
+			this->drain();
 			if (f % 120 == 0) { this->score += DifficultySettings::Score::applyMultipliers(1); }
 
 			//speed goes back to base speed gradually
@@ -292,8 +293,13 @@ public:
 				imageCount.y * textureSize.y, textureSize.x, textureSize.y));
 		}
 	}
-	void drain(uint64_t f)
+	void drain()
 	{
+		if(this->eatDrainFreezeCountdown > 0)
+		{
+			this->eatDrainFreezeCountdown--;
+			return;
+		}
 		float highHealthDrainPenalty = DifficultySettings::Player::highHealthDrainPenalty;
 		float drainPenalty = 1.0f + (highHealthDrainPenalty * (static_cast<float>(this->_health) / static_cast<float>(this->maxHealth)));
 		int baseDrain = this->healthDrain * drainPenalty;
@@ -353,6 +359,7 @@ public:
 				this->changeSpeed(1);
 				this->speedDecayDelay = 60;
 				this->score += DifficultySettings::Score::applyMultipliers(10);
+				this->eatDrainFreezeCountdown = DifficultySettings::Player::eatDrainFreezeDuration;
 			}
 		}
 	}
