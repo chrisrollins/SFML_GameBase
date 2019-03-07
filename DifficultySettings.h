@@ -39,7 +39,7 @@ namespace DifficultySettings
 		static float cumulativeBonusMultiplierMax;
 		inline int applyMultipliers(int baseIncrease)
 		{
-			int result = baseIncrease * cumulativeBonusMultiplierCurrent * baseMultiplier;
+			int result = baseIncrease * static_cast<int>(cumulativeBonusMultiplierCurrent * baseMultiplier);
 			return (result > 0) ? result : 1;
 		}
 	}

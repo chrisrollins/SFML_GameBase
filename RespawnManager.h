@@ -30,14 +30,14 @@ public:
 
 private:
 	std::map<Engine::GameObjectID, T*> characters;
-	int max;
+	size_t max;
 	int respawnSpeed;
 	int cooldown = 0;
 	sf::Sprite sprite;
 	void EveryFrame(uint64_t frameNumber)
 	{
 		if (this->characters.size() >= this->max) { return; } //don't spawn if at max
-		srand(frameNumber * this->getID()); // use frameNumber and ID as seed
+		srand(static_cast<int>(frameNumber * this->getID())); // use frameNumber and ID as seed
 		if (cooldown == 0)
 		{
 			cooldown = respawnSpeed + ((rand() % 120) - 60); //randomize respawn rate +/- 1 second
@@ -47,8 +47,8 @@ private:
 			do
 			{
 				// add and subtract numbers here to prevent the sprite from respawning near the edge
-				position.x = rand() % static_cast<int>(map->tileSize().x * map->width() - 500) + 250;
-				position.y = rand() % static_cast<int>(map->tileSize().y * map->height() - 500) + 250;
+				position.x = static_cast<float>( rand() % static_cast<int>(map->tileSize().x * map->width() - 500) + 250 );
+				position.y = static_cast<float>( rand() % static_cast<int>(map->tileSize().y * map->height() - 500) + 250 );
 			} while (map->isObstacle(position));
 			sprite.setPosition(position);
 			this->add(sprite);

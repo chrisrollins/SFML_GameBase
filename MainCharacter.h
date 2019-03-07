@@ -54,11 +54,11 @@ public:
 			imageCount.y * textureSize.y, textureSize.x, textureSize.y));
 		blast_texture.loadFromFile("blast.png");
 		sf::IntRect size = this->sprite()->getTextureRect();
-		sf::Vector2f collisionSizeRatio(0.4, 0.3); //these numbers shrink the collision size of the player, and the code below adjusts it to be positioned at the bottom of the sprite
-		this->obstacleCollisionSize.width = size.width * collisionSizeRatio.x;
-		this->obstacleCollisionSize.height = size.height * collisionSizeRatio.y;
-		this->obstacleCollisionSize.left = ((1 - collisionSizeRatio.x) * size.width) / 2;
-		this->obstacleCollisionSize.top = ((1 - collisionSizeRatio.y) * size.height);
+		sf::Vector2f collisionSizeRatio(0.4f, 0.3f); //these numbers shrink the collision size of the player, and the code below adjusts it to be positioned at the bottom of the sprite
+		this->obstacleCollisionSize.width = static_cast<float>(size.width) * collisionSizeRatio.x;
+		this->obstacleCollisionSize.height = static_cast<float>(size.height) * collisionSizeRatio.y;
+		this->obstacleCollisionSize.left = ((1.f - collisionSizeRatio.x) * static_cast<float>(size.width)) / 2.f;
+		this->obstacleCollisionSize.top = ((1.f - collisionSizeRatio.y) * static_cast<float>(size.height));
 		meleeAttack = false;
 		deathCount = 0;
 		isDead = false;
@@ -160,9 +160,9 @@ public:
 				sf::Vector2f distance = static_cast<sf::Vector2f>(mousePos) - this->sprite()->getPosition();
 				sf::Vector2f shotOrigin = this->sprite()->getPosition();
 				sf::IntRect size = this->sprite()->getTextureRect();
-				shotOrigin.x += size.width / 2;
-				shotOrigin.y += size.height / 4;
-				ZombieBlast* blast = new ZombieBlast(sf::Sprite(blast_texture), shotOrigin, sf::Vector2f(mousePos.x, mousePos.y));
+				shotOrigin.x += static_cast<float>(size.width / 2);
+				shotOrigin.y += static_cast<float>(size.height / 4);
+				ZombieBlast* blast = new ZombieBlast(sf::Sprite(blast_texture), shotOrigin, sf::Vector2f(static_cast<float>(mousePos.x), static_cast<float>(mousePos.y)));
 				this->screen->add(blast);
 			}
 		}
@@ -202,6 +202,7 @@ public:
 			}
 			if (!meleeAttack)
 			{
+				float fSpeed = static_cast<float>(this->speed);
 				if (f % 20 == 0)
 				{
 					if (imageCount.x == 3)
@@ -212,22 +213,22 @@ public:
 				if (this->W_KeyHeld)
 				{
 					imageCount.y = 3;
-					s->move(0, -1 * this->speed);
+					s->move(0.f, -1.f * fSpeed);
 				}
 				if (this->A_KeyHeld)
 				{
 					imageCount.y = 1;
-					s->move(-1 * this->speed, 0);
+					s->move(-1.f * fSpeed, 0.f);
 				}
 				if (this->S_KeyHeld)
 				{
 					imageCount.y = 0;
-					s->move(0, this->speed);
+					s->move(0.f, fSpeed);
 				}
 				if (this->D_KeyHeld)
 				{
 					imageCount.y = 2;
-					s->move(this->speed, 0);
+					s->move(fSpeed, 0.f);
 				}
 			}
 			meleeAttackCounter++;
@@ -302,7 +303,7 @@ public:
 		}
 		float highHealthDrainPenalty = DifficultySettings::Player::highHealthDrainPenalty;
 		float drainPenalty = 1.0f + (highHealthDrainPenalty * (static_cast<float>(this->_health) / static_cast<float>(this->maxHealth)));
-		int baseDrain = this->healthDrain * drainPenalty;
+		int baseDrain = static_cast<int>(static_cast<float>(this->healthDrain) * drainPenalty);
 		int mageDrain = numMagesAlive * (this->additionalDrainPerMage + DifficultySettings::Mage::healthDrainModifier);
 		int totalDrain = baseDrain + mageDrain;
 		this->changeHealth(-1 * totalDrain);
@@ -355,7 +356,7 @@ public:
 				citizen->die();
 				float missingHealthBonus = DifficultySettings::Player::missingHealthHealBonus;
 				float missingHealthMultiplier = (1.0f + missingHealthBonus) - (missingHealthBonus * (static_cast<float>(this->_health) / static_cast<float>(this->maxHealth)));
-				this->changeHealth(this->eatHeal * missingHealthMultiplier);
+				this->changeHealth( static_cast<int>( static_cast<float>(this->eatHeal) * missingHealthMultiplier ));
 				this->changeSpeed(1);
 				this->speedDecayDelay = 60;
 				this->score += DifficultySettings::Score::applyMultipliers(10);

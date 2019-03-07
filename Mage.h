@@ -80,11 +80,35 @@ public:
 	void EveryFrame(uint64_t f)
 	{
 		internalClock++;
-		srand(time(0));
+		srand(static_cast<unsigned int>(time(0) * this->getID()));
 		if (alive)
 		{
 			if (internalClock % 120 == 0)
 			{
+				//new mage movement code work in progress
+				/*GraphicalGameObject* player = dynamic_cast<GraphicalGameObject*>(this->screen->getMainCharacter());
+				sf::Vector2f playerPosition = dynamic_cast<sf::Transformable*>(player->getGraphic())->getPosition();
+				sf::Vector2f myPosition = this->spritePtr()->getPosition();
+				DIRECTION xDirection = (playerPosition.x > myPosition.x) ? DIRECTION::RIGHT : DIRECTION::LEFT;
+				DIRECTION yDirection = (playerPosition.y > myPosition.y) ? DIRECTION::DOWN : DIRECTION::UP;
+				float a = (playerPosition.x - myPosition.x);
+				float b = (playerPosition.y - myPosition.y);
+				float distance = sqrt(a*a + b*b);
+				if (distance > 500.f)
+				{
+					int choice = rand() % 5;
+					if (choice < 2)
+					{
+						if (xDirection == DIRECTION::RIGHT) { this->D_KeyHeld = true; }
+						else { this->A_KeyHeld = true; }
+					}
+					else if (choice < 4)
+					{
+						if (yDirection == DIRECTION::DOWN) { this->S_KeyHeld = true; }
+						else { this->W_KeyHeld = true; }
+					}
+				}*/
+
 				switch (rand() % 4)
 				{
 				case 0:

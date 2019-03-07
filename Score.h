@@ -66,7 +66,7 @@ namespace Engine
 				DifficultySettings::Score::baseMultiplier += DifficultySettings::Score::multiplierPerSecond;
 				if (DifficultySettings::Score::baseMultiplier < 0.5f) { DifficultySettings::Score::baseMultiplier = 0.5f; }
 			}
-			this->setPosition(1000 - (count + 11) * 16, 0);
+			this->setPosition(static_cast<float>(1000 - (count + 11) * 16), 0.f);
 		}
 	private:
 		int number = 0;

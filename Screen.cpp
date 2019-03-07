@@ -65,7 +65,7 @@ namespace Engine
 		if (!windowPtr) { return sf::Vector2i(0, 0); }
 		sf::Vector2i pixelPos = sf::Mouse::getPosition(*windowPtr);
 		sf::Vector2f worldPos = windowPtr->mapPixelToCoords(pixelPos, windowPtr->getView());
-		return sf::Vector2i(worldPos.x, worldPos.y);
+		return sf::Vector2i(static_cast<int>(worldPos.x), static_cast<int>(worldPos.y));
 	}
 
 	const TileMap* Screen::getMap() const
@@ -88,7 +88,7 @@ namespace Engine
 		unsigned int height = (Screen::windowHeight) ? Screen::windowHeight : 500;
 		const char* title = (Screen::windowTitle) ? Screen::windowTitle : "<no title>";
 		static sf::RenderWindow window(sf::VideoMode(width, height), title);
-		static sf::View view(sf::Vector2f(width / 2, height / 2), sf::Vector2f(width, height));
+		static sf::View view(sf::Vector2f(static_cast<float>(width / 2), static_cast<float>(height / 2)), sf::Vector2f(static_cast<float>(width), static_cast<float>(height)));
 		static sf::Clock clock;
 		static uint64_t frameCount = 0;
 
@@ -232,7 +232,7 @@ namespace Engine
 				if (event.type == sf::Event::Resized)
 				{
 					// update the view to the new size of the window
-					sf::FloatRect visibleArea(0.f, 0.f, event.size.width, event.size.height);
+					sf::FloatRect visibleArea(0.f, 0.f, static_cast<float>(event.size.width), static_cast<float>(event.size.height));
 					view = sf::View(visibleArea);
 				}
 				//handle events on each object
@@ -268,27 +268,27 @@ namespace Engine
 					{
 						sf::Vector2u size(0, 0);
 						if (sf::Sprite* sprite = dynamic_cast<sf::Sprite*>(obj->getGraphic())) { size = sf::Vector2u(sprite->getTextureRect().width, sprite->getTextureRect().height); }
-#define X (transformable->getPosition().x)
-#define Y (transformable->getPosition().y)
-						if (X < 0) { transformable->setPosition(0.f, Y); }
-						if (Y < 0) { transformable->setPosition(X, 0.f); }
-						if (Y + size.y > MAP_HEIGHT) { transformable->setPosition(X, MAP_HEIGHT - size.y); }
-						if (X + size.x > MAP_WIDTH) { transformable->setPosition(MAP_WIDTH - size.x, Y); }
+						#define X (transformable->getPosition().x)
+						#define Y (transformable->getPosition().y)
+						if (X < 0.f) { transformable->setPosition(0.f, Y); }
+						if (Y < 0.f) { transformable->setPosition(X, 0.f); }
+						if (Y + size.y > MAP_HEIGHT) { transformable->setPosition(X, static_cast<float>(MAP_HEIGHT - size.y)); }
+						if (X + size.x > MAP_WIDTH) { transformable->setPosition(static_cast<float>(MAP_WIDTH - size.x), Y); }
 
-						sf::Vector2f offsets(0, 0);
-						if (obj->obstacleCollisionSize.width > 0 && obj->obstacleCollisionSize.height > 0)
+						sf::Vector2f offsets(0.f, 0.f);
+						if (obj->obstacleCollisionSize.width > 0.f && obj->obstacleCollisionSize.height > 0.f)
 						{
 							offsets.x = obj->obstacleCollisionSize.left;
 							offsets.y = obj->obstacleCollisionSize.top;
-							size.x = obj->obstacleCollisionSize.width;
-							size.y = obj->obstacleCollisionSize.height;
+							size.x = static_cast<unsigned int>(obj->obstacleCollisionSize.width);
+							size.y = static_cast<unsigned int>(obj->obstacleCollisionSize.height);
 						}
 
 						sf::Vector2f corners[4] = {
-							{X + offsets.x          , Y + offsets.y          },
-							{X + size.x + offsets.x , Y + offsets.y          },
-							{X + offsets.x          , Y + size.y + offsets.y },
-							{X + size.x + offsets.x , Y + size.y + offsets.y }
+							{X + static_cast<float>(offsets.x)          , Y + static_cast<float>(offsets.y)          },
+							{X + static_cast<float>(size.x + offsets.x) , Y + static_cast<float>(offsets.y)          },
+							{X + static_cast<float>(offsets.x)          , Y + static_cast<float>(size.y + offsets.y) },
+							{X + static_cast<float>(size.x + offsets.x) , Y + static_cast<float>(size.y + offsets.y) }
 						};
 
 						for (auto corner : corners)
@@ -297,8 +297,8 @@ namespace Engine
 						}
 
 						obj->lastPos = { X , Y };
-#undef X
-#undef Y
+						#undef X
+						#undef Y
 					}
 				}
 				obj->draw(window);
@@ -312,7 +312,7 @@ namespace Engine
 				if (!transformable) { continue; }
 				sf::Vector2f viewPos = window.getView().getCenter();
 				sf::Vector2f screenPosition = transformable->getPosition();
-				transformable->setPosition(viewPos - sf::Vector2f(currentScreen->windowWidth / 2, currentScreen->windowHeight / 2) + screenPosition);
+				transformable->setPosition(viewPos - sf::Vector2f(static_cast<float>(currentScreen->windowWidth / 2), static_cast<float>(currentScreen->windowHeight / 2)) + screenPosition);
 				obj->draw(window);
 				transformable->setPosition(screenPosition);
 			}
@@ -343,51 +343,57 @@ namespace Engine
 			{
 				if (const sf::Transformable* graphicAsTransformable = dynamic_cast<const sf::Transformable*>(mainCharGraphical->getGraphic()))
 				{
-					if (graphicAsTransformable->getPosition().x > windowWidth / 2 && graphicAsTransformable->getPosition().x < MAP_WIDTH - windowWidth / 2
-						&& graphicAsTransformable->getPosition().y > windowHeight / 2 && graphicAsTransformable->getPosition().y < MAP_HEIGHT - windowHeight / 2)
+					sf::Vector2f pos = graphicAsTransformable->getPosition();
+					float x = pos.x;
+					float y = pos.y;
+					float fWidth = static_cast<float>(MAP_WIDTH);
+					float fHeight = static_cast<float>(MAP_HEIGHT);
+					float halfWidth = static_cast<float>(windowWidth / 2);
+					float halfHeight = static_cast<float>(windowHeight / 2);
+					if (x > halfWidth && x < (fWidth - halfWidth)
+						&& y > halfHeight && y < (fHeight - halfHeight))
 					{
-						view.setCenter(graphicAsTransformable->getPosition());
+						view.setCenter(pos);
 					}
-					else if (graphicAsTransformable->getPosition().x >= 0 && graphicAsTransformable->getPosition().x <= windowWidth / 2 &&
-						graphicAsTransformable->getPosition().y >= 0 && graphicAsTransformable->getPosition().y <= windowHeight / 2)
-
+					else if (x >= 0.f && x <= halfWidth &&
+						y >= 0.f && y <= halfHeight)
 					{
-						view.setCenter(windowWidth / 2, windowHeight / 2);
+						view.setCenter(halfWidth, halfHeight);
 					}
-					else if (graphicAsTransformable->getPosition().x >= 0 && graphicAsTransformable->getPosition().x <= windowWidth / 2 &&
-						graphicAsTransformable->getPosition().y >= MAP_HEIGHT - windowHeight / 2 && graphicAsTransformable->getPosition().y <= MAP_HEIGHT)
+					else if (x >= 0.f && x <= halfWidth &&
+						y >= fHeight - halfHeight && y <= fHeight)
 					{
-						view.setCenter(windowWidth / 2, MAP_HEIGHT - windowHeight / 2);
+						view.setCenter(halfWidth, fHeight - halfHeight);
 					}
-					else if (graphicAsTransformable->getPosition().x >= MAP_WIDTH - windowWidth / 2 && graphicAsTransformable->getPosition().x <= MAP_WIDTH &&
-						graphicAsTransformable->getPosition().y >= 0 && graphicAsTransformable->getPosition().y <= windowHeight / 2)
+					else if (x >= fWidth - halfWidth && x <= fWidth &&
+						y >= 0.f && y <= halfHeight)
 					{
-						view.setCenter(MAP_WIDTH - windowWidth / 2, windowHeight / 2);
+						view.setCenter(fWidth - halfWidth, halfHeight);
 					}
-					else if (graphicAsTransformable->getPosition().x >= MAP_WIDTH - windowWidth / 2 && graphicAsTransformable->getPosition().x <= MAP_WIDTH &&
-						graphicAsTransformable->getPosition().y >= MAP_HEIGHT - windowHeight / 2 && graphicAsTransformable->getPosition().y <= MAP_HEIGHT)
+					else if (x >= fWidth - halfWidth && x <= fWidth &&
+						y >= fHeight - halfHeight && y <= fHeight)
 					{
-						view.setCenter(MAP_WIDTH - windowWidth / 2, MAP_HEIGHT - windowHeight / 2);
+						view.setCenter(fWidth - halfWidth, fHeight - halfHeight);
 					}
-					else if (graphicAsTransformable->getPosition().x > windowWidth / 2 && graphicAsTransformable->getPosition().x < MAP_WIDTH - windowWidth / 2 &&
-						graphicAsTransformable->getPosition().y >= 0 && graphicAsTransformable->getPosition().y <= windowHeight / 2)
+					else if (x > halfWidth && x < fWidth - halfWidth &&
+						y >= 0.f && y <= halfHeight)
 					{
-						view.setCenter(graphicAsTransformable->getPosition().x, windowHeight / 2);
+						view.setCenter(x, halfHeight);
 					}
-					else if (graphicAsTransformable->getPosition().x > windowWidth / 2 && graphicAsTransformable->getPosition().x < MAP_WIDTH - windowWidth / 2 &&
-						graphicAsTransformable->getPosition().y >= MAP_HEIGHT - windowHeight / 2 && graphicAsTransformable->getPosition().y <= MAP_HEIGHT)
+					else if (x > halfWidth && x < fWidth - halfWidth &&
+						y >= fHeight - halfHeight && y <= fHeight)
 					{
-						view.setCenter(graphicAsTransformable->getPosition().x, MAP_HEIGHT - windowHeight / 2);
+						view.setCenter(x, fHeight - halfHeight);
 					}
-					else if (graphicAsTransformable->getPosition().x >= 0 && graphicAsTransformable->getPosition().x <= windowWidth / 2 &&
-						graphicAsTransformable->getPosition().y > windowHeight / 2 && graphicAsTransformable->getPosition().y < MAP_HEIGHT - windowHeight / 2)
+					else if (x >= 0.f && x <= halfWidth &&
+						y > halfHeight && y < fHeight - halfHeight)
 					{
-						view.setCenter(windowWidth / 2, graphicAsTransformable->getPosition().y);
+						view.setCenter(halfWidth, y);
 					}
-					else if (graphicAsTransformable->getPosition().x >= MAP_WIDTH - windowWidth / 2 && graphicAsTransformable->getPosition().x <= MAP_WIDTH &&
-						graphicAsTransformable->getPosition().y > windowHeight / 2 && graphicAsTransformable->getPosition().y < MAP_HEIGHT - windowHeight / 2)
+					else if (x >= fWidth - halfWidth && x <= fWidth &&
+						y > halfHeight && y < MAP_HEIGHT - halfHeight)
 					{
-						view.setCenter(MAP_WIDTH - windowWidth / 2, graphicAsTransformable->getPosition().y);
+						view.setCenter(fWidth - halfWidth, y);
 					}
 				}
 			}

@@ -20,21 +20,23 @@ public:
 
 	void setCharacter(MainCharacter * mc) {
 		this->character = mc;
-
-		this->maxPtr()->setSize(sf::Vector2f(this->character->getHealth() / 600, 10));
-		this->currPtr()->setSize(sf::Vector2f(this->character->getHealth() / 600, 10));
-		this->currPtr()->setPosition(50, 50);
+		float fHealth = static_cast<float>(this->character->getHealth());
+		this->maxPtr()->setSize(sf::Vector2f(fHealth / 600.f, 10.f));
+		this->currPtr()->setSize(sf::Vector2f(fHealth / 600, 10.f));
+		this->currPtr()->setPosition(50.f, 50.f);
 		this->currPtr()->setFillColor(sf::Color(sf::Color::Green));
 
 
 	}
 	void EveryFrame(uint64_t f) {
+		float fMaxHealth = static_cast<float>(this->character->getMaxHealth());
+		float fCurrHealth = static_cast<float>(this->character->getHealth());
 		if (this->character->getHealth() > this->character->getMaxHealth())
-			this->currPtr()->setSize(sf::Vector2f(this->character->getMaxHealth() / 600, 10));
+			this->currPtr()->setSize(sf::Vector2f(fMaxHealth / 600.f, 10.f));
 		else
-			this->currPtr()->setSize(sf::Vector2f(this->character->getHealth() / 600, 10));
+			this->currPtr()->setSize(sf::Vector2f(fCurrHealth / 600.f, 10.f));
 
-		if (this->character->getHealth() > 15 * 60)
+		if (this->character->getHealth() > (this->character->getMaxHealth() / 2))
 			this->currPtr()->setFillColor(sf::Color(sf::Color::Green));
 		else
 			this->currPtr()->setFillColor(sf::Color(sf::Color::Red));
