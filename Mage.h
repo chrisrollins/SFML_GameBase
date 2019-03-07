@@ -9,6 +9,8 @@
 #include "DifficultySettings.h"
 #include <ctime>
 #include <cmath>
+#include "DifficultySettings.h"
+#include "Score.h"
 
 template<typename T> class RespawnManager;
 
