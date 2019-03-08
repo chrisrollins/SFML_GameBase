@@ -7,10 +7,10 @@
 #include "GameObject.h"
 #include "ZombieBlast.h"
 #include "Citizen.h"
-#include "Bullet.h"
 #include "Mage.h"
 #include "DifficultySettings.h"
 #include "MageBlast.h"
+#include "AntiMagePotion.h"
 
 using namespace Engine;
 
@@ -35,6 +35,8 @@ class MainCharacter : public GraphicalGameObject
 	bool startDeath;
 	bool isDead; // true when the zombie turns to invisible
 	DIRECTION direction;
+	int potionNum;
+	int maxPotionNum = 5;
 	int _health = 30 * 60 * 100;
 	int maxHealth = 30 * 60 * 100;
 	int healthDrain = 16;
@@ -65,6 +67,7 @@ public:
 		this->obstacleCollisionSize.height = static_cast<float>(size.height) * collisionSizeRatio.y;
 		this->obstacleCollisionSize.left = ((1.f - collisionSizeRatio.x) * static_cast<float>(size.width)) / 2.f;
 		this->obstacleCollisionSize.top = ((1.f - collisionSizeRatio.y) * static_cast<float>(size.height));
+		potionNum = 0;
 		meleeAttack = false;
 		startDeath = false;
 		deathCount = 0;
@@ -162,7 +165,7 @@ public:
 				this->sprite()->setTextureRect(sf::IntRect(imageCount.x * textureSize.x,
 					imageCount.y * textureSize.y, textureSize.x, textureSize.y));
 			}
-			else
+			else if (potionNum > 0)
 			{
 				this->screen->getSoundPlayer()->play(SoundEffect::ID::ZombieAttack, 40.f);
 				if (this->_health > 0.2 * this->maxHealth) { this->changeHealth(-1 * attackHealthCost); } //health cost of ranged attack only applies if health is above 20%
@@ -174,6 +177,7 @@ public:
 				shotOrigin.y += static_cast<float>(size.height / 4);
 				ZombieBlast* blast = new ZombieBlast(sf::Sprite(blast_texture), shotOrigin, sf::Vector2f(static_cast<float>(mousePos.x), static_cast<float>(mousePos.y)));
 				this->screen->add(blast);
+				potionNum--;
 			}
 		}
 	}
@@ -365,6 +369,15 @@ public:
 		this->_health += change;
 		if (this->_health > this->maxHealth) { this->_health = this->maxHealth; }
 	}
+	void addPotionNum()
+	{
+		this->potionNum++;
+		if (this->potionNum > this->maxPotionNum) { this->potionNum = this->maxPotionNum; }
+	}
+	int getPotionNum() const
+	{
+		return this->potionNum;
+	}
 	void changeSpeed(int change)
 	{
 		this->speed += change;
@@ -430,6 +443,12 @@ public:
 				this->speedDecayDelay = 60;
 				this->score += DifficultySettings::Score::applyMultipliers(10);
 				this->eatDrainFreezeCountdown = DifficultySettings::Player::eatDrainFreezeDuration;
+			}
+			else if (AntiMagePotion* potion = dynamic_cast<AntiMagePotion*>(&other))
+			{
+				this->screen->getSoundPlayer()->play(SoundEffect::ID::Potion, 40.f);
+				this->addPotionNum();
+				potion->die();
 			}
 		}
 	}
