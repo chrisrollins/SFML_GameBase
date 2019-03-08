@@ -232,6 +232,7 @@ public:
 		}
 		else
 		{
+			this->screen->getSoundPlayer()->play(SoundEffect::MageDeath, 1.f);
 			if (this->W_KeyHeld)
 			{
 				imageCount.y = 11;
@@ -265,6 +266,7 @@ public:
 				numMagesAlive--;
 				DifficultySettings::Score::cumulativeBonusMultiplierCurrent = fmin(DifficultySettings::Score::cumulativeBonusMultiplierMax, DifficultySettings::Score::cumulativeBonusMultiplierCurrent + DifficultySettings::Score::cumulativeBonusMultiplier);
 				(*Engine::scorePtr) += DifficultySettings::Score::applyMultipliers(20);
+				this->screen->getSoundPlayer()->removeStoppedSounds();
 			}
 		}
 	}
