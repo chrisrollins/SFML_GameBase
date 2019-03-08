@@ -15,7 +15,7 @@ public:
 		this->maxPtr()->setOutlineColor(sf::Color(0, 0, 0, 100));
 		this->currPtr()->setOutlineThickness(3);
 		this->currPtr()->setOutlineColor(sf::Color(0, 0, 0, 100));
-
+		isAlarming = false;
 	}
 
 	void setCharacter(MainCharacter * mc) {
@@ -32,14 +32,36 @@ public:
 		float fMaxHealth = static_cast<float>(this->character->getMaxHealth());
 		float fCurrHealth = static_cast<float>(this->character->getHealth());
 		if (this->character->getHealth() > this->character->getMaxHealth())
+		{
 			this->currPtr()->setSize(sf::Vector2f(fMaxHealth / 600.f, 10.f));
+		}
 		else
+		{
 			this->currPtr()->setSize(sf::Vector2f(fCurrHealth / 600.f, 10.f));
+		}
 
 		if (this->character->getHealth() > (this->character->getMaxHealth() / 2))
+		{
 			this->currPtr()->setFillColor(sf::Color(sf::Color::Green));
+		}
 		else
+		{
+			if (character->getHealth() > 0)
+			{
+				if (!isAlarming)
+				{
+					isAlarming = true;
+					alarmClock.restart();
+					this->screen->getSoundPlayer()->play(SoundEffect::Alarm, 20.f);
+				}
+				else if (alarmClock.getElapsedTime().asSeconds() > 3.5)
+				{
+					isAlarming = false;
+				}
+			}
+			this->screen->getSoundPlayer()->removeStoppedSounds();
 			this->currPtr()->setFillColor(sf::Color(sf::Color::Red));
+		}
 	}
 	void draw(sf::RenderWindow& win)
 	{
@@ -55,6 +77,8 @@ private:
 	sf::RectangleShape* currPtr() { return dynamic_cast<sf::RectangleShape*>(this->getGraphic()); }
 	MainCharacter * character = nullptr;
 	sf::RectangleShape maxHealthBar;
+	sf::Clock alarmClock;
+	bool isAlarming;
 };
 
 #endif /* HealthBar_h */
