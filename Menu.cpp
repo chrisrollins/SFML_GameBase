@@ -13,7 +13,7 @@ public:
 		{
 			DifficultySettings::setDifficulty(DifficultySettings::EASY);
 			mainMenu.startTestLevel();
-			this->screen->getSoundPlayer()->play(SoundEffect::MenuClick, 20.f);
+			this->screen->getSoundPlayer()->play(SoundEffect::ID::MenuClick, 20.f);
 			this->screen->getMusicPlayer()->stop();
 			this->screen->getMusicPlayer()->play(Music::EasyGame);
 		}
