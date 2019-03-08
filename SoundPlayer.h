@@ -16,6 +16,7 @@ namespace SoundEffect
 		ZombieGroan,
 		ZombieDeath,
 		MageDeath,
+		Potion,
 		Trap,
 		Alarm,
 		MenuClick
@@ -52,6 +53,7 @@ public:
 		mSoundContainer.loadSoundEffect(SoundEffect::ID::ZombieGroan, "zombie_hurt.ogg");
 		mSoundContainer.loadSoundEffect(SoundEffect::ID::ZombieDeath, "zombie_death.ogg");
 		mSoundContainer.loadSoundEffect(SoundEffect::ID::MageDeath, "mage_death.ogg");
+		mSoundContainer.loadSoundEffect(SoundEffect::ID::Potion, "potion.ogg");
 		mSoundContainer.loadSoundEffect(SoundEffect::ID::Trap, "trap.ogg");
 		mSoundContainer.loadSoundEffect(SoundEffect::ID::Alarm, "alarm.ogg");
 		mSoundContainer.loadSoundEffect(SoundEffect::ID::MenuClick, "menu_buttonclick.ogg");
