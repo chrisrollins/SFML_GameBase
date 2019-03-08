@@ -160,7 +160,7 @@ public:
 			}
 			else
 			{
-				this->screen->getSoundPlayer()->play(SoundEffect::ZombieAttack, 10.f);
+				this->screen->getSoundPlayer()->play(SoundEffect::ID::ZombieAttack, 10.f);
 				if (this->_health > 0.2 * this->maxHealth) { this->changeHealth(-1 * attackHealthCost); } //health cost of ranged attack only applies if health is above 20%
 				sf::Vector2i mousePos = this->screen->getMousePosition();
 				sf::Vector2f distance = static_cast<sf::Vector2f>(mousePos) - this->sprite()->getPosition();
@@ -270,7 +270,7 @@ public:
 			if (!startDeath) 
 			{ 
 				startDeath = true; 
-				this->screen->getSoundPlayer()->play(SoundEffect::ZombieDeath, 60.f);
+				this->screen->getSoundPlayer()->play(SoundEffect::ID::ZombieDeath, 60.f);
 				this->screen->getSoundPlayer()->removeStoppedSounds();
 			}
 			imageCount.x = deathCount;
@@ -359,7 +359,7 @@ public:
 				{
 					isHurt = true;
 					hurtClock.restart();
-					this->screen->getSoundPlayer()->play(SoundEffect::ZombieGroan, 15.f);
+					this->screen->getSoundPlayer()->play(SoundEffect::ID::ZombieGroan, 15.f);
 				}
 				else if (hurtClock.getElapsedTime().asSeconds() > 0.5)
 				{
@@ -390,13 +390,13 @@ public:
 				switch (randSound)
 				{
 				case 0:
-					this->screen->getSoundPlayer()->play(SoundEffect::ZombieEat1, 50.f);
+					this->screen->getSoundPlayer()->play(SoundEffect::ID::ZombieEat1, 50.f);
 					break;
 				case 1:
-					this->screen->getSoundPlayer()->play(SoundEffect::ZombieEat2, 50.f);
+					this->screen->getSoundPlayer()->play(SoundEffect::ID::ZombieEat2, 50.f);
 					break;
 				case 2:
-					this->screen->getSoundPlayer()->play(SoundEffect::ZombieEat3, 30.f);
+					this->screen->getSoundPlayer()->play(SoundEffect::ID::ZombieEat3, 30.f);
 					break;
 				default:
 					break;
