@@ -32,10 +32,17 @@ public:
 	}
 	void EveryFrame(uint64_t f)
 	{
-		this->spritePtr()->move(this->movePerFrame);
+		sf::Sprite* spr = this->spritePtr();
+		spr->move(this->movePerFrame);
+		spr->rotate(3.f);
+		spr->setScale(cos(static_cast<float>(this->life)), sin(static_cast<float>(this->life)));
 		this->life--;
-		this->spritePtr()->rotate(3.f);
-		this->spritePtr()->setScale(cos(static_cast<float>(this->life)), sin(static_cast<float>(this->life)));
+		if (this->life <= 20)
+		{
+			sf::Color currentColor = spr->getColor();
+			currentColor.a -= (currentColor.a > 13) ? 13 : currentColor.a;
+			spr->setColor(currentColor);
+		}
 		if (this->life <= 0)
 		{
 			this->screen->remove(this);

@@ -39,9 +39,9 @@ class MainCharacter : public GraphicalGameObject
 	int maxPotionNum = 5;
 	int _health = 30 * 60 * 100;
 	int maxHealth = 30 * 60 * 100;
-	int healthDrain = 16;
-	int additionalDrainPerMage = 6;
-	int eatHeal = 4500;
+	int healthDrain = 13;
+	int additionalDrainPerMage = 2;
+	int eatHeal = 5100;
 	int eatDrainFreezeCountdown = 0;
 	int attackHealthCost = 30;
 	int baseSpeed = 3;
@@ -399,7 +399,7 @@ public:
 				{
 					isHurt = false;
 				}
-				this->takeDamage(500 + DifficultySettings::Mage::attackDamageModifier);
+				this->takeDamage(750 + DifficultySettings::Mage::attackDamageModifier);
 			}
 			else if (Mage* mage = dynamic_cast<Mage*>(&other))
 			{

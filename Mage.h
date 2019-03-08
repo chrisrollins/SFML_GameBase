@@ -194,7 +194,7 @@ public:
 			{
 				sf::Vector2f pos = this->spritePtr()->getPosition();
 				sf::Vector2f playerPos = dynamic_cast<sf::Transformable*>(dynamic_cast<GraphicalGameObject*>(this->screen->getMainCharacter())->getGraphic())->getPosition();
-				MageBlast* blast = new MageBlast(pos, playerPos, 2.5 + static_cast<double>(DifficultySettings::Mage::blastSpeedModifier), 110);
+				MageBlast* blast = new MageBlast(pos, playerPos, 2.5 + static_cast<double>(DifficultySettings::Mage::blastSpeedModifier), 130);
 				this->screen->add(blast);
 			}
 

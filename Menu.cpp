@@ -40,7 +40,7 @@ public:
 
 class HardLevelButton : public UIButton {
 public:
-	HardLevelButton() : UIButton("Hard", { 412.f, 322.f }, { 200.f, 75.f }) {}
+	HardLevelButton() : UIButton("Insane", { 412.f, 322.f }, { 200.f, 75.f }) {}
 	void MouseButtonReleased(sf::Event e)
 	{
 		if (e.mouseButton.button == sf::Mouse::Button::Left //if the left mouse button was clicked
