@@ -66,12 +66,12 @@ namespace DifficultySettings
 			break;
 		case DIFFICULTY::EASY:
 			Player::missingHealthHealBonus = 0.6f;
-			Player::highHealthDrainPenalty = 0.15f;
+			Player::highHealthDrainPenalty = 0.2f;
 			Player::eatDrainFreezeDuration = 9;
 			Score::baseMultiplier = 1.0f;
 			Score::cumulativeBonusMultiplier = 0.03f;
 			Score::cumulativeBonusMultiplierMax = 1.15f;
-			Score::multiplierPerSecond = -0.003f;
+			Score::multiplierPerSecond = -0.002f;
 			break;
 		case DIFFICULTY::NORMAL:
 			Player::missingHealthHealBonus = 0.3f;

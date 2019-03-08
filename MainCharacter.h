@@ -271,7 +271,6 @@ public:
 			{ 
 				startDeath = true; 
 				this->screen->getSoundPlayer()->play(SoundEffect::ID::ZombieDeath, 60.f);
-				this->screen->getSoundPlayer()->removeStoppedSounds();
 			}
 			imageCount.x = deathCount;
 			if (f % 50 == 0 && !this->isDead)

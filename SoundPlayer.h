@@ -4,6 +4,7 @@
 #include "SFML/Audio.hpp"
 #include <list>
 #include <map>
+#include <thread>
 
 namespace SoundEffect
 {
@@ -58,6 +59,7 @@ public:
 		mSounds.push_back(sf::Sound(mSoundContainer.getSoundBuffer(effect)));
 		mSounds.back().setVolume(volume);
 		mSounds.back().play();
+		removeStoppedSounds();
 	}
 	void removeStoppedSounds()
 	{

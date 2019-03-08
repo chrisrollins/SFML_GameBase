@@ -44,6 +44,10 @@ public:
 		{
 			this->currPtr()->setFillColor(sf::Color(sf::Color::Green));
 		}
+		else if (this->character->getHealth() > (this->character->getMaxHealth() / 4))
+		{
+			this->currPtr()->setFillColor(sf::Color(sf::Color::Yellow));
+		}
 		else
 		{
 			if (character->getHealth() > 0)
@@ -59,7 +63,6 @@ public:
 					isAlarming = false;
 				}
 			}
-			this->screen->getSoundPlayer()->removeStoppedSounds();
 			this->currPtr()->setFillColor(sf::Color(sf::Color::Red));
 		}
 	}
