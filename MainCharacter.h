@@ -10,6 +10,7 @@
 #include "Bullet.h"
 #include "Mage.h"
 #include "DifficultySettings.h"
+#include "MageBlast.h"
 
 using namespace Engine;
 
@@ -373,7 +374,7 @@ public:
 	void Collision(GraphicalGameObject& other)
 	{
 		if (_health > 0) {
-			if (dynamic_cast<Bullet*>(&other))
+			if (dynamic_cast<MageBlast*>(&other))
 			{
 				if (!isHurt)
 				{

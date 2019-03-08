@@ -1,14 +1,14 @@
 #ifndef MAGE_HEADER
 #define MAGE_HEADER
 
+#include <ctime>
+#include <cmath>
 #include "GameObject.h"
 #include "RespawnManager.h"
 #include "ZombieBlast.h"
 #include "Bullet.h"
+#include "MageBlast.h"
 #include "Screen.h"
-#include "DifficultySettings.h"
-#include <ctime>
-#include <cmath>
 #include "DifficultySettings.h"
 #include "Score.h"
 
@@ -87,56 +87,30 @@ public:
 		{
 			if (internalClock % 120 == 0)
 			{
-				//new mage movement code work in progress
-				/*GraphicalGameObject* player = dynamic_cast<GraphicalGameObject*>(this->screen->getMainCharacter());
+				GraphicalGameObject* player = dynamic_cast<GraphicalGameObject*>(this->screen->getMainCharacter());
 				sf::Vector2f playerPosition = dynamic_cast<sf::Transformable*>(player->getGraphic())->getPosition();
 				sf::Vector2f myPosition = this->spritePtr()->getPosition();
 				DIRECTION xDirection = (playerPosition.x > myPosition.x) ? DIRECTION::RIGHT : DIRECTION::LEFT;
 				DIRECTION yDirection = (playerPosition.y > myPosition.y) ? DIRECTION::DOWN : DIRECTION::UP;
 				float a = (playerPosition.x - myPosition.x);
 				float b = (playerPosition.y - myPosition.y);
-				float distance = sqrt(a*a + b*b);
-				if (distance > 500.f)
-				{
-					int choice = rand() % 5;
-					if (choice < 2)
-					{
-						if (xDirection == DIRECTION::RIGHT) { this->D_KeyHeld = true; }
-						else { this->A_KeyHeld = true; }
-					}
-					else if (choice < 4)
-					{
-						if (yDirection == DIRECTION::DOWN) { this->S_KeyHeld = true; }
-						else { this->W_KeyHeld = true; }
-					}
-				}*/
+				float distance = sqrt(a*a + b * b);
 
-				switch (rand() % 4)
+				this->W_KeyHeld = false;
+				this->A_KeyHeld = false;
+				this->S_KeyHeld = false;
+				this->D_KeyHeld = false;
+
+				int choice = rand() % 2;
+				if (choice == 0)
 				{
-				case 0:
-					W_KeyHeld = true;
-					A_KeyHeld = false;
-					S_KeyHeld = false;
-					D_KeyHeld = false;
-					break;
-				case 1:
-					A_KeyHeld = true;
-					W_KeyHeld = false;
-					S_KeyHeld = false;
-					D_KeyHeld = false;
-					break;
-				case 2:
-					S_KeyHeld = true;
-					A_KeyHeld = false;
-					W_KeyHeld = false;
-					D_KeyHeld = false;
-					break;
-				case 3:
-					D_KeyHeld = true;
-					A_KeyHeld = false;
-					S_KeyHeld = false;
-					W_KeyHeld = false;
-					break;
+					if (xDirection == DIRECTION::RIGHT) { this->D_KeyHeld = true; }
+					else { this->A_KeyHeld = true; }
+				}
+				else
+				{
+					if (yDirection == DIRECTION::DOWN) { this->S_KeyHeld = true; }
+					else { this->W_KeyHeld = true; }
 				}
 			}
 			if (this->W_KeyHeld)
@@ -153,8 +127,8 @@ public:
 					bullet_cooldown = 0;
 					bullet_position = this->spritePtr()->getPosition();
 					bullet_position.x += textureSize.x / 4;
-					Bullet* bullet = new Bullet(bullet_position, DIRECTION::UP);
-					this->screen->add(bullet);
+					//Bullet* bullet = new Bullet(bullet_position, DIRECTION::UP);
+					//this->screen->add(bullet);
 				}
 
 			}
@@ -172,8 +146,8 @@ public:
 					bullet_cooldown = 0;
 					bullet_position = this->spritePtr()->getPosition();
 					bullet_position.y += textureSize.y / 4;
-					Bullet* bullet = new Bullet(bullet_position, DIRECTION::LEFT);
-					this->screen->add(bullet);
+					//Bullet* bullet = new Bullet(bullet_position, DIRECTION::LEFT);
+					//this->screen->add(bullet);
 				}
 			}
 			if (this->S_KeyHeld)
@@ -191,8 +165,8 @@ public:
 					bullet_position = this->spritePtr()->getPosition();
 					bullet_position.x += textureSize.x / 4;
 					bullet_position.y += textureSize.y;
-					Bullet* bullet = new Bullet(bullet_position, DIRECTION::DOWN);
-					this->screen->add(bullet);
+					//Bullet* bullet = new Bullet(bullet_position, DIRECTION::DOWN);
+					//this->screen->add(bullet);
 				}
 			}
 			if (this->D_KeyHeld)
@@ -211,10 +185,20 @@ public:
 					bullet_position = this->spritePtr()->getPosition();
 					bullet_position.x += textureSize.x;
 					bullet_position.y += textureSize.y / 4;
-					Bullet* bullet = new Bullet(bullet_position, DIRECTION::RIGHT);
-					this->screen->add(bullet);
+					//Bullet* bullet = new Bullet(bullet_position, DIRECTION::RIGHT);
+					//this->screen->add(bullet);
 				}
 			}
+
+
+			if (this->internalClock % 100 == 0)
+			{
+				sf::Vector2f pos = this->spritePtr()->getPosition();
+				sf::Vector2f playerPos = dynamic_cast<sf::Transformable*>(dynamic_cast<GraphicalGameObject*>(this->screen->getMainCharacter())->getGraphic())->getPosition();
+				MageBlast* blast = new MageBlast(pos, playerPos, 2.5 + static_cast<double>(DifficultySettings::Mage::blastSpeedModifier), 110);
+				this->screen->add(blast);
+			}
+
 			// shooting delay
 			bullet_cooldown++;
 			if (bullet_cooldown == 50)
@@ -260,7 +244,7 @@ public:
 			if (dynamic_cast<ZombieBlast*>(&other))
 			{
 				if (this->respawnManager) { this->respawnManager->died(this); }
-				std::cout << this->W_KeyHeld << this->A_KeyHeld << this->S_KeyHeld << this->D_KeyHeld << std::endl;
+				//std::cout << this->W_KeyHeld << this->A_KeyHeld << this->S_KeyHeld << this->D_KeyHeld << std::endl;
 				alive = false;
 				numMagesAlive--;
 				DifficultySettings::Score::cumulativeBonusMultiplierCurrent = fmin(DifficultySettings::Score::cumulativeBonusMultiplierMax, DifficultySettings::Score::cumulativeBonusMultiplierCurrent + DifficultySettings::Score::cumulativeBonusMultiplier);

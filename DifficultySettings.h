@@ -26,10 +26,10 @@ namespace DifficultySettings
 	namespace Mage
 	{
 		static int attackDamageModifier;
-		static int attackRateModifier;
 		static int touchDamageModifier;
 		static int movementSpeedModifier;
 		static int healthDrainModifier;
+		static float blastSpeedModifier;
 	}
 
 	namespace Citizen
@@ -77,12 +77,12 @@ namespace DifficultySettings
 			Map::picture = "tileset.png";
 			Map::fileName = "map_easy.txt";
 			Player::missingHealthHealBonus = 0.6f;
-			Player::highHealthDrainPenalty = 0.15f;
+			Player::highHealthDrainPenalty = 0.2f;
 			Player::eatDrainFreezeDuration = 9;
 			Score::baseMultiplier = 1.0f;
 			Score::cumulativeBonusMultiplier = 0.03f;
 			Score::cumulativeBonusMultiplierMax = 1.15f;
-			Score::multiplierPerSecond = -0.003f;
+			Score::multiplierPerSecond = -0.002f;
 			break;
 		case DIFFICULTY::NORMAL:
 			Map::picture = "tileset.png";
@@ -95,7 +95,7 @@ namespace DifficultySettings
 			Player::eatHealModifier = -300;
 			Player::attackHealthCostModifier = 70;
 			Mage::attackDamageModifier = 10;
-			Mage::attackRateModifier = 5;
+			Mage::blastSpeedModifier = 0.25f;
 			Mage::touchDamageModifier = 20;
 			Mage::movementSpeedModifier = 1;
 			Mage::healthDrainModifier = 3;
@@ -116,14 +116,14 @@ namespace DifficultySettings
 			Player::eatHealModifier = -450;
 			Player::attackHealthCostModifier = 260;
 			Mage::attackDamageModifier = 80;
-			Mage::attackRateModifier = 5;
+			Mage::blastSpeedModifier = 1.5f;
 			Mage::touchDamageModifier = 95;
 			Mage::movementSpeedModifier = 2;
 			Mage::healthDrainModifier = 7;
 			Citizen::movementSpeedModifier = 1;
-			Score::baseMultiplier = 8.0f;
-			Score::cumulativeBonusMultiplier = 0.07f;
-			Score::cumulativeBonusMultiplierMax = 5.4f;
+			Score::baseMultiplier = 2.0f;
+			Score::cumulativeBonusMultiplier = 0.02f;
+			Score::cumulativeBonusMultiplierMax = 10.f;
 			Score::multiplierPerSecond = 0.006f;
 			break;
 		default:

@@ -50,7 +50,7 @@ public:
 			this->spritePtr()->move(2, 0);
 		}
 		this->life++;
-		if (this->life == 60)
+		if (this->life == 120)
 		{
 			this->screen->remove(this);
 		}
