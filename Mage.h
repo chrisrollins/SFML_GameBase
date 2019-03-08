@@ -265,7 +265,7 @@ public:
 				numMagesAlive--;
 				DifficultySettings::Score::cumulativeBonusMultiplierCurrent = fmin(DifficultySettings::Score::cumulativeBonusMultiplierMax, DifficultySettings::Score::cumulativeBonusMultiplierCurrent + DifficultySettings::Score::cumulativeBonusMultiplier);
 				(*Engine::scorePtr) += DifficultySettings::Score::applyMultipliers(20);
-				this->screen->getSoundPlayer()->play(SoundEffect::ID::MageDeath, 1.f);
+				this->screen->getSoundPlayer()->play(SoundEffect::ID::MageDeath, 30.f);
 			}
 		}
 	}
