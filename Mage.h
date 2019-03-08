@@ -232,7 +232,7 @@ public:
 		}
 		else
 		{
-			this->screen->getSoundPlayer()->play(SoundEffect::MageDeath, 1.f);
+			this->screen->getSoundPlayer()->play(SoundEffect::ID::MageDeath, 1.f);
 			if (this->W_KeyHeld)
 			{
 				imageCount.y = 11;
