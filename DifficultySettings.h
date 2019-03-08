@@ -1,8 +1,15 @@
 #ifndef DIFFICULTY_SETTINGS_HEADER
 #define DIFFICULTY_SETTINGS_HEADER
 
+#include <string>
+
 namespace DifficultySettings
 {
+	namespace Map
+	{
+		static std::string picture;
+		static std::string fileName;
+	}
 	// modifiers are added to the base value
 	// example: Player::maxHealthModifier increases (if positive) or decreases (if negative) the player's max health
 	namespace Player
@@ -55,6 +62,8 @@ namespace DifficultySettings
 		switch (diff)
 		{
 		case DIFFICULTY::TEST:
+			Map::picture = "tileset.png";
+			Map::fileName = "map_easy.txt";
 			Player::missingHealthHealBonus = 0.6f;
 			Player::healthDrainModifier = -1000;
 			Player::maxHealthModifier = 100000;
@@ -65,15 +74,19 @@ namespace DifficultySettings
 			Score::multiplierPerSecond = 0.0f;
 			break;
 		case DIFFICULTY::EASY:
+			Map::picture = "tileset.png";
+			Map::fileName = "map_easy.txt";
 			Player::missingHealthHealBonus = 0.6f;
-			Player::highHealthDrainPenalty = 0.2f;
+			Player::highHealthDrainPenalty = 0.15f;
 			Player::eatDrainFreezeDuration = 9;
 			Score::baseMultiplier = 1.0f;
 			Score::cumulativeBonusMultiplier = 0.03f;
 			Score::cumulativeBonusMultiplierMax = 1.15f;
-			Score::multiplierPerSecond = -0.002f;
+			Score::multiplierPerSecond = -0.003f;
 			break;
 		case DIFFICULTY::NORMAL:
+			Map::picture = "tileset.png";
+			Map::fileName = "map_normal.txt";
 			Player::missingHealthHealBonus = 0.3f;
 			Player::healthDrainModifier = 1;
 			Player::highHealthDrainPenalty = 0.5f;
@@ -93,6 +106,8 @@ namespace DifficultySettings
 			Score::multiplierPerSecond = 0.0005f;
 			break;
 		case DIFFICULTY::HARD:
+			Map::picture = "tileset.png";
+			Map::fileName = "map_insane.txt";
 			Player::missingHealthHealBonus = 0.20f;
 			Player::healthDrainModifier = 1;
 			Player::highHealthDrainPenalty = 5.0f;
