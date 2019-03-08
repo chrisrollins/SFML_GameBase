@@ -18,10 +18,10 @@ public:
 	{
 		this->ignoreObstacles = true;
 		this->blockingCollision = false;
-		double radians = atan2( D(clickPos.y - pos.y), D(clickPos.x - pos.x));
-		this->distance = sf::Vector2f( F(cos(radians)), F(sin(radians)));
-		this->spritePtr()->rotate( F(radians * (180 / 3.141592653589793) - 180.0) );
-		this->spritePtr()->setPosition( pos.x + (this->distance.x * 15.f), pos.y + (this->distance.y * 15.f) );
+		double radians = atan2(D(clickPos.y - pos.y), D(clickPos.x - pos.x));
+		this->distance = sf::Vector2f(F(cos(radians)), F(sin(radians)));
+		this->spritePtr()->rotate(F(radians * (180 / 3.141592653589793) - 180.0));
+		this->spritePtr()->setPosition(pos.x + (this->distance.x * 15.f), pos.y + (this->distance.y * 15.f));
 		blast_life = 0;
 	}
 	void EveryFrame(uint64_t f)

@@ -10,6 +10,7 @@
 #include "GameObject.h"
 #include "MainCharacter.h"
 #include "Mage.h"
+#include "AntiMagePotion.h"
 #include "Citizen.h"
 #include "SampleUIObject.h"
 #include "SampleUIText.h"
@@ -39,6 +40,13 @@ public:
 		m_Sprite.setTexture(m_Texture);
 		MainCharacter* mc_ptr = new MainCharacter(m_Sprite);
 		levelScreen.addMainCharacter(mc_ptr);
+
+		static sf::Texture potion_texture;
+		potion_texture.loadFromFile("antimage_potion.png");
+		sf::Sprite potion;
+		potion.setTexture(potion_texture);
+		static RespawnManager<AntiMagePotion> potionMng(potion, 10, 200);
+		levelScreen.add(&potionMng);
 
 		static sf::Texture citizen_boy_texture;
 		citizen_boy_texture.loadFromFile("boy.png");
