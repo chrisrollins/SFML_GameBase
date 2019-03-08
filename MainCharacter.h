@@ -26,7 +26,10 @@ class MainCharacter : public GraphicalGameObject
 	bool meleeAttack;
 	int meleeAttackDuration = 20;
 	int meleeAttackCounter = 0;
+	bool isHurt;
+	sf::Clock hurtClock;
 	int deathCount; // to control death animation
+	bool startDeath;
 	bool isDead; // true when the zombie turns to invisible
 	DIRECTION direction;
 	int _health = 30 * 60 * 100;
@@ -60,7 +63,9 @@ public:
 		this->obstacleCollisionSize.left = ((1.f - collisionSizeRatio.x) * static_cast<float>(size.width)) / 2.f;
 		this->obstacleCollisionSize.top = ((1.f - collisionSizeRatio.y) * static_cast<float>(size.height));
 		meleeAttack = false;
+		startDeath = false;
 		deathCount = 0;
+		isHurt = false;
 		isDead = false;
 
 		//set up the score object
@@ -155,6 +160,7 @@ public:
 			}
 			else
 			{
+				this->screen->getSoundPlayer()->play(SoundEffect::ZombieAttack, 10.f);
 				if (this->_health > 0.2 * this->maxHealth) { this->changeHealth(-1 * attackHealthCost); } //health cost of ranged attack only applies if health is above 20%
 				sf::Vector2i mousePos = this->screen->getMousePosition();
 				sf::Vector2f distance = static_cast<sf::Vector2f>(mousePos) - this->sprite()->getPosition();
@@ -261,6 +267,12 @@ public:
 		}
 		else
 		{
+			if (!startDeath) 
+			{ 
+				startDeath = true; 
+				this->screen->getSoundPlayer()->play(SoundEffect::ZombieDeath, 60.f);
+				this->screen->getSoundPlayer()->removeStoppedSounds();
+			}
 			imageCount.x = deathCount;
 			if (f % 50 == 0 && !this->isDead)
 			{
@@ -296,7 +308,7 @@ public:
 	}
 	void drain()
 	{
-		if(this->eatDrainFreezeCountdown > 0)
+		if (this->eatDrainFreezeCountdown > 0)
 		{
 			this->eatDrainFreezeCountdown--;
 			return;
@@ -343,20 +355,56 @@ public:
 		if (_health > 0) {
 			if (dynamic_cast<Bullet*>(&other))
 			{
+				if (!isHurt)
+				{
+					isHurt = true;
+					hurtClock.restart();
+					this->screen->getSoundPlayer()->play(SoundEffect::ZombieGroan, 15.f);
+				}
+				else if (hurtClock.getElapsedTime().asSeconds() > 0.5)
+				{
+					isHurt = false;
+				}
 				this->takeDamage(500 + DifficultySettings::Mage::attackDamageModifier);
 			}
 			else if (Mage* mage = dynamic_cast<Mage*>(&other))
 			{
+				if (!isHurt)
+				{
+					isHurt = true;
+					hurtClock.restart();
+					this->screen->getSoundPlayer()->play(SoundEffect::ZombieGroan, 10.f);
+				}
+				else if (hurtClock.getElapsedTime().asSeconds() > 0.5)
+				{
+					isHurt = false;
+				}
 				if (!mage->isAlive()) { return; }
 				this->takeDamage(1000 + DifficultySettings::Mage::touchDamageModifier);
 				this->speed = 1;
 			}
 			else if (Citizen* citizen = dynamic_cast<Citizen*>(&other))
 			{
+				srand(static_cast<int>(time(0) * other.getID()));
+				int randSound = rand() % 3;
+				switch (randSound)
+				{
+				case 0:
+					this->screen->getSoundPlayer()->play(SoundEffect::ZombieEat1, 50.f);
+					break;
+				case 1:
+					this->screen->getSoundPlayer()->play(SoundEffect::ZombieEat2, 50.f);
+					break;
+				case 2:
+					this->screen->getSoundPlayer()->play(SoundEffect::ZombieEat3, 30.f);
+					break;
+				default:
+					break;
+				}
 				citizen->die();
 				float missingHealthBonus = DifficultySettings::Player::missingHealthHealBonus;
 				float missingHealthMultiplier = (1.0f + missingHealthBonus) - (missingHealthBonus * (static_cast<float>(this->_health) / static_cast<float>(this->maxHealth)));
-				this->changeHealth( static_cast<int>( static_cast<float>(this->eatHeal) * missingHealthMultiplier ));
+				this->changeHealth(static_cast<int>(static_cast<float>(this->eatHeal) * missingHealthMultiplier));
 				this->changeSpeed(1);
 				this->speedDecayDelay = 60;
 				this->score += DifficultySettings::Score::applyMultipliers(10);
