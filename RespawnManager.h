@@ -47,8 +47,8 @@ private:
 			do
 			{
 				// add and subtract numbers here to prevent the sprite from respawning near the edge
-				position.x = static_cast<float>( rand() % static_cast<int>(map->tileSize().x * map->width() - 500) + 250 );
-				position.y = static_cast<float>( rand() % static_cast<int>(map->tileSize().y * map->height() - 500) + 250 );
+				position.x = static_cast<float>(rand() % static_cast<int>(map->tileSize().x * map->width() - 500) + 250);
+				position.y = static_cast<float>(rand() % static_cast<int>(map->tileSize().y * map->height() - 500) + 250);
 			} while (map->isObstacle(position));
 			sprite.setPosition(position);
 			this->add(sprite);
