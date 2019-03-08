@@ -16,6 +16,7 @@ namespace SoundEffect
 		ZombieGroan,
 		ZombieDeath,
 		MageDeath,
+		Trap,
 		Alarm,
 		MenuClick
 	};
@@ -44,15 +45,16 @@ class SoundPlayer : private sf::NonCopyable
 public:
 	SoundPlayer() :mSoundContainer(), mSounds()
 	{
-		mSoundContainer.loadSoundEffect(SoundEffect::ZombieEat1, "zombie_eat1.ogg");
-		mSoundContainer.loadSoundEffect(SoundEffect::ZombieEat2, "zombie_eat2.ogg");
-		mSoundContainer.loadSoundEffect(SoundEffect::ZombieEat3, "zombie_eat3.ogg");
-		mSoundContainer.loadSoundEffect(SoundEffect::ZombieAttack, "zombie_attack.ogg");
-		mSoundContainer.loadSoundEffect(SoundEffect::ZombieGroan, "zombie_hurt.ogg");
-		mSoundContainer.loadSoundEffect(SoundEffect::ZombieDeath, "zombie_death.ogg");
-		mSoundContainer.loadSoundEffect(SoundEffect::MageDeath, "mage_death.ogg");
-		mSoundContainer.loadSoundEffect(SoundEffect::Alarm, "alarm.ogg");
-		mSoundContainer.loadSoundEffect(SoundEffect::MenuClick, "menu_buttonclick.ogg");
+		mSoundContainer.loadSoundEffect(SoundEffect::ID::ZombieEat1, "zombie_eat1.ogg");
+		mSoundContainer.loadSoundEffect(SoundEffect::ID::ZombieEat2, "zombie_eat2.ogg");
+		mSoundContainer.loadSoundEffect(SoundEffect::ID::ZombieEat3, "zombie_eat3.ogg");
+		mSoundContainer.loadSoundEffect(SoundEffect::ID::ZombieAttack, "zombie_attack.ogg");
+		mSoundContainer.loadSoundEffect(SoundEffect::ID::ZombieGroan, "zombie_hurt.ogg");
+		mSoundContainer.loadSoundEffect(SoundEffect::ID::ZombieDeath, "zombie_death.ogg");
+		mSoundContainer.loadSoundEffect(SoundEffect::ID::MageDeath, "mage_death.ogg");
+		mSoundContainer.loadSoundEffect(SoundEffect::ID::Trap, "trap.ogg");
+		mSoundContainer.loadSoundEffect(SoundEffect::ID::Alarm, "alarm.ogg");
+		mSoundContainer.loadSoundEffect(SoundEffect::ID::MenuClick, "menu_buttonclick.ogg");
 	}
 	void play(SoundEffect::ID effect, float volume)
 	{
