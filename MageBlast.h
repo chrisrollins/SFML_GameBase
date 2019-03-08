@@ -5,6 +5,11 @@
 #include "Screen.h"
 #include <cmath>
 
+enum class DIRECTION
+{
+	UP, DOWN, LEFT, RIGHT
+};
+
 class MageBlast : public Engine::GraphicalGameObject
 {
 private:
@@ -20,10 +25,10 @@ public:
 		this->spritePtr()->setTexture(this->texture);
 		this->spritePtr()->setPosition(pos);
 		sf::Vector2u size = this->texture.getSize();
-		this->spritePtr()->setOrigin( static_cast<float>(size.x) / 2.f, static_cast<float>(size.y) / 2.f);
+		this->spritePtr()->setOrigin(static_cast<float>(size.x) / 2.f, static_cast<float>(size.y) / 2.f);
 		double radians = atan2(static_cast<double>(destination.y - pos.y), static_cast<double>(destination.x - pos.x));
 		this->movePerFrame = { static_cast<float>(speed * cos(radians)), static_cast<float>(speed * sin(radians)) };
-		this->life = duration;		
+		this->life = duration;
 	}
 	void EveryFrame(uint64_t f)
 	{
