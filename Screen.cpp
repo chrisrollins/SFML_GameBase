@@ -23,6 +23,10 @@ namespace Engine
 	bool running = true;
 	bool windowInitialized = false;
 
+	Screen::Screen()
+	{
+	}
+
 	void Screen::addMap(TileMap* map)
 	{
 		this->map = map;
@@ -71,6 +75,16 @@ namespace Engine
 	const TileMap* Screen::getMap() const
 	{
 		return this->map;
+	}
+
+	MusicPlayer* Screen::getMusicPlayer() const
+	{
+		return const_cast<MusicPlayer*>(&(this->musicPlayer));
+	}
+
+	SoundPlayer* Screen::getSoundPlayer() const
+	{
+		return const_cast<SoundPlayer*>(&(this->soundPlayer));
 	}
 
 	void Screen::close()
@@ -268,8 +282,8 @@ namespace Engine
 					{
 						sf::Vector2u size(0, 0);
 						if (sf::Sprite* sprite = dynamic_cast<sf::Sprite*>(obj->getGraphic())) { size = sf::Vector2u(sprite->getTextureRect().width, sprite->getTextureRect().height); }
-						#define X (transformable->getPosition().x)
-						#define Y (transformable->getPosition().y)
+#define X (transformable->getPosition().x)
+#define Y (transformable->getPosition().y)
 						if (X < 0.f) { transformable->setPosition(0.f, Y); }
 						if (Y < 0.f) { transformable->setPosition(X, 0.f); }
 						if (Y + size.y > MAP_HEIGHT) { transformable->setPosition(X, static_cast<float>(MAP_HEIGHT - size.y)); }
@@ -297,8 +311,8 @@ namespace Engine
 						}
 
 						obj->lastPos = { X , Y };
-						#undef X
-						#undef Y
+#undef X
+#undef Y
 					}
 				}
 				obj->draw(window);
@@ -412,6 +426,5 @@ namespace Engine
 
 	Screen::~Screen()
 	{
-
 	}
 }
