@@ -26,8 +26,10 @@ class MainCharacter : public GraphicalGameObject
 	bool meleeAttack;
 	int meleeAttackDuration = 20;
 	int meleeAttackCounter = 0;
+	bool inTrap;
 	bool isHurt;
 	sf::Clock hurtClock;
+	sf::Clock trapClock;
 	int deathCount; // to control death animation
 	bool startDeath;
 	bool isDead; // true when the zombie turns to invisible
@@ -65,6 +67,7 @@ public:
 		meleeAttack = false;
 		startDeath = false;
 		deathCount = 0;
+		inTrap = false;
 		isHurt = false;
 		isDead = false;
 
@@ -160,7 +163,7 @@ public:
 			}
 			else
 			{
-				this->screen->getSoundPlayer()->play(SoundEffect::ID::ZombieAttack, 10.f);
+				this->screen->getSoundPlayer()->play(SoundEffect::ID::ZombieAttack, 40.f);
 				if (this->_health > 0.2 * this->maxHealth) { this->changeHealth(-1 * attackHealthCost); } //health cost of ranged attack only applies if health is above 20%
 				sf::Vector2i mousePos = this->screen->getMousePosition();
 				sf::Vector2f distance = static_cast<sf::Vector2f>(mousePos) - this->sprite()->getPosition();
@@ -176,6 +179,23 @@ public:
 	void EveryFrame(uint64_t f)
 	{
 		sf::Sprite* s = this->sprite();
+		sf::Vector2f adjustPos;
+		adjustPos.x = s->getPosition().x + textureSize.x / 2;
+		adjustPos.y = s->getPosition().y + textureSize.y;
+		if (this->screen->getMap()->isTrap(adjustPos))
+		{
+			if (!inTrap)
+			{
+				inTrap = true;
+				trapClock.restart();
+				this->screen->getSoundPlayer()->play(SoundEffect::ID::Trap, 20.f);
+			}
+			speed = 1.f;
+		}
+		if (trapClock.getElapsedTime().asSeconds() > 2)
+		{
+			inTrap = false;
+		}
 		if (_health > 0)
 		{
 			if (meleeAttackCounter >= meleeAttackDuration && meleeAttack)
@@ -267,9 +287,10 @@ public:
 		}
 		else
 		{
-			if (!startDeath) 
-			{ 
-				startDeath = true; 
+			this->sprite()->setColor(sf::Color(255, 100, 100));
+			if (!startDeath)
+			{
+				startDeath = true;
 				this->screen->getSoundPlayer()->play(SoundEffect::ID::ZombieDeath, 60.f);
 			}
 			imageCount.x = deathCount;
@@ -389,13 +410,13 @@ public:
 				switch (randSound)
 				{
 				case 0:
-					this->screen->getSoundPlayer()->play(SoundEffect::ID::ZombieEat1, 50.f);
+					this->screen->getSoundPlayer()->play(SoundEffect::ID::ZombieEat1, 80.f);
 					break;
 				case 1:
-					this->screen->getSoundPlayer()->play(SoundEffect::ID::ZombieEat2, 50.f);
+					this->screen->getSoundPlayer()->play(SoundEffect::ID::ZombieEat2, 80.f);
 					break;
 				case 2:
-					this->screen->getSoundPlayer()->play(SoundEffect::ID::ZombieEat3, 30.f);
+					this->screen->getSoundPlayer()->play(SoundEffect::ID::ZombieEat3, 50.f);
 					break;
 				default:
 					break;

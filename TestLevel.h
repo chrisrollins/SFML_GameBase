@@ -16,6 +16,7 @@
 #include "Score.h"
 #include "HealthBar.h"
 #include "RespawnManager.h"
+#include "DifficultySettings.h"
 
 using namespace Engine;
 
@@ -28,7 +29,7 @@ public:
 		static Screen levelScreen;
 		static TileMap map;
 		
-		map.load("map.png", "map.txt");
+		map.load(DifficultySettings::Map::picture, DifficultySettings::Map::fileName);
 		levelScreen.addMap(&map);
 
 		sf::Sprite m_Sprite;
@@ -93,7 +94,7 @@ public:
 		static HealthBar healthbar;
 		healthbar.setCharacter(mc_ptr);
 		levelScreen.addUIObject(&healthbar);
-		
+
 		levelScreen.render();
 	}
 };

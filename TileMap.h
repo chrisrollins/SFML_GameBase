@@ -68,8 +68,20 @@ namespace Engine
 			int row = I(position.x / F(this->tileSize().x));
 			int column = I(position.y / F(this->tileSize().y));
 			int tileType = this->getTileAt(row, column);
-			if (tileType == 3 || tileType == 4 || tileType == 5 || tileType == 15 || tileType == 16
-				|| tileType == 17 || tileType == 27 || tileType == 28 || tileType == 29)
+			if (tileType == 0 || tileType == 1 || tileType == 2 || tileType == 9 || tileType == 10
+				|| tileType == 11 || tileType == 18 || tileType == 19 || tileType == 20)
+				return true;
+			else
+				return false;
+		}
+
+		bool isTrap(sf::Vector2f position) const
+		{
+			int row = I(position.x / F(this->tileSize().x));
+			int column = I(position.y / F(this->tileSize().y));
+			int tileType = this->getTileAt(row, column);
+			if (tileType == 6 || tileType == 7 || tileType == 8 || tileType == 15 || tileType == 16
+				|| tileType == 17 || tileType == 25 || tileType == 26)
 				return true;
 			else
 				return false;
