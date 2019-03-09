@@ -81,8 +81,8 @@ namespace DifficultySettings
 			Player::highHealthDrainPenalty = 0.15f;
 			Player::eatDrainFreezeDuration = 12;
 			Score::baseMultiplier = 1.0f;
-			Score::cumulativeBonusMultiplier = 0.03f;
-			Score::cumulativeBonusMultiplierMax = 1.15f;
+			Score::cumulativeBonusMultiplier = 0.02f;
+			Score::cumulativeBonusMultiplierMax = 1.10f;
 			Score::multiplierPerSecond = -0.002f;
 			break;
 		case DIFFICULTY::NORMAL:
@@ -93,7 +93,7 @@ namespace DifficultySettings
 			Player::highHealthDrainPenalty = 0.4f;
 			Player::eatDrainFreezeDuration = 11;
 			Player::maxHealthModifier = -4500;
-			Player::eatHealModifier = -300;
+			Player::eatHealModifier = -250;
 			Player::attackHealthCostModifier = 150;
 			Mage::attackDamageModifier = 10;
 			Mage::blastSpeedModifier = 0.255f;
@@ -102,9 +102,9 @@ namespace DifficultySettings
 			Mage::healthDrainModifier = 1;
 			Mage::mageHealthModifier = 2;
 			Citizen::movementSpeedModifier = 1;
-			Score::baseMultiplier = 1.97f;
-			Score::cumulativeBonusMultiplier = 0.06f;
-			Score::cumulativeBonusMultiplierMax = 1.3f;
+			Score::baseMultiplier = 1.5f;
+			Score::cumulativeBonusMultiplier = 0.03f;
+			Score::cumulativeBonusMultiplierMax = 1.29f;
 			Score::multiplierPerSecond = 0.0005f;
 			break;
 		case DIFFICULTY::HARD:
@@ -115,8 +115,8 @@ namespace DifficultySettings
 			Player::highHealthDrainPenalty = 4.0f;
 			Player::eatDrainFreezeDuration = 10;
 			Player::maxHealthModifier = -6000;
-			Player::eatHealModifier = -400;
-			Player::attackHealthCostModifier = 400;
+			Player::eatHealModifier = -300;
+			Player::attackHealthCostModifier = 390;
 			Mage::attackDamageModifier = 70;
 			Mage::blastSpeedModifier = 1.5f;
 			Mage::touchDamageModifier = 90;

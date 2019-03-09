@@ -70,7 +70,7 @@ public:
 		spr->rotate(this->rotationRate);
 		if (this->blast_life <= 20)
 		{
-			this->rotationRate += 3.f;
+			this->rotationRate -= 3.f;
 			spr->scale(1.02f, 1.02f);
 			sf::Color currentColor = spr->getColor();
 			currentColor.a -= (currentColor.a > 13) ? 13 : currentColor.a;
