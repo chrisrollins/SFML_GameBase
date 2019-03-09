@@ -21,6 +21,7 @@ class MainCharacter : public GraphicalGameObject
 	bool S_KeyHeld = false;
 	bool D_KeyHeld = false;
 	sf::Texture blast_texture;
+	sf::Texture super_blast_texture;
 	sf::Vector2u textureSize;
 	sf::Vector2u imageCount;
 	sf::Vector2u currentImage;
@@ -40,10 +41,10 @@ class MainCharacter : public GraphicalGameObject
 	int _health = 30 * 60 * 100;
 	int maxHealth = 30 * 60 * 100;
 	int healthDrain = 13;
-	int additionalDrainPerMage = 2;
-	int eatHeal = 5100;
+	int additionalDrainPerMage = 1;
+	int eatHeal = 5500;
 	int eatDrainFreezeCountdown = 0;
-	int attackHealthCost = 30;
+	int attackHealthCost = 500;
 	int baseSpeed = 3;
 	int speed = 3;
 	int maxSpeed = 4;
@@ -61,6 +62,7 @@ public:
 		this->sprite()->setTextureRect(sf::IntRect(imageCount.x * textureSize.x,
 			imageCount.y * textureSize.y, textureSize.x, textureSize.y));
 		blast_texture.loadFromFile("blast.png");
+		super_blast_texture.loadFromFile("super_zombie_blast.png");
 		sf::IntRect size = this->sprite()->getTextureRect();
 		sf::Vector2f collisionSizeRatio(0.4f, 0.3f); //these numbers shrink the collision size of the player, and the code below adjusts it to be positioned at the bottom of the sprite
 		this->obstacleCollisionSize.width = static_cast<float>(size.width) * collisionSizeRatio.x;
@@ -137,7 +139,7 @@ public:
 	{
 		if (_health > 0)
 		{
-			if (e.mouseButton.button == sf::Mouse::Left)
+			/*if (e.mouseButton.button == sf::Mouse::Left)
 			{
 				this->speed = 0;
 				this->speedRestoreDelay = 6;
@@ -164,8 +166,8 @@ public:
 				}
 				this->sprite()->setTextureRect(sf::IntRect(imageCount.x * textureSize.x,
 					imageCount.y * textureSize.y, textureSize.x, textureSize.y));
-			}
-			else if (potionNum > 0)
+			}*/
+			if (e.mouseButton.button == sf::Mouse::Left)
 			{
 				this->screen->getSoundPlayer()->play(SoundEffect::ID::ZombieAttack, 40.f);
 				if (this->_health > 0.2 * this->maxHealth) { this->changeHealth(-1 * attackHealthCost); } //health cost of ranged attack only applies if health is above 20%
@@ -175,7 +177,19 @@ public:
 				sf::IntRect size = this->sprite()->getTextureRect();
 				shotOrigin.x += static_cast<float>(size.width / 2);
 				shotOrigin.y += static_cast<float>(size.height / 4);
-				ZombieBlast* blast = new ZombieBlast(sf::Sprite(blast_texture), shotOrigin, sf::Vector2f(static_cast<float>(mousePos.x), static_cast<float>(mousePos.y)));
+				ZombieBlast* blast = new ZombieBlast(sf::Sprite(blast_texture), shotOrigin, sf::Vector2f(static_cast<float>(mousePos.x), static_cast<float>(mousePos.y)), 3.5f, 140);
+				this->screen->add(blast);
+			}
+			else if (potionNum > 0)
+			{
+				this->screen->getSoundPlayer()->play(SoundEffect::ID::ZombieAttack, 40.f);
+				sf::Vector2i mousePos = this->screen->getMousePosition();
+				sf::Vector2f distance = static_cast<sf::Vector2f>(mousePos) - this->sprite()->getPosition();
+				sf::Vector2f shotOrigin = this->sprite()->getPosition();
+				sf::IntRect size = this->sprite()->getTextureRect();
+				shotOrigin.x += static_cast<float>(size.width / 2);
+				shotOrigin.y += static_cast<float>(size.height / 4);
+				SuperZombieBlast* blast = new SuperZombieBlast(sf::Sprite(super_blast_texture), shotOrigin, sf::Vector2f(static_cast<float>(mousePos.x), static_cast<float>(mousePos.y)), 2.25f, 180, 1000, 0.1f, 0.2f);
 				this->screen->add(blast);
 				potionNum--;
 			}

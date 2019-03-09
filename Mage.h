@@ -3,6 +3,7 @@
 
 #include <ctime>
 #include <cmath>
+#include <unordered_set>
 #include "GameObject.h"
 #include "RespawnManager.h"
 #include "ZombieBlast.h"
@@ -25,6 +26,8 @@ private:
 	bool D_KeyHeld = false;
 	bool alive;
 	int deathCount;
+	int health = 3 + DifficultySettings::Mage::mageHealthModifier;
+	std::unordered_set<GameObjectID> blastsHitBy;
 	bool isShooting;
 	uint64_t internalClock = 0;
 	sf::Vector2f bullet_position;
@@ -194,7 +197,7 @@ public:
 			{
 				sf::Vector2f pos = this->spritePtr()->getPosition();
 				sf::Vector2f playerPos = dynamic_cast<sf::Transformable*>(dynamic_cast<GraphicalGameObject*>(this->screen->getMainCharacter())->getGraphic())->getPosition();
-				MageBlast* blast = new MageBlast(pos, playerPos, 2.5 + static_cast<double>(DifficultySettings::Mage::blastSpeedModifier), 130);
+				MageBlast* blast = new MageBlast(pos, playerPos, 2.4 + static_cast<double>(DifficultySettings::Mage::blastSpeedModifier), 130);
 				this->screen->add(blast);
 			}
 
@@ -240,10 +243,13 @@ public:
 	{
 		if (alive)
 		{
-			if (dynamic_cast<ZombieBlast*>(&other))
+			if (ZombieBlast* blast = dynamic_cast<ZombieBlast*>(&other))
 			{
+				if (this->blastsHitBy.find(blast->getID()) != this->blastsHitBy.end()) { return; }
+				this->blastsHitBy.insert(blast->getID());
+				this->health -= blast->getDamage();
+				if (this->health > 0) { return; }
 				if (this->respawnManager) { this->respawnManager->died(this); }
-				//std::cout << this->W_KeyHeld << this->A_KeyHeld << this->S_KeyHeld << this->D_KeyHeld << std::endl;
 				alive = false;
 				numMagesAlive--;
 				DifficultySettings::Score::cumulativeBonusMultiplierCurrent = fmin(DifficultySettings::Score::cumulativeBonusMultiplierMax, DifficultySettings::Score::cumulativeBonusMultiplierCurrent + DifficultySettings::Score::cumulativeBonusMultiplier);

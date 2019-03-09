@@ -3,6 +3,7 @@
 
 #include "GameObject.h"
 #include "Screen.h"
+#include "ZombieBlast.h"
 #include <cmath>
 
 enum class DIRECTION
@@ -50,7 +51,12 @@ public:
 	}
 	void Collision(GraphicalGameObject& other)
 	{
-
+		if (dynamic_cast<SuperZombieBlast*>(&other) && this->life > 20)
+		{
+			this->life = 20;
+			this->movePerFrame.x /= 3.f;
+			this->movePerFrame.y /= 3.f;
+		}
 	}
 	sf::Sprite* spritePtr()
 	{

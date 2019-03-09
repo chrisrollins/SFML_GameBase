@@ -26,15 +26,7 @@ public:
 
 	void EveryFrame(uint64_t f)
 	{}
-
-	void Collision(Engine::GraphicalGameObject& other)
-	{
-		if (dynamic_cast<ZombieBlast*>(&other))
-		{
-			this->die();
-		}
-	}
-
+	
 	void die()
 	{
 		if (this->respawnManager) { this->respawnManager->died(this); }

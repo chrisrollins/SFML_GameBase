@@ -29,6 +29,7 @@ namespace DifficultySettings
 		static int touchDamageModifier;
 		static int movementSpeedModifier;
 		static int healthDrainModifier;
+		static int mageHealthModifier;
 		static float blastSpeedModifier;
 	}
 
@@ -91,14 +92,15 @@ namespace DifficultySettings
 			Player::healthDrainModifier = 1;
 			Player::highHealthDrainPenalty = 0.4f;
 			Player::eatDrainFreezeDuration = 11;
-			Player::maxHealthModifier = -7500;
+			Player::maxHealthModifier = -4500;
 			Player::eatHealModifier = -300;
-			Player::attackHealthCostModifier = 70;
+			Player::attackHealthCostModifier = 150;
 			Mage::attackDamageModifier = 10;
-			Mage::blastSpeedModifier = 0.25f;
+			Mage::blastSpeedModifier = 0.255f;
 			Mage::touchDamageModifier = 20;
 			Mage::movementSpeedModifier = 1;
 			Mage::healthDrainModifier = 1;
+			Mage::mageHealthModifier = 2;
 			Citizen::movementSpeedModifier = 1;
 			Score::baseMultiplier = 1.97f;
 			Score::cumulativeBonusMultiplier = 0.06f;
@@ -110,16 +112,17 @@ namespace DifficultySettings
 			Map::fileName = "map_insane.txt";
 			Player::missingHealthHealBonus = 0.20f;
 			Player::healthDrainModifier = 1;
-			Player::highHealthDrainPenalty = 5.0f;
+			Player::highHealthDrainPenalty = 4.0f;
 			Player::eatDrainFreezeDuration = 10;
-			Player::maxHealthModifier = -9000;
-			Player::eatHealModifier = -450;
-			Player::attackHealthCostModifier = 260;
-			Mage::attackDamageModifier = 80;
-			Mage::blastSpeedModifier = 1.6f;
-			Mage::touchDamageModifier = 95;
+			Player::maxHealthModifier = -6000;
+			Player::eatHealModifier = -400;
+			Player::attackHealthCostModifier = 400;
+			Mage::attackDamageModifier = 70;
+			Mage::blastSpeedModifier = 1.5f;
+			Mage::touchDamageModifier = 90;
 			Mage::movementSpeedModifier = 2;
 			Mage::healthDrainModifier = 2;
+			Mage::mageHealthModifier = 7;
 			Citizen::movementSpeedModifier = 1;
 			Score::baseMultiplier = 2.5f;
 			Score::cumulativeBonusMultiplier = 0.02f;
