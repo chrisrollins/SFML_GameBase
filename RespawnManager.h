@@ -43,13 +43,9 @@ private:
 			cooldown = respawnSpeed + ((rand() % 120) - 60); //randomize respawn rate +/- 1 second
 			if (cooldown <= 10) { cooldown = 10; }
 			const TileMap* map = this->screen->getMap();
-			sf::Vector2f position;
-			do
-			{
-				// add and subtract numbers here to prevent the sprite from respawning near the edge
-				position.x = static_cast<float>(rand() % static_cast<int>(map->tileSize().x * map->width() - 500) + 250);
-				position.y = static_cast<float>(rand() % static_cast<int>(map->tileSize().y * map->height() - 500) + 250);
-			} while (map->isObstacle(position));
+			std::vector<sf::Vector2f> spawnPositions = map->getSafeSpawnPositions();
+			size_t randIndex = rand() % spawnPositions.size();
+			sf::Vector2f position = spawnPositions[randIndex];
 			sprite.setPosition(position);
 			this->add(sprite);
 		}

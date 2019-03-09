@@ -60,7 +60,48 @@ namespace Engine
 				}
 			}
 
+			//initialize safe spawn positions
+			for (int i = 1; i < this->_width - 1; i++)
+			{
+				for (int j = 1; j < this->_height - 1; j++)
+				{
+					bool anyObstacles = false;
+					for (auto tile : {
+						this->getTileAt(i - 1, j - 1),
+						this->getTileAt(i - 1, j),
+						this->getTileAt(i, j - 1),
+						this->getTileAt(i + 1, j + 1),
+						this->getTileAt(i + 1, j),
+						this->getTileAt(i, j + 1),
+						this->getTileAt(i - 1, j + 1),
+						this->getTileAt(i + 1, j - 1)
+						})
+					{
+						if (isTileTypeObstacle(tile))
+						{
+							anyObstacles = true;
+							break;
+						}
+					}
+					if (!anyObstacles)
+					{
+						sf::Vector2f pos = this->getTileCenter(i, j);
+						this->safeSpawnPositions.push_back(pos);
+					}
+				}
+			}
+
 			return true;
+		}
+
+		static bool isTileTypeObstacle(int tileType)
+		{
+			return (tileType == 0 || tileType == 1 || tileType == 2 || tileType == 9 || tileType == 10 || tileType == 11 || tileType == 18 || tileType == 19 || tileType == 20);
+		}
+
+		static bool isTileTypeTrap(int tileType)
+		{
+			return (tileType == 6 || tileType == 7 || tileType == 8 || tileType == 15 || tileType == 16 || tileType == 17 || tileType == 25 || tileType == 26);
 		}
 
 		bool isObstacle(sf::Vector2f position) const
@@ -68,11 +109,7 @@ namespace Engine
 			int row = I(position.x / F(this->tileSize().x));
 			int column = I(position.y / F(this->tileSize().y));
 			int tileType = this->getTileAt(row, column);
-			if (tileType == 0 || tileType == 1 || tileType == 2 || tileType == 9 || tileType == 10
-				|| tileType == 11 || tileType == 18 || tileType == 19 || tileType == 20)
-				return true;
-			else
-				return false;
+			return isTileTypeObstacle(tileType);
 		}
 
 		bool isTrap(sf::Vector2f position) const
@@ -80,11 +117,17 @@ namespace Engine
 			int row = I(position.x / F(this->tileSize().x));
 			int column = I(position.y / F(this->tileSize().y));
 			int tileType = this->getTileAt(row, column);
-			if (tileType == 6 || tileType == 7 || tileType == 8 || tileType == 15 || tileType == 16
-				|| tileType == 17 || tileType == 25 || tileType == 26)
-				return true;
-			else
-				return false;
+			return isTileTypeTrap(tileType);
+		}
+
+		sf::Vector2f getTileCenter(int i, int j) const
+		{
+			return { F(this->tileSize().x * i), F(this->tileSize().x * j) };
+		}
+
+		const std::vector<sf::Vector2f>& getSafeSpawnPositions() const
+		{
+			return this->safeSpawnPositions;
 		}
 
 		sf::FloatRect currTile(sf::Vector2f position) const
@@ -114,8 +157,8 @@ namespace Engine
 			return tiles[i + j * this->width()];
 		}
 
-		int * readFromFile(std::string mapTable) {
-
+		int* readFromFile(std::string mapTable)
+		{
 			std::ifstream fin(mapTable.c_str());
 
 			if (!fin) {
@@ -154,7 +197,8 @@ namespace Engine
 			// draw the vertex array
 			target.draw(m_vertices, states);
 		}
-
+		
+		std::vector<sf::Vector2f> safeSpawnPositions;
 		sf::Vector2u _tileSize;
 		unsigned int _width;
 		unsigned int _height;
