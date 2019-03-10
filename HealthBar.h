@@ -55,7 +55,7 @@ public:
 				{
 					isAlarming = true;
 					alarmClock.restart();
-					this->screen->getSoundPlayer()->play(SoundEffect::ID::Alarm, 20.f);
+					Engine::soundPlayer.play(SoundEffect::ID::Alarm, 20.f);
 				}
 				else if (alarmClock.getElapsedTime().asSeconds() > 3.5)
 				{

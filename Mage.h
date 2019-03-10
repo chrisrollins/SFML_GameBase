@@ -25,7 +25,7 @@ public:
 	{
 		sf::RectangleShape* rect = this->rectPtr();
 		rect->setFillColor({ 50, 255, 50, 140 });
-		rect->setSize({ 100.f, 10.f });
+		rect->setSize({ 37.f, 5.f });
 		this->blockingCollision = false;
 		this->ignoreObstacles = true;
 	}
@@ -35,8 +35,8 @@ public:
 	}
 	void setHealth(int health)
 	{
-		float length = static_cast<float>(health) * 0.1f;
-		this->rectPtr()->setScale(length, 1.f);
+		//float length = static_cast<float>(health) * 0.1f;
+		//this->rectPtr()->setScale(length, 1.f);
 	}
 };
 
@@ -99,7 +99,7 @@ public:
 		case 3:
 			D_KeyHeld = true;
 			break;
-		}	
+		}
 
 		numMagesAlive++;
 	}
@@ -273,7 +273,7 @@ public:
 				numMagesAlive--;
 				DifficultySettings::Score::cumulativeBonusMultiplierCurrent = fmin(DifficultySettings::Score::cumulativeBonusMultiplierMax, DifficultySettings::Score::cumulativeBonusMultiplierCurrent + DifficultySettings::Score::cumulativeBonusMultiplier);
 				(*Engine::scorePtr) += DifficultySettings::Score::applyMultipliers(20);
-				this->screen->getSoundPlayer()->play(SoundEffect::ID::MageDeath, 30.f);
+				Engine::soundPlayer.play(SoundEffect::ID::MageDeath, 30.f);
 				this->screen->remove(this->healthBar);
 			}
 		}

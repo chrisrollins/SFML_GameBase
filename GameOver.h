@@ -18,7 +18,6 @@ namespace Engine
 		{
 			sf::IntRect size = this->spritePtr()->getTextureRect();
 			sf::Vector2f pos;
-			
 			pos.x = static_cast<float>(Screen::windowWidth / 2 - size.width / 2);
 			pos.y = static_cast<float>(Screen::windowHeight / 2 - size.height / 2);
 			this->spritePtr()->setPosition(pos);
