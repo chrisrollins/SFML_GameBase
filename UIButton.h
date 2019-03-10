@@ -10,7 +10,7 @@ class UIButton : public GraphicalGameObject
 {
 public:
 	UIButton(std::string text, sf::Vector2f position, sf::Vector2f size) : GraphicalGameObject(sf::Text())
-	{		
+	{
 		if (myFont.loadFromFile("arial.ttf"))
 		{
 			this->textPtr()->setFont(myFont);
@@ -19,6 +19,11 @@ public:
 		this->background.setFillColor(sf::Color(70, 70, 70));
 		this->background.setSize(size);
 		this->setPosition(position);
+	}
+	void setFont(std::string font)
+	{
+		myFont.loadFromFile(font);
+		this->textPtr()->setFont(myFont);
 	}
 	void setPosition(sf::Vector2f position)
 	{
@@ -32,6 +37,10 @@ public:
 			textPositionAdjust.y = (textPositionAdjust.y / 2) - (textSize.height);
 			this->textPtr()->setPosition(position + textPositionAdjust);
 		}
+	}
+	void setTextSize(float size)
+	{
+		this->textPtr()->setCharacterSize(size);
 	}
 	void setTextColor(sf::Color color)
 	{

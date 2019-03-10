@@ -50,7 +50,11 @@ public:
 		static RespawnManager<AntiMagePotion> potionMng(potion, 10, 200);
 		levelScreen.add(&potionMng);
 
-		static PotionUI potionUI(potion);
+		static sf::Texture potionUI_texture;
+		potionUI_texture.loadFromFile("brain_icon.png");
+		sf::Sprite potion_icon;
+		potion_icon.setTexture(potionUI_texture);
+		static PotionUI potionUI(potion_icon);
 		potionUI.setCharacter(mc_ptr);
 		levelScreen.addUIObject(&potionUI);
 

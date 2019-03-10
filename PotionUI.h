@@ -14,11 +14,11 @@ public:
 	PotionUI(sf::Sprite s) : GraphicalGameObject(s)
 	{
 		potion()->setPosition(50.f, 70.f);
-		potion()->setColor(sf::Color(230, 230, 0));
 		font.loadFromFile("zombie.ttf");
 		text.setFont(font);
 		text.Bold;
-		text.setOutlineColor(sf::Color(179, 45, 0));
+		text.setLetterSpacing(3.f);
+		text.setOutlineColor(sf::Color(163, 19, 88));
 		text.setOutlineThickness(2.f);
 		text.setFillColor(sf::Color::Black);
 	}
@@ -30,14 +30,14 @@ public:
 
 	void EveryFrame(uint64_t f) 
 	{
-		string currNum = to_string(character->getPotionNum());
+		string currNum = to_string(character->getPotionNum()) + "/" + to_string(character->getMaxPotionNum());
 		text.setString(currNum);
 	}
 
 	void draw(sf::RenderWindow& win)
 	{
 		win.draw(*potion());
-		text.setPosition(potion()->getPosition().x + 50, potion()->getPosition().y);
+		text.setPosition(potion()->getPosition().x + 50, potion()->getPosition().y - 5);
 		win.draw(text);
 	}
 

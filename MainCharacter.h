@@ -30,7 +30,7 @@ class MainCharacter : public GraphicalGameObject
 	int meleeAttackCounter = 0;
 	bool inTrap;
 	bool isHurt;
-	float totalAliveTime; 
+	float totalAliveTime;
 	sf::Clock aliveClock;
 	sf::Clock hurtClock;
 	sf::Clock trapClock;
@@ -63,7 +63,7 @@ public:
 		this->sprite()->setTextureRect(sf::IntRect(imageCount.x * textureSize.x,
 			imageCount.y * textureSize.y, textureSize.x, textureSize.y));
 		blast_texture.loadFromFile("blast.png");
-		super_blast_texture.loadFromFile("skull_test.png");
+		super_blast_texture.loadFromFile("brain.png");
 		sf::IntRect size = this->sprite()->getTextureRect();
 		sf::Vector2f collisionSizeRatio(0.4f, 0.3f); //these numbers shrink the collision size of the player, and the code below adjusts it to be positioned at the bottom of the sprite
 		this->obstacleCollisionSize.width = static_cast<float>(size.width) * collisionSizeRatio.x;
@@ -400,6 +400,10 @@ public:
 	{
 		return this->potionNum;
 	}
+	int getMaxPotionNum() const
+	{
+		return this->maxPotionNum;
+	}
 	void changeSpeed(int change)
 	{
 		this->speed += change;
@@ -421,7 +425,7 @@ public:
 				{
 					isHurt = false;
 				}
-				int damage = static_cast<int>( static_cast<float>(1000 + DifficultySettings::Mage::attackDamageModifier) / (1.f + 0.01f*(static_cast<float>( blast->getHits() ))) );
+				int damage = static_cast<int>(static_cast<float>(1000 + DifficultySettings::Mage::attackDamageModifier) / (1.f + 0.01f*(static_cast<float>(blast->getHits()))));
 				if (damage < 15) { damage = 15; }
 				this->takeDamage(damage);
 				blast->hitPlayer();
