@@ -61,9 +61,9 @@ namespace Engine
 			}
 
 			//initialize safe spawn positions
-			for (int i = 1; i < this->_width - 1; i++)
+			for (unsigned int i = 1; i < this->_width - 1; i++)
 			{
-				for (int j = 1; j < this->_height - 1; j++)
+				for (unsigned int j = 1; j < this->_height - 1; j++)
 				{
 					bool anyObstacles = false;
 					for (auto tile : {

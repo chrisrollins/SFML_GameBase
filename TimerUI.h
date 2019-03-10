@@ -24,8 +24,8 @@ public:
 		this->text()->setPosition(830.f, 50.f);
 		this->text()->setLetterSpacing(3.f);
 		this->text()->setString("Time: 00:00");
-		minute = 0.f;
-		second = 0.f;
+		minute = 0;
+		second = 0;
 	}
 
 	void setCharacter(MainCharacter * mc)
@@ -39,8 +39,8 @@ public:
 		sout << "Time: ";
 		if (character->isAlive())
 		{
-			minute = character->getCurrAliveTime() / 60;
-			second = character->getCurrAliveTime() - minute * 60;
+			minute = static_cast<int>(character->getCurrAliveTime() / 60);
+			second = static_cast<int>(character->getCurrAliveTime() - minute * 60);
 			sout << setw(2) << setfill('0') << right << minute << ":" << setw(2) <<
 				setprecision(2) << setfill('0') << second;
 			this->text()->setString(sout.str());

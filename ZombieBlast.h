@@ -35,7 +35,7 @@ public:
 	virtual void EveryFrame(uint64_t f)
 	{
 		this->spritePtr()->move(distance.x, distance.y);
-		this->growth += growRate / 60.0;
+		this->growth += growRate / 60.0f;
 		this->spritePtr()->setScale(this->growth, this->growth);
 		this->blast_life--;
 		if (this->blast_life <= 0)

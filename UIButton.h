@@ -40,7 +40,7 @@ public:
 	}
 	void setTextSize(float size)
 	{
-		this->textPtr()->setCharacterSize(size);
+		this->textPtr()->setCharacterSize(static_cast<unsigned int>(size));
 	}
 	void setTextColor(sf::Color color)
 	{

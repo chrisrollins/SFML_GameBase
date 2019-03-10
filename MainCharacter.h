@@ -204,7 +204,7 @@ public:
 				trapClock.restart();
 				this->screen->getSoundPlayer()->play(SoundEffect::ID::Trap, 20.f);
 			}
-			speed = 1.f;
+			speed = 1;
 		}
 		if (trapClock.getElapsedTime().asSeconds() > 2)
 		{
