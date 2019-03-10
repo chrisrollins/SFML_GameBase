@@ -11,7 +11,8 @@ namespace Music
 		Menu,
 		EasyGame,
 		NormalGame,
-		HardGame
+		HardGame,
+		GameOver
 	};
 }
 
@@ -24,6 +25,7 @@ public:
 		mFilenames[Music::EasyGame] = "theme_easy.ogg";
 		mFilenames[Music::NormalGame] = "theme_normal.ogg";
 		mFilenames[Music::HardGame] = "theme_hard.ogg";
+		mFilenames[Music::GameOver] = "theme_gameover.ogg";
 	}
 	void play(Music::ID theme)
 	{
