@@ -298,18 +298,38 @@ namespace Engine
 							size.y = static_cast<unsigned int>(obj->obstacleCollisionSize.height);
 						}
 
-						sf::Vector2f corners[4] = {
-							{X + static_cast<float>(offsets.x)          , Y + static_cast<float>(offsets.y)          },
-							{X + static_cast<float>(size.x + offsets.x) , Y + static_cast<float>(offsets.y)          },
-							{X + static_cast<float>(offsets.x)          , Y + static_cast<float>(size.y + offsets.y) },
-							{X + static_cast<float>(size.x + offsets.x) , Y + static_cast<float>(size.y + offsets.y) }
-						};
-
-						for (auto corner : corners)
+						int count = 0;
+						do
 						{
-							if (currentScreen->map->isObstacle(corner)) { transformable->setPosition(obj->lastPos); }
-						}
+							sf::Vector2f corners[4] = {
+								{X + static_cast<float>(offsets.x)          , Y + static_cast<float>(offsets.y)          },
+								{X + static_cast<float>(size.x + offsets.x) , Y + static_cast<float>(offsets.y)          },
+								{X + static_cast<float>(offsets.x)          , Y + static_cast<float>(size.y + offsets.y) },
+								{X + static_cast<float>(size.x + offsets.x) , Y + static_cast<float>(size.y + offsets.y) }
+							};
 
+							bool collision = false;
+							for (auto corner : corners)
+							{
+								if (currentScreen->map->isObstacle(corner))
+								{
+									collision = true;
+									break;
+								}
+							}
+							if (collision)
+							{
+								if (obj->spawnCollisionsResolved) { transformable->setPosition(obj->lastPos); }
+								else
+								{
+									auto positions = this->map->getSafeSpawnPositions();
+									transformable->setPosition(positions[rand() % positions.size()]);
+								}
+							}
+							else { obj->spawnCollisionsResolved = true; }
+							count++;
+						} while (!obj->spawnCollisionsResolved);
+						
 						obj->lastPos = { X , Y };
 						#undef X
 						#undef Y

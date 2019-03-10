@@ -71,6 +71,7 @@ namespace Engine
 		sf::Drawable* graphic;
 	private:
 		friend class Screen;
+		bool spawnCollisionsResolved = false;
 		sf::Vector2f lastPos;
 	};
 }

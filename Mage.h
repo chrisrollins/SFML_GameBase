@@ -81,16 +81,6 @@ public:
 		isShooting = false;
 		bullet_cooldown = 0;
 
-		sf::IntRect size = this->spritePtr()->getTextureRect();
-		sf::Vector2f collisionSizeRatio(0.6f, 0.3f); //these numbers shrink the collision size, and the code below adjusts it to be positioned at the bottom of the sprite
-		this->obstacleCollisionSize.width = static_cast<float>(size.width) * collisionSizeRatio.x;
-		this->obstacleCollisionSize.height = static_cast<float>(size.height) * collisionSizeRatio.y;
-		this->obstacleCollisionSize.left = ((1.f - collisionSizeRatio.x) * static_cast<float>(size.width)) / 2.f;
-		this->obstacleCollisionSize.top = ((1.f - collisionSizeRatio.y) * static_cast<float>(size.height));
-		this->spritePtr()->move((
-			(1.f - collisionSizeRatio.x) * static_cast<float>(size.width)) / 2.f,
-			-1.f * ((1.f - collisionSizeRatio.y) * static_cast<float>(size.height)));
-		
 		W_KeyHeld = false;
 		A_KeyHeld = false;
 		S_KeyHeld = false;
