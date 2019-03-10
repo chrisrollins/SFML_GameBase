@@ -36,9 +36,9 @@ public:
 		{
 			DifficultySettings::setDifficulty(DifficultySettings::EASY);
 			mainMenu.startTestLevel();
-			this->screen->getSoundPlayer()->play(SoundEffect::ID::MenuClick, 20.f);
-			this->screen->getMusicPlayer()->stop();
-			this->screen->getMusicPlayer()->play(Music::EasyGame);
+			Engine::soundPlayer.play(SoundEffect::ID::MenuClick, 20.f);
+			Engine::musicPlayer.stop();
+			Engine::musicPlayer.play(Music::EasyGame);
 		}
 	}
 };
@@ -59,10 +59,10 @@ public:
 		{
 			DifficultySettings::setDifficulty(DifficultySettings::NORMAL);
 			mainMenu.startTestLevel();
-			this->screen->getSoundPlayer()->play(SoundEffect::MenuClick, 20.f);
-			this->screen->getMusicPlayer()->stop();
-			this->screen->getMusicPlayer()->play(Music::NormalGame);
-			this->screen->getMusicPlayer()->setVolume(20.f);
+			Engine::soundPlayer.play(SoundEffect::MenuClick, 20.f);
+			Engine::musicPlayer.stop();
+			Engine::musicPlayer.play(Music::NormalGame);
+			Engine::musicPlayer.setVolume(20.f);
 		}
 	}
 };
@@ -83,10 +83,10 @@ public:
 		{
 			DifficultySettings::setDifficulty(DifficultySettings::HARD);
 			mainMenu.startTestLevel();
-			this->screen->getSoundPlayer()->play(SoundEffect::MenuClick, 20.f);
-			this->screen->getMusicPlayer()->stop();
-			this->screen->getMusicPlayer()->play(Music::HardGame);
-			this->screen->getMusicPlayer()->setVolume(20.f);
+			Engine::soundPlayer.play(SoundEffect::MenuClick, 20.f);
+			Engine::musicPlayer.stop();
+			Engine::musicPlayer.play(Music::HardGame);
+			Engine::musicPlayer.setVolume(20.f);
 		}
 	}
 };
@@ -142,9 +142,9 @@ public:
 		if (e.mouseButton.button == sf::Mouse::Button::Left //if the left mouse button was clicked
 			&& this->background.getGlobalBounds().contains(static_cast<float>(e.mouseButton.x), static_cast<float>(e.mouseButton.y))) //if the click was inside the button
 		{
-			this->screen->getSoundPlayer()->play(SoundEffect::MenuClick, 20.f);
+			Engine::soundPlayer.play(SoundEffect::MenuClick, 20.f);
+			Engine::musicPlayer.stop();
 			this->screen->close();
-			this->screen->getMusicPlayer()->stop();
 		}
 	}
 };
@@ -175,7 +175,7 @@ namespace Engine
 
 	void Menu::start()
 	{
-		menuScreen.getMusicPlayer()->play(Music::Menu);
+		Engine::musicPlayer.play(Music::Menu);
 		for (auto obj : this->menuObjects)
 		{
 			menuScreen.addUIObject(obj);
