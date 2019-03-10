@@ -19,6 +19,7 @@ static int numMagesAlive;
 class MageHealthBar : public Engine::GraphicalGameObject
 {
 private:
+	int maxHealth;
 	sf::RectangleShape* rectPtr() { return dynamic_cast<sf::RectangleShape*>(this->graphic); }
 public:
 	MageHealthBar() : GraphicalGameObject(sf::RectangleShape())
@@ -33,10 +34,13 @@ public:
 	{
 		this->rectPtr()->setPosition(pos);
 	}
-	void setHealth(int health)
+	void setMaxHealth(int maxHealth)
 	{
-		//float length = static_cast<float>(health) * 0.1f;
-		//this->rectPtr()->setScale(length, 1.f);
+		this->maxHealth = maxHealth;
+	}
+	void setCurrHealth(int health)
+	{
+		this->rectPtr()->setSize({ 37.f * health / maxHealth, 5.f });
 	}
 };
 
@@ -106,10 +110,11 @@ public:
 	void AddedToScreen()
 	{
 		this->healthBar = new MageHealthBar();
+		healthBar->setMaxHealth(this->health);
 		sf::Vector2f pos = this->spritePtr()->getPosition();
 		pos.y -= 10.f;
 		pos.x += 5.f;
-		this->healthBar->setHealth(this->health);
+		this->healthBar->setCurrHealth(this->health);
 		this->healthBar->setPosition(pos);
 		this->screen->add(this->healthBar);
 	}
@@ -266,7 +271,7 @@ public:
 				if (this->blastsHitBy.find(blast->getID()) != this->blastsHitBy.end()) { return; }
 				this->blastsHitBy.insert(blast->getID());
 				this->health -= blast->getDamage();
-				this->healthBar->setHealth(this->health);
+				this->healthBar->setCurrHealth(this->health);
 				if (this->health > 0) { return; }
 				if (this->respawnManager) { this->respawnManager->died(this); }
 				alive = false;
