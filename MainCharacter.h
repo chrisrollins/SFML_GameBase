@@ -11,6 +11,7 @@
 #include "DifficultySettings.h"
 #include "MageBlast.h"
 #include "AntiMagePotion.h"
+#include "GameOver.h"
 
 using namespace Engine;
 
@@ -50,6 +51,7 @@ class MainCharacter : public GraphicalGameObject
 	int speedDecayDelay = 0;
 	int speedRestoreDelay = 0;
 	int colorRestoreDelay = 0;
+	GameOver gameOver;
 public:
 	MainCharacter(sf::Sprite s) : GraphicalGameObject(s)
 	{
@@ -280,6 +282,7 @@ public:
 			{
 				this->sprite()->setColor(sf::Color(0, 0, 0, 0));
 				isDead = true;
+				this->screen->addUIObject(&this->gameOver);
 			}
 		}
 
