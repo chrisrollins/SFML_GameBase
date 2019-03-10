@@ -261,6 +261,12 @@ public:
 			if (f % 50 == 0 && !this->isDead)
 			{
 				deathCount++;
+				if (deathCount == 3)
+				{
+					this->screen->getMusicPlayer()->stop();
+					this->screen->getMusicPlayer()->play(Music::ID::GameOver);
+					this->screen->getMusicPlayer()->setVolume(20.f);
+				}
 			}
 			if (direction == DIRECTION::DOWN || S_KeyHeld)
 			{
