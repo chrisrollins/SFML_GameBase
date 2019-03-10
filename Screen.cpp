@@ -298,7 +298,6 @@ namespace Engine
 							size.y = static_cast<unsigned int>(obj->obstacleCollisionSize.height);
 						}
 
-						int count = 0;
 						do
 						{
 							sf::Vector2f corners[4] = {
@@ -327,7 +326,6 @@ namespace Engine
 								}
 							}
 							else { obj->spawnCollisionsResolved = true; }
-							count++;
 						} while (!obj->spawnCollisionsResolved);
 						
 						obj->lastPos = { X , Y };
