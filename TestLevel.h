@@ -36,7 +36,8 @@ public:
 		levelScreen.addMap(&map);
 
 		sf::Sprite m_Sprite;
-		m_Sprite.setPosition(static_cast<float>(Screen::windowWidth / 2), static_cast<float>(Screen::windowHeight / 2));
+		m_Sprite.setPosition(static_cast<float>(map.width() * map.tileSize().x / 2),
+			static_cast<float>(map.height() * map.tileSize().y / 2));
 		static sf::Texture m_Texture;
 		m_Texture.loadFromFile("zombie.png");
 		m_Sprite.setTexture(m_Texture);
