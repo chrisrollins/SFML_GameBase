@@ -24,8 +24,6 @@ namespace Engine
 		void close();
 		sf::Vector2i getMousePosition() const;
 		GameObject* getMainCharacter() const;
-		MusicPlayer* getMusicPlayer() const;
-		SoundPlayer* getSoundPlayer() const;
 		const TileMap* getMap() const;
 		unsigned static int windowWidth;
 		unsigned static int windowHeight;
@@ -37,8 +35,9 @@ namespace Engine
 		GameObjectMap ui_objects; //UI objects have an absolute position on the screen so they follow the view. they have no collision either.
 		GameObject* mainCharacter = nullptr;
 		TileMap* map = nullptr;
-		MusicPlayer musicPlayer;
-		SoundPlayer soundPlayer;
 	};
+
+	static MusicPlayer musicPlayer;
+	static SoundPlayer soundPlayer;
 }
 #endif
