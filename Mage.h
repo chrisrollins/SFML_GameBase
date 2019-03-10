@@ -26,6 +26,8 @@ public:
 		sf::RectangleShape* rect = this->rectPtr();
 		rect->setFillColor({ 50, 255, 50, 140 });
 		rect->setSize({ 100.f, 10.f });
+		this->blockingCollision = false;
+		this->ignoreObstacles = true;
 	}
 	void setPosition(sf::Vector2f pos)
 	{
