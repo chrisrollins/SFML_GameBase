@@ -21,6 +21,7 @@ namespace DifficultySettings
 		static int healthDrainModifier;
 		static float highHealthDrainPenalty;
 		static int attackHealthCostModifier;
+		static int maxPotionNumModifier;
 	}
 
 	namespace Mage
@@ -77,26 +78,27 @@ namespace DifficultySettings
 		case DIFFICULTY::EASY:
 			Map::picture = "tileset.png";
 			Map::fileName = "map_easy.txt";
-			Player::missingHealthHealBonus = 0.6f;
-			Player::highHealthDrainPenalty = 0.15f;
+			Player::missingHealthHealBonus = 0.5f;
+			Player::highHealthDrainPenalty = 0.2f;
 			Player::eatDrainFreezeDuration = 12;
 			Score::baseMultiplier = 1.0f;
 			Score::cumulativeBonusMultiplier = 0.02f;
 			Score::cumulativeBonusMultiplierMax = 1.10f;
-			Score::multiplierPerSecond = -0.002f;
+			Score::multiplierPerSecond = -0.001f;
 			break;
 		case DIFFICULTY::NORMAL:
 			Map::picture = "tileset.png";
 			Map::fileName = "map_normal.txt";
 			Player::missingHealthHealBonus = 0.3f;
 			Player::healthDrainModifier = 1;
-			Player::highHealthDrainPenalty = 0.4f;
+			Player::highHealthDrainPenalty = 0.5f;
 			Player::eatDrainFreezeDuration = 11;
 			Player::maxHealthModifier = -4500;
 			Player::eatHealModifier = -250;
 			Player::attackHealthCostModifier = 150;
-			Mage::attackDamageModifier = 10;
-			Mage::blastSpeedModifier = 0.255f;
+			Player::maxPotionNumModifier = -1;
+			Mage::attackDamageModifier = 50;
+			Mage::blastSpeedModifier = 0.8f;
 			Mage::touchDamageModifier = 20;
 			Mage::movementSpeedModifier = 1;
 			Mage::healthDrainModifier = 1;
@@ -117,7 +119,8 @@ namespace DifficultySettings
 			Player::maxHealthModifier = -6000;
 			Player::eatHealModifier = -300;
 			Player::attackHealthCostModifier = 390;
-			Mage::attackDamageModifier = 70;
+			Player::maxPotionNumModifier = -2;
+			Mage::attackDamageModifier = 150;
 			Mage::blastSpeedModifier = 1.5f;
 			Mage::touchDamageModifier = 90;
 			Mage::movementSpeedModifier = 2;

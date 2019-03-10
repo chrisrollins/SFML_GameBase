@@ -40,7 +40,6 @@ public:
 		if (character->isAlive())
 		{
 			minute = character->getCurrAliveTime() / 60;
-			cout << minute << endl;
 			second = character->getCurrAliveTime() - minute * 60;
 			sout << setw(2) << setfill('0') << right << minute << ":" << setw(2) <<
 				setprecision(2) << setfill('0') << second;

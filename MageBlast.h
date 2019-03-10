@@ -17,6 +17,7 @@ private:
 	sf::Vector2f movePerFrame;
 	sf::Texture texture;
 	int life;
+	int hitsAgainstPlayer = 0;
 public:
 	MageBlast(const sf::Vector2f& pos, const sf::Vector2f& destination, double speed, int duration) : Engine::GraphicalGameObject(sf::Sprite())
 	{
@@ -54,9 +55,17 @@ public:
 		if (dynamic_cast<SuperZombieBlast*>(&other) && this->life > 20)
 		{
 			this->life = 20;
-			this->movePerFrame.x /= 3.f;
-			this->movePerFrame.y /= 3.f;
+			this->movePerFrame.x /= 4.f;
+			this->movePerFrame.y /= 4.f;
 		}
+	}
+	void hitPlayer()
+	{
+		this->hitsAgainstPlayer++;
+	}
+	int getHits() const
+	{
+		return this->hitsAgainstPlayer;
 	}
 	sf::Sprite* spritePtr()
 	{

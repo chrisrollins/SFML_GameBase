@@ -39,14 +39,14 @@ class MainCharacter : public GraphicalGameObject
 	bool isDead; // true when the zombie turns to invisible
 	DIRECTION direction;
 	int potionNum = 0;
-	int maxPotionNum = 5;
+	int maxPotionNum = 6;
 	int _health = 30 * 60 * 100;
 	int maxHealth = 30 * 60 * 100;
-	int healthDrain = 13;
-	int additionalDrainPerMage = 1;
-	int eatHeal = 5500;
+	int healthDrain = 15;
+	int additionalDrainPerMage = 2;
+	int eatHeal = 5700;
 	int eatDrainFreezeCountdown = 0;
-	int attackHealthCost = 500;
+	int attackHealthCost = 400;
 	int baseSpeed = 3;
 	int speed = 3;
 	int maxSpeed = 4;
@@ -84,6 +84,7 @@ public:
 		this->eatHeal += DifficultySettings::Player::eatHealModifier;
 		this->healthDrain += DifficultySettings::Player::healthDrainModifier;
 		this->attackHealthCost += DifficultySettings::Player::attackHealthCostModifier;
+		this->maxPotionNum += DifficultySettings::Player::maxPotionNumModifier;
 	}
 	void KeyPressed(sf::Event e)
 	{
@@ -408,7 +409,7 @@ public:
 	void Collision(GraphicalGameObject& other)
 	{
 		if (_health > 0) {
-			if (dynamic_cast<MageBlast*>(&other))
+			if (MageBlast* blast = dynamic_cast<MageBlast*>(&other))
 			{
 				if (!isHurt)
 				{
@@ -420,7 +421,10 @@ public:
 				{
 					isHurt = false;
 				}
-				this->takeDamage(750 + DifficultySettings::Mage::attackDamageModifier);
+				int damage = static_cast<int>( static_cast<float>(1000 + DifficultySettings::Mage::attackDamageModifier) / (1.f + 0.01f*(static_cast<float>( blast->getHits() ))) );
+				if (damage < 15) { damage = 15; }
+				this->takeDamage(damage);
+				blast->hitPlayer();
 			}
 			else if (Mage* mage = dynamic_cast<Mage*>(&other))
 			{
@@ -469,6 +473,8 @@ public:
 			{
 				this->screen->getSoundPlayer()->play(SoundEffect::ID::Potion, 40.f);
 				this->addPotionNum();
+				this->changeHealth(this->eatHeal / 4);
+				this->eatDrainFreezeCountdown = DifficultySettings::Player::eatDrainFreezeDuration * 2;
 				potion->die();
 			}
 		}
