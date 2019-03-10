@@ -25,9 +25,6 @@ class MainCharacter : public GraphicalGameObject
 	sf::Vector2u textureSize;
 	sf::Vector2u imageCount;
 	sf::Vector2u currentImage;
-	bool meleeAttack;
-	int meleeAttackDuration = 20;
-	int meleeAttackCounter = 0;
 	bool inTrap;
 	bool isHurt;
 	float totalAliveTime;
@@ -70,8 +67,8 @@ public:
 		this->obstacleCollisionSize.height = static_cast<float>(size.height) * collisionSizeRatio.y;
 		this->obstacleCollisionSize.left = ((1.f - collisionSizeRatio.x) * static_cast<float>(size.width)) / 2.f;
 		this->obstacleCollisionSize.top = ((1.f - collisionSizeRatio.y) * static_cast<float>(size.height));
+		direction = DIRECTION::DOWN;
 		potionNum = 0;
-		meleeAttack = false;
 		startDeath = false;
 		deathCount = 0;
 		inTrap = false;
@@ -88,80 +85,58 @@ public:
 	}
 	void KeyPressed(sf::Event e)
 	{
-		switch (e.key.code)
+		if (!startDeath)
 		{
-		case sf::Keyboard::W:
-			this->W_KeyHeld = true;
-			break;
-		case sf::Keyboard::A:
-			this->A_KeyHeld = true;
-			break;
-		case sf::Keyboard::S:
-			this->S_KeyHeld = true;
-			break;
-		case sf::Keyboard::D:
-			this->D_KeyHeld = true;
-			break;
-		default:
-			break;
+			switch (e.key.code)
+			{
+			case sf::Keyboard::W:
+				this->W_KeyHeld = true;
+				break;
+			case sf::Keyboard::A:
+				this->A_KeyHeld = true;
+				break;
+			case sf::Keyboard::S:
+				this->S_KeyHeld = true;
+				break;
+			case sf::Keyboard::D:
+				this->D_KeyHeld = true;
+				break;
+			default:
+				break;
+			}
 		}
 	}
 	void KeyReleased(sf::Event e)
 	{
-		switch (e.key.code)
+		if (!startDeath)
 		{
-		case sf::Keyboard::W:
-			this->W_KeyHeld = false;
-			this->setDirection(DIRECTION::UP);
-			break;
-		case sf::Keyboard::A:
-			this->A_KeyHeld = false;
-			this->setDirection(DIRECTION::LEFT);
-			break;
-		case sf::Keyboard::S:
-			this->S_KeyHeld = false;
-			this->setDirection(DIRECTION::DOWN);
-			break;
-		case sf::Keyboard::D:
-			this->D_KeyHeld = false;
-			this->setDirection(DIRECTION::RIGHT);
-			break;
-		default:
-			break;
+			switch (e.key.code)
+			{
+			case sf::Keyboard::W:
+				this->W_KeyHeld = false;
+				this->setDirection(DIRECTION::UP);
+				break;
+			case sf::Keyboard::A:
+				this->A_KeyHeld = false;
+				this->setDirection(DIRECTION::LEFT);
+				break;
+			case sf::Keyboard::S:
+				this->S_KeyHeld = false;
+				this->setDirection(DIRECTION::DOWN);
+				break;
+			case sf::Keyboard::D:
+				this->D_KeyHeld = false;
+				this->setDirection(DIRECTION::RIGHT);
+				break;
+			default:
+				break;
+			}
 		}
 	}
 	void MouseButtonReleased(sf::Event e)
 	{
 		if (_health > 0)
 		{
-			/*if (e.mouseButton.button == sf::Mouse::Left)
-			{
-				this->speed = 0;
-				this->speedRestoreDelay = 6;
-				meleeAttack = true;
-				if (direction == DIRECTION::UP)
-				{
-					imageCount.y = 8;
-					imageCount.x = 2;
-				}
-				if (direction == DIRECTION::DOWN)
-				{
-					imageCount.y = 8;
-					imageCount.x = 0;
-				}
-				if (direction == DIRECTION::LEFT)
-				{
-					imageCount.y = 9;
-					imageCount.x = 2;
-				}
-				if (direction == DIRECTION::RIGHT)
-				{
-					imageCount.y = 9;
-					imageCount.x = 0;
-				}
-				this->sprite()->setTextureRect(sf::IntRect(imageCount.x * textureSize.x,
-					imageCount.y * textureSize.y, textureSize.x, textureSize.y));
-			}*/
 			if (e.mouseButton.button == sf::Mouse::Left)
 			{
 				this->screen->getSoundPlayer()->play(SoundEffect::ID::ZombieAttack, 40.f);
@@ -212,66 +187,38 @@ public:
 		}
 		if (_health > 0)
 		{
-			if (meleeAttackCounter >= meleeAttackDuration && meleeAttack)
+			float fSpeed = static_cast<float>(this->speed);
+			if (f % 20 == 0 && (this->W_KeyHeld || this->A_KeyHeld || this->S_KeyHeld || this->D_KeyHeld))
 			{
-				meleeAttack = false;
-				if (direction == DIRECTION::DOWN || direction == DIRECTION::RIGHT)
-				{
-					if (imageCount.x == 1)
-					{
-						if (direction == DIRECTION::DOWN)
-							imageCount.y = 0;
-						else
-							imageCount.y = 2;
-					}
-					else
-						imageCount.x++;
-				}
-				else //if (direction == DIRECTION::UP || direction == DIRECTION::LEFT)
-				{
-					if (imageCount.x == 3)
-					{
-						if (direction == DIRECTION::UP)
-							imageCount.y = 3;
-						else
-							imageCount.y = 1;
-					}
-					else
-						imageCount.x++;
-				}
+				if (imageCount.x == 3)
+					imageCount.x = 0;
+				else
+					imageCount.x++;
 			}
-			if (!meleeAttack)
+			if (!this->W_KeyHeld && !this->A_KeyHeld && !this->S_KeyHeld && !this->D_KeyHeld)
 			{
-				float fSpeed = static_cast<float>(this->speed);
-				if (f % 20 == 0)
-				{
-					if (imageCount.x == 3)
-						imageCount.x = 0;
-					else
-						imageCount.x++;
-				}
-				if (this->W_KeyHeld)
-				{
-					imageCount.y = 3;
-					s->move(0.f, -1.f * fSpeed);
-				}
-				if (this->A_KeyHeld)
-				{
-					imageCount.y = 1;
-					s->move(-1.f * fSpeed, 0.f);
-				}
-				if (this->S_KeyHeld)
-				{
-					imageCount.y = 0;
-					s->move(0.f, fSpeed);
-				}
-				if (this->D_KeyHeld)
-				{
-					imageCount.y = 2;
-					s->move(fSpeed, 0.f);
-				}
+				imageCount.x = 0;
 			}
-			meleeAttackCounter++;
+			if (this->W_KeyHeld)
+			{
+				imageCount.y = 3;
+				s->move(0.f, -1.f * fSpeed);
+			}
+			if (this->A_KeyHeld)
+			{
+				imageCount.y = 1;
+				s->move(-1.f * fSpeed, 0.f);
+			}
+			if (this->S_KeyHeld)
+			{
+				imageCount.y = 0;
+				s->move(0.f, fSpeed);
+			}
+			if (this->D_KeyHeld)
+			{
+				imageCount.y = 2;
+				s->move(fSpeed, 0.f);
+			}
 			this->drain();
 			if (f % 120 == 0) { *Engine::scorePtr += DifficultySettings::Score::applyMultipliers(1); }
 
@@ -335,6 +282,7 @@ public:
 				isDead = true;
 			}
 		}
+
 		if (!isDead)
 		{
 			this->sprite()->setTextureRect(sf::IntRect(imageCount.x * textureSize.x,
@@ -377,7 +325,6 @@ public:
 	}
 	void setDirection(DIRECTION direction)
 	{
-		if (this->meleeAttack) { return; }
 		this->direction = direction;
 	}
 	void takeDamage(int damage)
