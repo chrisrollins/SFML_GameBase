@@ -56,12 +56,22 @@ public:
 	}
 };
 
-class Name : public SampleUIText {
+class Name : public GraphicalGameObject {
 public:
-	Name() : SampleUIText("DoubleFeature.ttf", "Cursed Zombie", sf::Color::Red, 50, 340, 0) {}
+	Name() : GraphicalGameObject(sf::Text()) 
+	{
+		font.loadFromFile("DoubleFeature.ttf");
+		this->textPtr()->setFont(font);
+		this->textPtr()->setString("Cursed Zombie");
+		this->textPtr()->Bold;
+		this->textPtr()->setFillColor(sf::Color(179, 45, 0));
+		this->textPtr()->setCharacterSize(50);
+		this->textPtr()->setPosition(340.f, 50.f);
+	}
+private:
+	sf::Font font;
+	sf::Text* textPtr() { return dynamic_cast<sf::Text*>(this->getGraphic()); }
 };
-
-
 
 class QuitButton : public UIButton
 {

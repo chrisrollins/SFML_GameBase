@@ -18,6 +18,8 @@
 #include "HealthBar.h"
 #include "RespawnManager.h"
 #include "DifficultySettings.h"
+#include "PotionUI.h"
+#include "TimerUI.h"
 
 using namespace Engine;
 
@@ -29,7 +31,7 @@ public:
 	{
 		static Screen levelScreen;
 		static TileMap map;
-		
+
 		map.load(DifficultySettings::Map::picture, DifficultySettings::Map::fileName);
 		levelScreen.addMap(&map);
 
@@ -47,6 +49,10 @@ public:
 		potion.setTexture(potion_texture);
 		static RespawnManager<AntiMagePotion> potionMng(potion, 10, 200);
 		levelScreen.add(&potionMng);
+
+		static PotionUI potionUI(potion);
+		potionUI.setCharacter(mc_ptr);
+		levelScreen.addUIObject(&potionUI);
 
 		static sf::Texture citizen_boy_texture;
 		citizen_boy_texture.loadFromFile("boy.png");
@@ -102,6 +108,17 @@ public:
 		static HealthBar healthbar;
 		healthbar.setCharacter(mc_ptr);
 		levelScreen.addUIObject(&healthbar);
+
+		//set up the score object
+		static sf::Text s;
+		static Score score(s);
+		Engine::scorePtr = &score;
+		levelScreen.addUIObject(&score);
+
+		static sf::Text t;
+		static TimerUI timer(t);
+		timer.setCharacter(mc_ptr);
+		levelScreen.addUIObject(&timer);
 
 		levelScreen.render();
 	}

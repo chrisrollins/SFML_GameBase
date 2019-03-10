@@ -1,32 +1,29 @@
-//
-//  Score.hpp
-//  Project_XCODE
-//
-//  Created by Jakin Wang on 2/27/19.
-//  Copyright © 2019 Jakin Wang. All rights reserved.
-//
-
-#ifndef Score_hpp
-#define Score_hpp
+#ifndef SCORE_H
+#define SCORE_H
 
 #include <iostream>
 #include <string>
 #include "Screen.h"
-#include "SampleUIText.h"
+#include "GameObject.h"
 #include "DifficultySettings.h"
 
 namespace Engine
 {
-	class Score : public SampleUIText {
-
+	class Score : public GraphicalGameObject 
+	{
 	public:
-		Score(std::string text) : SampleUIText(text), number(0) {}
-		Score(int s) : number(s), SampleUIText(std::to_string(s)) {}
-		Score(std::string text, const sf::Color &C, unsigned int size,
-			float position_x, float position_y) : SampleUIText(text, C, size, position_x, position_y) {}
-		Score(int s, const sf::Color &C, unsigned int size,
-			float position_x, float position_y) : number(s), SampleUIText("Your Score: " + std::to_string(s), C, size, position_x, position_y) {}
-		Score() : Score(0, sf::Color::Cyan, 32, 1000, 0) {}
+		Score(sf::Text t) : GraphicalGameObject(t) 
+		{
+			font.loadFromFile("zombie.ttf");
+			this->text()->setFont(font);
+			this->text()->Bold;
+			this->text()->setOutlineColor(sf::Color(179, 45, 0));
+			this->text()->setOutlineThickness(2.f);
+			this->text()->setFillColor(sf::Color::Black);
+			this->text()->setPosition(830.f, 10.f);
+			this->text()->setLetterSpacing(3.f);
+			this->text()->setString("Score: 0");
+		}
 		int operator++()
 		{
 			*this += 1;
@@ -53,7 +50,7 @@ namespace Engine
 		void set(int n)
 		{
 			this->number = n;
-			this->setText("Your Score: " + std::to_string(number));
+			this->text()->setString("Score: " + std::to_string(number));
 		}
 		void EveryFrame(uint64_t f) {
 			int n = number, count = 0;
@@ -66,10 +63,11 @@ namespace Engine
 				DifficultySettings::Score::baseMultiplier += DifficultySettings::Score::multiplierPerSecond;
 				if (DifficultySettings::Score::baseMultiplier < 0.5f) { DifficultySettings::Score::baseMultiplier = 0.5f; }
 			}
-			this->setPosition(static_cast<float>(1000 - (count + 11) * 16), 0.f);
 		}
 	private:
 		int number = 0;
+		sf::Font font;
+		sf::Text* text() { return dynamic_cast<sf::Text*>(this->getGraphic()); }
 	};
 
 	static Score* scorePtr;

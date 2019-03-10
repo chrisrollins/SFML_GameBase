@@ -25,9 +25,8 @@ public:
 		this->currPtr()->setSize(sf::Vector2f(fHealth / 600, 10.f));
 		this->currPtr()->setPosition(50.f, 50.f);
 		this->currPtr()->setFillColor(sf::Color(sf::Color::Green));
-
-
 	}
+
 	void EveryFrame(uint64_t f) {
 		float fMaxHealth = static_cast<float>(this->character->getMaxHealth());
 		float fCurrHealth = static_cast<float>(this->character->getHealth());
@@ -66,6 +65,7 @@ public:
 			this->currPtr()->setFillColor(sf::Color(sf::Color::Red));
 		}
 	}
+
 	void draw(sf::RenderWindow& win)
 	{
 		this->maxPtr()->setPosition(this->currPtr()->getPosition());

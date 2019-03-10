@@ -30,13 +30,15 @@ class MainCharacter : public GraphicalGameObject
 	int meleeAttackCounter = 0;
 	bool inTrap;
 	bool isHurt;
+	float totalAliveTime; 
+	sf::Clock aliveClock;
 	sf::Clock hurtClock;
 	sf::Clock trapClock;
 	int deathCount; // to control death animation
 	bool startDeath;
 	bool isDead; // true when the zombie turns to invisible
 	DIRECTION direction;
-	int potionNum;
+	int potionNum = 0;
 	int maxPotionNum = 5;
 	int _health = 30 * 60 * 100;
 	int maxHealth = 30 * 60 * 100;
@@ -51,7 +53,6 @@ class MainCharacter : public GraphicalGameObject
 	int speedDecayDelay = 0;
 	int speedRestoreDelay = 0;
 	int colorRestoreDelay = 0;
-	Score score;
 public:
 	MainCharacter(sf::Sprite s) : GraphicalGameObject(s)
 	{
@@ -62,7 +63,7 @@ public:
 		this->sprite()->setTextureRect(sf::IntRect(imageCount.x * textureSize.x,
 			imageCount.y * textureSize.y, textureSize.x, textureSize.y));
 		blast_texture.loadFromFile("blast.png");
-		super_blast_texture.loadFromFile("super_zombie_blast.png");
+		super_blast_texture.loadFromFile("skull_test.png");
 		sf::IntRect size = this->sprite()->getTextureRect();
 		sf::Vector2f collisionSizeRatio(0.4f, 0.3f); //these numbers shrink the collision size of the player, and the code below adjusts it to be positioned at the bottom of the sprite
 		this->obstacleCollisionSize.width = static_cast<float>(size.width) * collisionSizeRatio.x;
@@ -76,20 +77,13 @@ public:
 		inTrap = false;
 		isHurt = false;
 		isDead = false;
-
-		//set up the score object
-		this->score = 0;
-		Engine::scorePtr = &this->score;
+		aliveClock.restart();
 
 		//difficulty adjustments
 		this->maxHealth += DifficultySettings::Player::maxHealthModifier;
 		this->eatHeal += DifficultySettings::Player::eatHealModifier;
 		this->healthDrain += DifficultySettings::Player::healthDrainModifier;
 		this->attackHealthCost += DifficultySettings::Player::attackHealthCostModifier;
-	}
-	void AddedToScreen()
-	{
-		this->screen->addUIObject(&this->score);
 	}
 	void KeyPressed(sf::Event e)
 	{
@@ -278,7 +272,7 @@ public:
 			}
 			meleeAttackCounter++;
 			this->drain();
-			if (f % 120 == 0) { this->score += DifficultySettings::Score::applyMultipliers(1); }
+			if (f % 120 == 0) { *Engine::scorePtr += DifficultySettings::Score::applyMultipliers(1); }
 
 			//speed goes back to base speed gradually
 			if (f % 6 == 0)
@@ -309,6 +303,7 @@ public:
 			this->sprite()->setColor(sf::Color(255, 100, 100));
 			if (!startDeath)
 			{
+				totalAliveTime = aliveClock.getElapsedTime().asSeconds();
 				startDeath = true;
 				this->screen->getSoundPlayer()->play(SoundEffect::ID::ZombieDeath, 60.f);
 			}
@@ -366,6 +361,18 @@ public:
 	int getMaxHealth()
 	{
 		return maxHealth;
+	}
+	float getCurrAliveTime()
+	{
+		return aliveClock.getElapsedTime().asSeconds();
+	}
+	float getTotalAliveTime()
+	{
+		return totalAliveTime;
+	}
+	bool isAlive()
+	{
+		return !startDeath;
 	}
 	void setDirection(DIRECTION direction)
 	{
@@ -455,7 +462,7 @@ public:
 				this->changeHealth(static_cast<int>(static_cast<float>(this->eatHeal) * missingHealthMultiplier));
 				this->changeSpeed(1);
 				this->speedDecayDelay = 60;
-				this->score += DifficultySettings::Score::applyMultipliers(10);
+				*Engine::scorePtr += DifficultySettings::Score::applyMultipliers(10);
 				this->eatDrainFreezeCountdown = DifficultySettings::Player::eatDrainFreezeDuration;
 			}
 			else if (AntiMagePotion* potion = dynamic_cast<AntiMagePotion*>(&other))
@@ -468,7 +475,7 @@ public:
 	}
 	void changeScore(int change)
 	{
-		this->score += change;
+		*Engine::scorePtr += change;
 	}
 	sf::Sprite* sprite()
 	{
