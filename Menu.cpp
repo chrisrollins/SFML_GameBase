@@ -48,7 +48,7 @@ public:
 				this->name = this->name.substr(0, this->name.size() - 1);
 			}
 		}
-		else if(key == 13) //13 is enter
+		else if(key == static_cast<int>('\r') || key == static_cast<int>('\n'))
 		{
 			Music::ID music;
 			switch (DifficultySettings::currentDifficulty)
