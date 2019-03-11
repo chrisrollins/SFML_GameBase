@@ -16,7 +16,7 @@ public:
 		potion()->setPosition(50.f, 70.f);
 		font.loadFromFile("zombie.ttf");
 		text.setFont(font);
-		text.Bold;
+        text.setStyle(sf::Text::Bold);
 		text.setLetterSpacing(3.f);
 		text.setOutlineColor(sf::Color(163, 19, 88));
 		text.setOutlineThickness(2.f);
