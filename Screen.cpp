@@ -59,7 +59,23 @@ namespace Engine
 
 	void Screen::remove(GameObject* gameObject)
 	{
-		removeQueue.push(gameObject);
+		if (this != currentScreen)
+		{
+			for (auto map : { &this->objects, &this->g_objects, &this->ui_objects })
+			{
+				if (map->find(gameObject->getID()) != map->end())
+				{
+					GameObjectID id = gameObject->getID();
+					map->erase(id);
+					delete gameObject;
+					break;
+				}
+			}
+		}
+		else
+		{		
+			removeQueue.push(gameObject);
+		}
 	}
 
 	sf::Vector2i Screen::getMousePosition() const
@@ -90,15 +106,12 @@ namespace Engine
 		unsigned int height = (Screen::windowHeight) ? Screen::windowHeight : 500;
 		const char* title = (Screen::windowTitle) ? Screen::windowTitle : "<no title>";
 		static sf::RenderWindow window(sf::VideoMode(width, height), title, sf::Style::Close);
-		static sf::View view(sf::Vector2f(static_cast<float>(width / 2), static_cast<float>(height / 2)), sf::Vector2f(static_cast<float>(width), static_cast<float>(height)));
 		static sf::Clock clock;
 		static uint64_t frameCount = 0;
-
-		if (!windowInitialized)
-		{
-			windowPtr = &window;
-			window.setView(view);
-		}
+				
+		sf::View view(sf::Vector2f(static_cast<float>(width / 2), static_cast<float>(height / 2)), sf::Vector2f(static_cast<float>(width), static_cast<float>(height)));
+		windowPtr = &window;
+		window.setView(view);	
 
 		if (renderStarted)
 		{
@@ -112,6 +125,7 @@ namespace Engine
 		currentScreen = this;
 		renderStarted = true;
 
+		//local function used by game loop to iterate over each map of objects for the events
 		static std::function<void(GameObjectMap*, sf::Event)> handleEvents = [](GameObjectMap* objects, sf::Event event)
 		{
 			for (auto const& pair : *objects)
@@ -190,11 +204,11 @@ namespace Engine
 				}
 			}
 		};
-
+		
 		while (window.isOpen() && !pendingSwitch)
 		{
 			clock.restart();
-
+			/*
 			//remove objects that are pending to be removed
 			while (!removeQueue.empty())
 			{
@@ -211,7 +225,7 @@ namespace Engine
 						break;
 					}
 				}
-			}
+			}*/
 
 			//run the EveryFrame event on all objects
 			for (auto map : { &currentScreen->objects, &currentScreen->g_objects, &currentScreen->ui_objects })
@@ -419,6 +433,25 @@ namespace Engine
 			}
 			window.setView(view);
 			window.display();
+
+			//remove objects that are pending to be removed
+			while (!removeQueue.empty())
+			{
+				GameObject* toRemove = removeQueue.front();
+				removeQueue.pop();
+				for (auto map : { &currentScreen->objects, &currentScreen->g_objects, &currentScreen->ui_objects })
+				{
+					if (map->find(toRemove->getID()) != map->end())
+					{
+						GameObjectID id = toRemove->getID();
+						toRemove->RemovedFromScreen();
+						map->erase(id);
+						delete toRemove;
+						break;
+					}
+				}
+			}
+
 			frameCount++;
 			while (clock.getElapsedTime().asMicroseconds() < (1000000 / currentFPS)) {}
 		}

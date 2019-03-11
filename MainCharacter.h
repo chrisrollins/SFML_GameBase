@@ -4,6 +4,7 @@
 #include <cmath>
 #include <ctime>
 #include <vector>
+#include "GameOver.h"
 #include "Score.h"
 #include "Screen.h"
 #include "GameObject.h"
@@ -13,7 +14,6 @@
 #include "DifficultySettings.h"
 #include "MageBlast.h"
 #include "AntiMagePotion.h"
-#include "GameOver.h"
 
 using namespace Engine;
 
@@ -57,7 +57,6 @@ class MainCharacter : public GraphicalGameObject
 	int speedRestoreDelay = 0;
 	int colorRestoreDelay = 0;
 	std::vector<sf::Vector2f> spawnPositions;
-	GameOver gameOver;
 public:
 	MainCharacter(sf::Sprite s) : GraphicalGameObject(s)
 	{
@@ -295,9 +294,7 @@ public:
 			}
 			if (imageCount.x == 3)
 			{
-				this->sprite()->setColor(sf::Color(0, 0, 0, 0));
-				isDead = true;
-				this->screen->addUIObject(&this->gameOver);
+				this->die();
 			}
 		}
 
@@ -320,6 +317,15 @@ public:
 		int mageDrain = numMagesAlive * (this->additionalDrainPerMage + DifficultySettings::Mage::healthDrainModifier);
 		int totalDrain = baseDrain + mageDrain;
 		this->changeHealth(-1 * totalDrain);
+	}
+	void die()
+	{
+		if (!isDead)
+		{
+			this->sprite()->setColor(sf::Color(0, 0, 0, 0));
+			isDead = true;
+			this->screen->addUIObject(new GameOver());
+		}
 	}
 	int getHealth()
 	{
@@ -394,7 +400,9 @@ public:
 				{
 					isHurt = false;
 				}
-				int damage = static_cast<int>(static_cast<float>(1000 + DifficultySettings::Mage::attackDamageModifier) / (1.f + 0.01f*(static_cast<float>(blast->getHits()))));
+				float repeatDamageDampening = (1.f + 0.01f*(static_cast<float>(blast->getHits())));
+				if (repeatDamageDampening < 0.5f) { repeatDamageDampening = 0.5f; }
+				int damage = static_cast<int>(static_cast<float>(800 + DifficultySettings::Mage::attackDamageModifier) / repeatDamageDampening);
 				if (damage < 15) { damage = 15; }
 				this->takeDamage(damage);
 				blast->hitPlayer();
@@ -472,8 +480,8 @@ public:
 			{
 				Engine::soundPlayer.play(SoundEffect::ID::Potion, 40.f);
 				this->addPotionNum();
-				this->changeHealth(this->eatHeal / 4);
-				this->eatDrainFreezeCountdown = DifficultySettings::Player::eatDrainFreezeDuration * 2;
+				this->changeHealth(this->eatHeal / 2);
+				this->eatDrainFreezeCountdown = DifficultySettings::Player::eatDrainFreezeDuration * 3;
 				potion->die();
 			}
 		}

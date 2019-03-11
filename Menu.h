@@ -24,8 +24,6 @@ namespace Engine
 		Screen menuScreen;
 		TestLevel testLevel;
 	};
-
-	static Menu mainMenu;
 }
 
 #endif

@@ -2,6 +2,9 @@
 #include "TestLevel.h"
 #include "DifficultySettings.h"
 #include <string>
+
+static Menu* currentMenu = nullptr;
+
 class GameTitle : public GraphicalGameObject {
 public:
 	GameTitle() : GraphicalGameObject(sf::Text())
@@ -65,11 +68,11 @@ public:
 					music = Music::EasyGame;
 					break;
 				}
-				mainMenu.startTestLevel();
 				Engine::musicPlayer.stop();
 				Engine::musicPlayer.play(music);
 				Engine::musicPlayer.setVolume(20.f);
 				this->screen->remove(this);
+				currentMenu->startTestLevel();
 			}
 		}
 	}

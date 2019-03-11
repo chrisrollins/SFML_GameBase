@@ -32,7 +32,7 @@ public:
 	{
 		this->character = mc;
 	}
-
+	
 	void EveryFrame(uint64_t f)
 	{
 		ostringstream sout;

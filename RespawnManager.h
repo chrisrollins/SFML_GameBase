@@ -28,6 +28,15 @@ public:
 		this->characters.erase(character->getID());
 	}
 
+	void clear()
+	{
+		for (auto ch : this->characters)
+		{
+			this->screen->remove(ch.second);
+		}
+		this->characters.clear();
+	}
+
 private:
 	std::map<Engine::GameObjectID, T*> characters;
 	size_t max;
