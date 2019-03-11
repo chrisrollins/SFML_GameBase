@@ -2,33 +2,27 @@
 #define ANTIMAGEPOTION_H
 
 #include "GameObject.h"
-#include "RespawnManager.h"
 #include "Screen.h"
 #include "DifficultySettings.h"
 #include "Score.h"
+#include "MainCharacter.h"
+#include <vector>
+#include <ctime>
 
-template<typename T> class RespawnManager;
+class MainCharacter;
 
 class AntiMagePotion : public Engine::GraphicalGameObject
 {
 private:
-	friend class RespawnManager<AntiMagePotion>;
-	RespawnManager<AntiMagePotion>* respawnManager = nullptr;
 	int wiggleDirection = 1;
 	float wiggleSpeed = 1.1f;
 	float wiggleMagnitude = 18.f;
 	float currentRotation = 0.f;
 public:
-
-	AntiMagePotion(sf::Sprite s, RespawnManager<AntiMagePotion>* respawnManager) : AntiMagePotion(s)
-	{
-		this->respawnManager = respawnManager;
-	}
-
 	AntiMagePotion(sf::Sprite s) : Engine::GraphicalGameObject(s)
 	{
 		sf::IntRect size = this->spritePtr()->getTextureRect();
-		this->spritePtr()->setOrigin( static_cast<float>(size.width / 2 ), static_cast<float>(size.height / 2) );
+		this->spritePtr()->setOrigin(static_cast<float>(size.width / 2), static_cast<float>(size.height / 2));
 	}
 
 	void EveryFrame(uint64_t f)
@@ -37,10 +31,9 @@ public:
 		this->currentRotation += static_cast<float>(this->wiggleDirection) * this->wiggleSpeed;
 		this->spritePtr()->setRotation(this->currentRotation);
 	}
-	
+
 	void die()
 	{
-		if (this->respawnManager) { this->respawnManager->died(this); }
 		this->screen->remove(this);
 	}
 
