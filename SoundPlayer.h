@@ -12,6 +12,10 @@ namespace SoundEffect
 		ZombieEat1,
 		ZombieEat2,
 		ZombieEat3,
+		ZombieBurp1,
+		ZombieBurp2,
+		ZombieBurp3,
+		ZombieBurp4,
 		ZombieAttack,
 		ZombieGroan,
 		ZombieDeath,
@@ -49,6 +53,10 @@ public:
 		mSoundContainer.loadSoundEffect(SoundEffect::ID::ZombieEat1, "zombie_eat1.ogg");
 		mSoundContainer.loadSoundEffect(SoundEffect::ID::ZombieEat2, "zombie_eat2.ogg");
 		mSoundContainer.loadSoundEffect(SoundEffect::ID::ZombieEat3, "zombie_eat3.ogg");
+		mSoundContainer.loadSoundEffect(SoundEffect::ID::ZombieBurp1, "zombie_burp1.ogg");
+		mSoundContainer.loadSoundEffect(SoundEffect::ID::ZombieBurp2, "zombie_burp2.ogg");
+		mSoundContainer.loadSoundEffect(SoundEffect::ID::ZombieBurp3, "zombie_burp3.ogg");
+		mSoundContainer.loadSoundEffect(SoundEffect::ID::ZombieBurp4, "zombie_burp4.ogg");
 		mSoundContainer.loadSoundEffect(SoundEffect::ID::ZombieAttack, "zombie_attack.ogg");
 		mSoundContainer.loadSoundEffect(SoundEffect::ID::ZombieGroan, "zombie_hurt.ogg");
 		mSoundContainer.loadSoundEffect(SoundEffect::ID::ZombieDeath, "zombie_death.ogg");
