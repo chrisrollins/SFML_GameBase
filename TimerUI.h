@@ -17,7 +17,7 @@ public:
 	{
 		font.loadFromFile("zombie.ttf");
 		this->text()->setFont(font);
-		this->text()->Bold;
+        this->text()->setStyle(sf::Text::Bold);
 		this->text()->setOutlineColor(sf::Color(179, 45, 0));
 		this->text()->setOutlineThickness(2.f);
 		this->text()->setFillColor(sf::Color::Black);
