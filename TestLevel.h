@@ -36,20 +36,13 @@ public:
 		levelScreen.addMap(&map);
 
 		sf::Sprite m_Sprite;
-		m_Sprite.setPosition(static_cast<float>(map.width() * map.tileSize().x / 2),
+		m_Sprite.setPosition(static_cast<float>(map.width() * map.tileSize().x / 2), 
 			static_cast<float>(map.height() * map.tileSize().y / 2));
 		static sf::Texture m_Texture;
 		m_Texture.loadFromFile("zombie.png");
 		m_Sprite.setTexture(m_Texture);
 		MainCharacter* mc_ptr = new MainCharacter(m_Sprite);
 		levelScreen.addMainCharacter(mc_ptr);
-
-		static sf::Texture potion_texture;
-		potion_texture.loadFromFile("antimage_potion.png");
-		sf::Sprite potion;
-		potion.setTexture(potion_texture);
-		static RespawnManager<AntiMagePotion> potionMng(potion, 10, 200);
-		levelScreen.add(&potionMng);
 
 		static sf::Texture potionUI_texture;
 		potionUI_texture.loadFromFile("brain_icon.png");
