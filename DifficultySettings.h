@@ -22,6 +22,7 @@ namespace DifficultySettings
 		static float highHealthDrainPenalty;
 		static int attackHealthCostModifier;
 		static int maxPotionNumModifier;
+		static int potionMakingCitizenRequired;
 	}
 
 	namespace Mage
@@ -70,6 +71,7 @@ namespace DifficultySettings
 			Player::healthDrainModifier = -1000;
 			Player::maxHealthModifier = 100000;
 			Player::eatDrainFreezeDuration = 12;
+			Player::potionMakingCitizenRequired = 1;
 			Score::baseMultiplier = 0.f;
 			Score::cumulativeBonusMultiplier = 0.0f;
 			Score::cumulativeBonusMultiplierMax = 0.0f;
@@ -81,6 +83,7 @@ namespace DifficultySettings
 			Player::missingHealthHealBonus = 0.5f;
 			Player::highHealthDrainPenalty = 0.2f;
 			Player::eatDrainFreezeDuration = 12;
+			Player::potionMakingCitizenRequired = 4;
 			Score::baseMultiplier = 1.0f;
 			Score::cumulativeBonusMultiplier = 0.02f;
 			Score::cumulativeBonusMultiplierMax = 1.10f;
@@ -96,6 +99,7 @@ namespace DifficultySettings
 			Player::maxHealthModifier = -4500;
 			Player::eatHealModifier = -250;
 			Player::attackHealthCostModifier = 150;
+			Player::potionMakingCitizenRequired = 5;
 			Player::maxPotionNumModifier = -1;
 			Mage::attackDamageModifier = 50;
 			Mage::blastSpeedModifier = 0.8f;
@@ -119,6 +123,7 @@ namespace DifficultySettings
 			Player::maxHealthModifier = -6000;
 			Player::eatHealModifier = -300;
 			Player::attackHealthCostModifier = 390;
+			Player::potionMakingCitizenRequired = 6;
 			Player::maxPotionNumModifier = -2;
 			Mage::attackDamageModifier = 150;
 			Mage::blastSpeedModifier = 1.5f;
