@@ -89,7 +89,7 @@ namespace Engine
 		unsigned int width = (Screen::windowWidth) ? Screen::windowWidth : 500;
 		unsigned int height = (Screen::windowHeight) ? Screen::windowHeight : 500;
 		const char* title = (Screen::windowTitle) ? Screen::windowTitle : "<no title>";
-		static sf::RenderWindow window(sf::VideoMode(width, height), title);
+		static sf::RenderWindow window(sf::VideoMode(width, height), title, sf::Style::Close);
 		static sf::View view(sf::Vector2f(static_cast<float>(width / 2), static_cast<float>(height / 2)), sf::Vector2f(static_cast<float>(width), static_cast<float>(height)));
 		static sf::Clock clock;
 		static uint64_t frameCount = 0;
