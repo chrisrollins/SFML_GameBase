@@ -60,6 +60,26 @@ namespace DifficultySettings
 
 	inline void setDifficulty(DIFFICULTY diff)
 	{
+		Player::maxHealthModifier = 0;
+		Player::eatHealModifier = 0;
+		Player::eatDrainFreezeDuration = 0;
+		Player::missingHealthHealBonus = 0.f;
+		Player::healthDrainModifier = 0;
+		Player::highHealthDrainPenalty = 0.f;
+		Player::attackHealthCostModifier = 0;
+		Player::maxPotionNumModifier = 0;
+		Player::potionMakingCitizenRequired = 0;
+		Mage::attackDamageModifier = 0;
+		Mage::touchDamageModifier = 0;
+		Mage::movementSpeedModifier = 0;
+		Mage::healthDrainModifier = 0;
+		Mage::mageHealthModifier = 0;
+		Mage::blastSpeedModifier = 0.f;
+		Citizen::movementSpeedModifier = 0;
+		Score::multiplierPerSecond = 0.f;
+		Score::baseMultiplier = 0.f;
+		Score::cumulativeBonusMultiplier = 0.f;
+		Score::cumulativeBonusMultiplierMax = 0.f;
 		currentDifficulty = diff;
 		Score::cumulativeBonusMultiplierCurrent = 1.0f;
 		switch (diff)
