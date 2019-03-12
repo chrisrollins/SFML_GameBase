@@ -9,6 +9,7 @@ namespace Music
 {
 	enum ID {
 		Menu,
+		TestMode,
 		EasyGame,
 		NormalGame,
 		HardGame,
@@ -22,6 +23,7 @@ public:
 	MusicPlayer() : mMusic(), mFilenames(), mVolume(100.f)
 	{
 		mFilenames[Music::Menu] = "theme_menu.ogg";
+		mFilenames[Music::TestMode] = "theme_test.ogg";
 		mFilenames[Music::EasyGame] = "theme_easy.ogg";
 		mFilenames[Music::NormalGame] = "theme_normal.ogg";
 		mFilenames[Music::HardGame] = "theme_hard.ogg";
