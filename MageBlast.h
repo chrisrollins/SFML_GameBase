@@ -43,7 +43,7 @@ public:
 		{
 			sf::Color currentColor = spr->getColor();
 			currentColor.a -= (currentColor.a > 13) ? 13 : currentColor.a;
-			spr->setColor(currentColor);
+			spr->setColor(currentColor);			
 		}
 		if (this->life <= 0)
 		{

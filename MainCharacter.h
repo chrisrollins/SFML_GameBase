@@ -47,9 +47,9 @@ class MainCharacter : public GraphicalGameObject
 	int healthDrain = 20;
 	int additionalDrainPerMage = 2;
 	int numCitizenEated = 0;
-	int eatHeal = 6500;
+	int eatHeal = 7000;
 	int eatDrainFreezeCountdown = 0;
-	int attackHealthCost = 300;
+	int attackHealthCost = 250;
 	int baseSpeed = 3;
 	int speed = 3;
 	int maxSpeed = 4;

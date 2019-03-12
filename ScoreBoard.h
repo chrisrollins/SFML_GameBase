@@ -9,6 +9,7 @@
 #include <cstdlib>
 #include "DifficultySettings.h"
 #include "GameObject.h"
+#include "Menu.h"
 
 namespace Engine
 {
@@ -136,6 +137,18 @@ namespace Engine
 			showNormal = false;
 			showInsane = false;
 			showScoreChoice = false;
+			for (auto obj : Menu::getCurrentMenu()->getMenuObjects())
+			{
+				if (obj != this) { obj->disableEvents(); }
+			}
+		}
+		void RemovedFromScreen()
+		{
+			std::cout << "r" << std::endl;
+			for (auto obj : Menu::getCurrentMenu()->getMenuObjects())
+			{
+				if (obj != this) { obj->enableEvents(); }
+			}
 		}
 		bool add(ScoreEntry s, DifficultySettings::DIFFICULTY difficulty)
 		{

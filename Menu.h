@@ -20,6 +20,8 @@ namespace Engine
 		~Menu();
 		void start();
 		void startTestLevel(std::string playerName);
+		std::vector<GameObject*>& getMenuObjects() { return this->menuObjects; }
+		static Menu* getCurrentMenu();
 	private:
 		std::vector<GameObject*> menuObjects;
 		Screen menuScreen;

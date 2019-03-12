@@ -2,26 +2,8 @@
 #include "TestLevel.h"
 #include "DifficultySettings.h"
 #include "ScoreBoard.h"
+#include "UIButton.h"
 #include <string>
-
-static Menu* currentMenu = nullptr;
-
-class GameTitle : public GraphicalGameObject {
-public:
-	GameTitle() : GraphicalGameObject(sf::Text())
-	{
-		font.loadFromFile("DoubleFeature.ttf");
-		this->textPtr()->setFont(font);
-		this->textPtr()->setString("Cursed Zombie");
-		this->textPtr()->setStyle(sf::Text::Bold);
-		this->textPtr()->setFillColor(sf::Color(179, 45, 0));
-		this->textPtr()->setCharacterSize(50);
-		this->textPtr()->setPosition(340.f, 50.f);
-	}
-private:
-	sf::Font font;
-	sf::Text* textPtr() { return dynamic_cast<sf::Text*>(this->getGraphic()); }
-};
 
 class PlayerNameEntry : public GraphicalGameObject
 {
@@ -39,6 +21,10 @@ public:
 		background.setTexture(texture);
 		background.setPosition(600.f, 400.f);
 		ready = false;
+		for (auto obj : Menu::getCurrentMenu()->getMenuObjects())
+		{
+			if (obj != this) { obj->disableEvents(); }
+		}
 	}
 	void draw(sf::RenderWindow& win)
 	{
@@ -73,7 +59,7 @@ public:
 				Engine::musicPlayer.play(music);
 				Engine::musicPlayer.setVolume(20.f);
 				this->screen->remove(this);
-				currentMenu->startTestLevel(this->name);
+				Menu::getCurrentMenu()->startTestLevel(this->name);
 			}
 		}
 	}
@@ -108,6 +94,79 @@ private:
 	sf::Sprite background;
 	bool ready;
 	sf::Clock clock;
+};
+
+class TestModeButton : public UIButton
+{
+public:
+	TestModeButton() : UIButton("Test Mode", { 100.f, 100.f }, { 100.f, 100.f })
+	{
+		myFont.loadFromFile("DoubleFeature.ttf");
+		this->textPtr()->setFont(myFont);
+	}
+	void KeyReleased(sf::Event e)
+	{
+		if (e.key.code == sf::Keyboard::Z)
+		{
+			ZPressed++;
+			if (ZPressed == 4 && this->enabled)
+			{
+				std::cout << "activated" << std::endl;
+				this->activated = true;
+			}
+		}
+	}
+	void MouseButtonReleased(sf::Event e)
+	{
+		if (!this->enabled || !this->activated) { return; }
+		if (e.mouseButton.button == sf::Mouse::Button::Left //if the left mouse button was clicked
+			&& this->background.getGlobalBounds().contains(static_cast<float>(e.mouseButton.x), static_cast<float>(e.mouseButton.y))) //if the click was inside the button
+		{
+			DifficultySettings::setDifficulty(DifficultySettings::TEST);
+			Engine::soundPlayer.play(SoundEffect::ID::MenuClick, 20.f);
+			this->screen->addUIObject(new PlayerNameEntry());
+		}
+	}
+	void draw(sf::RenderWindow& win)
+	{
+		if (this->activated && this->enabled) { win.draw(*this->graphic); }
+	}
+	void EveryFrame(uint64_t f)
+	{
+		if (f % 60 == 0)
+		{
+			if (this->ZPressed > 0) { this->ZPressed--; }
+		}
+	}
+	void enable()
+	{
+		this->enabled = true;
+	}
+	void disable()
+	{
+		this->enabled = false;
+	}
+private:
+	bool activated = false;
+	bool enabled = true;
+	int ZPressed = 0;
+};
+
+class GameTitle : public GraphicalGameObject {
+public:
+	GameTitle() : GraphicalGameObject(sf::Text())
+	{
+		font.loadFromFile("DoubleFeature.ttf");
+		this->textPtr()->setFont(font);
+		this->textPtr()->setString("Cursed Zombie");
+		this->textPtr()->setStyle(sf::Text::Bold);
+		this->textPtr()->setFillColor(sf::Color(179, 45, 0));
+		this->textPtr()->setCharacterSize(50);
+		this->textPtr()->setPosition(340.f, 50.f);
+	}
+private:
+	sf::Font font;
+	sf::Text* textPtr() { return dynamic_cast<sf::Text*>(this->getGraphic()); }
 };
 
 class EasyLevelButton : public UIButton
@@ -236,8 +295,11 @@ public:
 
 namespace Engine
 {
+	static Menu* currentMenu = nullptr;
+
 	Menu::Menu()
 	{
+		currentMenu = this;
 		this->menuObjects = {
 			new GameTitle(),
 			new EasyLevelButton(),
@@ -245,7 +307,8 @@ namespace Engine
 			new HardLevelButton(),
 			new TutorialButton(),
 			new ScoreboardButton(),
-			new QuitButton()
+			new QuitButton(),
+			new TestModeButton()
 		};
 	}
 
@@ -271,5 +334,10 @@ namespace Engine
 	void Menu::startTestLevel(std::string playerName)
 	{
 		this->testLevel.start(playerName);
+	}
+
+	Menu* Menu::getCurrentMenu()
+	{
+		return currentMenu;
 	}
 }

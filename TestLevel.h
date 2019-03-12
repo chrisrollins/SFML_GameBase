@@ -120,6 +120,7 @@ public:
 		//set up the score object
 		static sf::Text s;
 		static Score score(s);
+		score.unfreeze();
 		score.set(0);
 		Engine::scorePtr = &score;
 		levelScreen->addUIObject(&score);

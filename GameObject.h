@@ -39,12 +39,15 @@ namespace Engine
 		virtual void AddedToScreen(); //triggers when the object is added to the screen
 		virtual void RemovedFromScreen(); //triggers when the object is removed from the screen
 		GameObjectID getID() { return this->id; }
+		void disableEvents() { this->eventsDisabled = true; }
+		void enableEvents() { this->eventsDisabled = false; }
 	private:
 		GameObject(GameObjectID id);
 	protected:
 		friend class Screen;
 		GameObjectID id;
 		Screen* screen = nullptr;
+		bool eventsDisabled = false;
 	};
 
 	class GraphicalGameObject : public GameObject

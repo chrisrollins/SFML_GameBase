@@ -59,7 +59,11 @@ namespace Engine
 		}
 		void freeze()
 		{
-			frozen = true;
+			this->frozen = true;
+		}
+		void unfreeze()
+		{
+			this->frozen = false;
 		}
 		void EveryFrame(uint64_t f) {
 			int n = number, count = 0;
