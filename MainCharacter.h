@@ -44,12 +44,12 @@ class MainCharacter : public GraphicalGameObject
 	int maxPotionNum = 6;
 	int health = 30 * 60 * 100;
 	int maxHealth = 30 * 60 * 100;
-	int healthDrain = 15;
+	int healthDrain = 20;
 	int additionalDrainPerMage = 2;
 	int numCitizenEated = 0;
-	int eatHeal = 5700;
+	int eatHeal = 6500;
 	int eatDrainFreezeCountdown = 0;
-	int attackHealthCost = 400;
+	int attackHealthCost = 300;
 	int baseSpeed = 3;
 	int speed = 3;
 	int maxSpeed = 4;
@@ -57,9 +57,11 @@ class MainCharacter : public GraphicalGameObject
 	int speedRestoreDelay = 0;
 	int colorRestoreDelay = 0;
 	std::vector<sf::Vector2f> spawnPositions;
+	std::string name;
 public:
-	MainCharacter(sf::Sprite s) : GraphicalGameObject(s)
+	MainCharacter(sf::Sprite s, std::string name) : GraphicalGameObject(s)
 	{
+		this->name = name;
 		static sf::Texture potion_texutre;
 		potion_texutre.loadFromFile("antimage_potion.png");
 		brainPotion.setTexture(potion_texutre);
@@ -324,30 +326,35 @@ public:
 		{
 			this->sprite()->setColor(sf::Color(0, 0, 0, 0));
 			isDead = true;
-			this->screen->addUIObject(new GameOver());
+			scorePtr->freeze();
+			this->screen->addUIObject(new GameOver(scorePtr->get()));
 		}
 	}
-	int getHealth()
+	std::string getName() const
+	{
+		return this->name;
+	}
+	int getHealth() const
 	{
 		return this->health;
 	}
-	int getMaxHealth()
+	int getMaxHealth() const
 	{
 		return this->maxHealth;
 	}
-	float getCurrAliveTime()
+	float getCurrAliveTime() const
 	{
 		return this->aliveClock.getElapsedTime().asSeconds();
 	}
-	float getTotalAliveTime()
+	float getTotalAliveTime() const
 	{
 		return this->totalAliveTime;
 	}
-	int getNumCitizenEated()
+	int getNumCitizenEated() const
 	{
 		return this->numCitizenEated;
 	}
-	bool isAlive()
+	bool isAlive() const
 	{
 		return !this->startDeath;
 	}

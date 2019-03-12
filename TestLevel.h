@@ -27,7 +27,7 @@ class TestLevel
 {
 public:
 	TestLevel() {}
-	void start()
+	void start(std::string playerName)
 	{
 		static Screen* oldScreen = nullptr;
 
@@ -44,7 +44,7 @@ public:
 		m_Texture.loadFromFile("zombie.png");
 		m_Sprite.setTexture(m_Texture);
 
-		MainCharacter* mc_ptr = new MainCharacter(m_Sprite);
+		MainCharacter* mc_ptr = new MainCharacter(m_Sprite, playerName);
 		levelScreen->addMainCharacter(mc_ptr);
 
 		static sf::Texture potionUI_texture;

@@ -1,6 +1,7 @@
 #include "Menu.h"
 #include "TestLevel.h"
 #include "DifficultySettings.h"
+#include "ScoreBoard.h"
 #include <string>
 
 static Menu* currentMenu = nullptr;
@@ -31,7 +32,7 @@ public:
 		this->textPtr()->setFont(this->font);
 		this->textPtr()->setStyle(sf::Text::Bold);
 		this->textPtr()->setFillColor(sf::Color(179, 45, 0));
-		this->textPtr()->setCharacterSize(50.f);
+		this->textPtr()->setCharacterSize(50U);
 		this->textPtr()->setPosition(150.f, 150.f);
 		this->textPtr()->setString("Enter your name while you can:");
 		texture.loadFromFile("bloodyhands.png");
@@ -72,7 +73,7 @@ public:
 				Engine::musicPlayer.play(music);
 				Engine::musicPlayer.setVolume(20.f);
 				this->screen->remove(this);
-				currentMenu->startTestLevel();
+				currentMenu->startTestLevel(this->name);
 			}
 		}
 	}
@@ -205,6 +206,8 @@ public:
 		if (e.mouseButton.button == sf::Mouse::Button::Left //if the left mouse button was clicked
 			&& this->background.getGlobalBounds().contains(static_cast<float>(e.mouseButton.x), static_cast<float>(e.mouseButton.y))) //if the click was inside the button
 		{
+			ScoreBoard* scoreBoard = new ScoreBoard();
+			this->screen->addUIObject(scoreBoard);
 		}
 	}
 };
@@ -265,8 +268,8 @@ namespace Engine
 		this->menuScreen.render();
 	}
 
-	void Menu::startTestLevel()
+	void Menu::startTestLevel(std::string playerName)
 	{
-		this->testLevel.start();
+		this->testLevel.start(playerName);
 	}
 }

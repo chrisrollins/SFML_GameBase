@@ -9,12 +9,13 @@ using namespace Engine;
 class GameOver : public GraphicalGameObject
 {
 public:
-	GameOver();
+	GameOver(int finalScore);
 	void AddedToScreen();
 	void EveryFrame(uint64_t f);
 	void MouseButtonReleased(sf::Event e);
 	void draw(sf::RenderWindow& win);
 private:
+	int finalScore = 0;
 	int internalClock = 0;
 	sf::Texture mainTexture;
 	sf::Texture backTexture;

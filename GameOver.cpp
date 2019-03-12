@@ -2,8 +2,9 @@
 #include "GameObject.h"
 #include "GameOver.h"
 #include "Menu.h"
+#include "ScoreBoard.h"
 
-GameOver::GameOver() : GraphicalGameObject(sf::Sprite())
+GameOver::GameOver(int finalScore) : GraphicalGameObject(sf::Sprite()), finalScore(finalScore)
 {
 	this->mainTexture.loadFromFile("gameover.png");
 	this->spritePtr()->setTexture(this->mainTexture);
@@ -35,6 +36,9 @@ void GameOver::MouseButtonReleased(sf::Event e)
 	sf::Vector2i mouse = this->screen->getMousePosition();
 	if (this->backSprite.getGlobalBounds().contains(static_cast<float>(mouse.x), static_cast<float>(mouse.y)))
 	{
+		MainCharacter* mc = dynamic_cast<MainCharacter*>(this->screen->getMainCharacter());
+		ScoreBoard scoreBoard;
+		scoreBoard.add(ScoreEntry(mc->getName(), this->finalScore, static_cast<int>(mc->getTotalAliveTime()) ), DifficultySettings::currentDifficulty);
 		this->screen->remove(this);
 		Menu* menu = new Menu();
 		menu->start();
