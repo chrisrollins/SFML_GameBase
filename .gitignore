@@ -14,3 +14,6 @@
 !*.ttf
 !*.dat
 !*.txt
+easyScores.dat
+normalScores.dat
+hardScores.dat
