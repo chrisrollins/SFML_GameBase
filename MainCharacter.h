@@ -327,7 +327,7 @@ public:
 			this->sprite()->setColor(sf::Color(0, 0, 0, 0));
 			isDead = true;
 			scorePtr->freeze();
-			this->screen->addUIObject(new GameOver(scorePtr->get()));
+			this->screen->addUIObject(new GameOver(scorePtr->get(), DifficultySettings::currentDifficulty));
 		}
 	}
 	std::string getName() const

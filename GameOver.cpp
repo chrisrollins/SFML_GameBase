@@ -4,7 +4,7 @@
 #include "Menu.h"
 #include "ScoreBoard.h"
 
-GameOver::GameOver(int finalScore) : GraphicalGameObject(sf::Sprite()), finalScore(finalScore)
+GameOver::GameOver(int finalScore, DifficultySettings::DIFFICULTY difficulty) : GraphicalGameObject(sf::Sprite()), finalScore(finalScore), difficulty(difficulty)
 {
 	this->mainTexture.loadFromFile("gameover.png");
 	this->spritePtr()->setTexture(this->mainTexture);
@@ -38,7 +38,10 @@ void GameOver::MouseButtonReleased(sf::Event e)
 	{
 		MainCharacter* mc = dynamic_cast<MainCharacter*>(this->screen->getMainCharacter());
 		ScoreBoard scoreBoard;
-		scoreBoard.add(ScoreEntry(mc->getName(), this->finalScore, static_cast<int>(mc->getTotalAliveTime()) ), DifficultySettings::currentDifficulty);
+		//std::cout << "easy: " << (this->difficulty == DifficultySettings::DIFFICULTY::EASY) << std::endl;
+		//std::cout << "normal: " << (this->difficulty == DifficultySettings::DIFFICULTY::NORMAL) << std::endl;
+		//std::cout << "hard: " << (this->difficulty == DifficultySettings::DIFFICULTY::HARD) << std::endl;
+		scoreBoard.add(ScoreEntry(mc->getName(), this->finalScore, static_cast<int>(mc->getTotalAliveTime()) ), this->difficulty);
 		this->screen->remove(this);
 		Menu* menu = new Menu();
 		menu->start();
