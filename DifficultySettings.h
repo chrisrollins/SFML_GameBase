@@ -122,7 +122,7 @@ namespace DifficultySettings
 			Player::maxPotionNumModifier = -1;
 			Mage::attackDamageModifier = 50;
 			Mage::blastSpeedModifier = 0.8f;
-			Mage::touchDamageModifier = 20;
+			Mage::touchDamageModifier = 10;
 			Mage::movementSpeedModifier = 1;
 			Mage::healthDrainModifier = 1;
 			Mage::mageHealthModifier = 2;
@@ -145,7 +145,7 @@ namespace DifficultySettings
 			Player::maxPotionNumModifier = -2;
 			Mage::attackDamageModifier = 150;
 			Mage::blastSpeedModifier = 1.5f;
-			Mage::touchDamageModifier = 90;
+			Mage::touchDamageModifier = 40;
 			Mage::movementSpeedModifier = 2;
 			Mage::healthDrainModifier = 2;
 			Mage::mageHealthModifier = 7;

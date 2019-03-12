@@ -1,6 +1,7 @@
 #ifndef SCOREBOARD_H
 #define SCOREBOARD_H
 
+#include <iostream>
 #include <iomanip>
 #include <string>
 #include <fstream>
@@ -47,11 +48,31 @@ namespace Engine
 		{
 			return this->score == other.getScore();
 		}
+
+		static const int rankWidth = 8;
+		static const int nameWidth = 16;
+		static const int scoreWidth = 12;
+		static const int timeWidth = 8;
+
 	private:
 		int score;
 		int time;
 		char name[256] = { };
 	};
+
+	inline std::ostream& operator << (std::ostream& os, const ScoreEntry& entry)
+	{
+		if (entry.getName().length() >= 10) { os << entry.getName().substr(0, 10); }
+		else { os << entry.getName(); }
+		os << std::setw(ScoreEntry::scoreWidth) << std::to_string(entry.getScore());
+		int minute = static_cast<int>(entry.getTimeInSeconds() / 60);
+		int second = static_cast<int>(entry.getTimeInSeconds() - minute * 60);
+		if (minute < 10) { os << "0"; }
+		os << minute << ":";
+		if (second < 10) { os << "0"; }
+		os << second;
+		return os;
+	}
 
 	class ScoreList
 	{
@@ -244,20 +265,16 @@ namespace Engine
 			std::ostringstream stream;
 			const ScoreEntry* scoreArray = list->getScores();
 			const char* columnLabel = (column == &this->easyColumn) ? "Easy" : (column == &this->normalColumn) ? "Normal" : "Insane";
-			const int rankWidth = 8;
-			const int nameWidth = 16;
-			const int scoreWidth = 12;
-			const int timeWidth = 8;
-			stream << std::setw((rankWidth + nameWidth + scoreWidth + timeWidth) / 2) << columnLabel << std::endl;
-			stream << std::left << std::setw(rankWidth) << "Rank" << std::setw(nameWidth) << "Name" 
-				<< std::setw(scoreWidth) << "Score" << setw(timeWidth) << "Time" << std::endl;
-			int minute;
-			int second;
-			string tempName;
+			stream << std::setw((ScoreEntry::rankWidth + ScoreEntry::nameWidth + ScoreEntry::scoreWidth + ScoreEntry::timeWidth) / 2) << columnLabel << std::endl;
+			stream << std::left << std::setw(ScoreEntry::rankWidth) << "Rank" << std::setw(ScoreEntry::nameWidth) << "Name"
+				<< std::setw(ScoreEntry::scoreWidth) << "Score" << setw(ScoreEntry::timeWidth) << "Time" << std::endl;
+//			int minute;
+//			int second;
+//			string tempName;
 			for (int i = list->getBoardSize() - 1; i >= 0 && scoreArray[i].getScore() != 0; i--)
 			{
-				stream << std::left << std::setw(rankWidth) << list->getBoardSize() - i << std::setw(nameWidth);
-				if (scoreArray[i].getName().length() >= 10)
+				stream << std::left << std::setw(ScoreEntry::rankWidth) << list->getBoardSize() - i << std::setw(ScoreEntry::nameWidth);
+				/*if (scoreArray[i].getName().length() >= 10)
 				{
 					tempName = scoreArray[i].getName().substr(0, 10);
 					stream << tempName;
@@ -274,7 +291,8 @@ namespace Engine
 				stream << minute << ":";
 				if (second < 10)
 					stream << "0";
-				stream << second << std::endl;
+				stream << second << std::endl;*/
+				stream << scoreArray[i] << std::endl;
 			}
 			//std::cout << stream.str() << std::endl;
 			column->setString(stream.str());

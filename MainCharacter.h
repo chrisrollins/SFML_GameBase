@@ -427,7 +427,7 @@ public:
 					isHurt = false;
 				}
 				if (!mage->isAlive()) { return; }
-				this->takeDamage(1000 + DifficultySettings::Mage::touchDamageModifier);
+				this->takeDamage(500 + DifficultySettings::Mage::touchDamageModifier);
 				this->speed = 1;
 			}
 			else if (Citizen* citizen = dynamic_cast<Citizen*>(&other))
