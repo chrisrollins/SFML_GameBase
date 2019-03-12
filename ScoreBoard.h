@@ -126,9 +126,9 @@ namespace Engine
 			float easyColumnX = 20.f;
 			float normalColumnX = easyColumnX + colSpacing;
 			float hardColumnX = normalColumnX + colSpacing;
-			this->easyColumn.setPosition(easyColumnX, 70.f);
+			this->easyColumn.setPosition(easyColumnX, 80.f);
 			this->normalColumn.setPosition(normalColumnX, 80.f);
-			this->hardColumn.setPosition(hardColumnX, 90.f);
+			this->hardColumn.setPosition(hardColumnX, 80.f);
 			updateColumnText(&this->easyColumn, &this->easyScores);
 			updateColumnText(&this->normalColumn, &this->normalScores);
 			updateColumnText(&this->hardColumn, &this->hardScores);
