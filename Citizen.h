@@ -1,10 +1,9 @@
-#ifndef CITIZEN_HEADER
-#define CITIZEN_HEADER
+#ifndef CITIZEN_H
+#define CITIZEN_H
 
-#include "GameObject.h"
+#include "Screen.h"
 #include "RespawnManager.h"
 #include "ZombieBlast.h"
-#include "Screen.h"
 #include "DifficultySettings.h"
 #include "Score.h"
 
@@ -18,14 +17,11 @@ private:
 	bool A_KeyHeld = false;
 	bool S_KeyHeld = false;
 	bool D_KeyHeld = false;
-	float health;
-	bool alive;
 	sf::Vector2u textureSize;
 	sf::Vector2u imageCount;
 	sf::Vector2u currentImage;
 	RespawnManager<Citizen>* respawnManager = nullptr;
 public:
-
 	Citizen(sf::Sprite s, RespawnManager<Citizen>* respawnManager) : Citizen(s)
 	{
 		this->respawnManager = respawnManager;
@@ -33,38 +29,41 @@ public:
 
 	Citizen(sf::Sprite s) : Engine::GraphicalGameObject(s)
 	{
-		textureSize = this->spritePtr()->getTexture()->getSize();
-		textureSize.x /= 3;
-		textureSize.y /= 4;
-		imageCount.x = 0;
+		this->textureSize = this->spritePtr()->getTexture()->getSize();
+		this->textureSize.x /= 3;
+		this->textureSize.y /= 4;
+		this->imageCount.x = 0;
 		switch (rand() % 4)
 		{
 		case 0:
-			W_KeyHeld = true;
-			A_KeyHeld = false;
-			S_KeyHeld = false;
-			D_KeyHeld = false;
+			this->W_KeyHeld = true;
+			this->A_KeyHeld = false;
+			this->S_KeyHeld = false;
+			this->D_KeyHeld = false;
 			break;
 		case 1:
-			A_KeyHeld = true;
-			W_KeyHeld = false;
-			S_KeyHeld = false;
-			D_KeyHeld = false;
+			this->A_KeyHeld = true;
+			this->W_KeyHeld = false;
+			this->S_KeyHeld = false;
+			this->D_KeyHeld = false;
 			break;
 		case 2:
-			S_KeyHeld = true;
-			A_KeyHeld = false;
-			W_KeyHeld = false;
-			D_KeyHeld = false;
+			this->S_KeyHeld = true;
+			this->A_KeyHeld = false;
+			this->W_KeyHeld = false;
+			this->D_KeyHeld = false;
 			break;
 		case 3:
-			D_KeyHeld = true;
-			A_KeyHeld = false;
-			S_KeyHeld = false;
-			W_KeyHeld = false;
+			this->D_KeyHeld = true;
+			this->A_KeyHeld = false;
+			this->S_KeyHeld = false;
+			this->W_KeyHeld = false;
+			break;
+		default:
 			break;
 		}
 	}
+
 	void EveryFrame(uint64_t f)
 	{
 		if (f % 120 == 0)
@@ -72,72 +71,65 @@ public:
 			switch (rand() % 4)
 			{
 			case 0:
-				W_KeyHeld = true;
-				A_KeyHeld = false;
-				S_KeyHeld = false;
-				D_KeyHeld = false;
+				this->W_KeyHeld = true;
+				this->A_KeyHeld = false;
+				this->S_KeyHeld = false;
+				this->D_KeyHeld = false;
 				break;
 			case 1:
-				A_KeyHeld = true;
-				W_KeyHeld = false;
-				S_KeyHeld = false;
-				D_KeyHeld = false;
+				this->A_KeyHeld = true;
+				this->W_KeyHeld = false;
+				this->S_KeyHeld = false;
+				this->D_KeyHeld = false;
 				break;
 			case 2:
-				S_KeyHeld = true;
-				A_KeyHeld = false;
-				W_KeyHeld = false;
-				D_KeyHeld = false;
+				this->S_KeyHeld = true;
+				this->A_KeyHeld = false;
+				this->W_KeyHeld = false;
+				this->D_KeyHeld = false;
 				break;
 			case 3:
-				D_KeyHeld = true;
-				A_KeyHeld = false;
-				S_KeyHeld = false;
-				W_KeyHeld = false;
+				this->D_KeyHeld = true;
+				this->A_KeyHeld = false;
+				this->S_KeyHeld = false;
+				this->W_KeyHeld = false;
+				break;
+			default:
 				break;
 			}
 		}
+
 		if (this->W_KeyHeld)
 		{
-			// row 4
-			imageCount.y = 3;
+			this->imageCount.y = 3;
 			this->spritePtr()->move(0, -0.5);
-			this->spritePtr()->setTextureRect(sf::IntRect(imageCount.x * textureSize.x,
-				imageCount.y * textureSize.y, textureSize.x, textureSize.y));
 		}
 		if (this->A_KeyHeld)
 		{
-			// row 2
-			imageCount.y = 1;
+			this->imageCount.y = 1;
 			this->spritePtr()->move(-0.5, 0);
-			this->spritePtr()->setTextureRect(sf::IntRect(imageCount.x * textureSize.x,
-				imageCount.y * textureSize.y, textureSize.x, textureSize.y));
 		}
 		if (this->S_KeyHeld)
 		{
-			// row 1
-			imageCount.y = 0;
+			this->imageCount.y = 0;
 			this->spritePtr()->move(0, 0.5);
-			this->spritePtr()->setTextureRect(sf::IntRect(imageCount.x * textureSize.x,
-				imageCount.y * textureSize.y, textureSize.x, textureSize.y));
 		}
 		if (this->D_KeyHeld)
 		{
-			// row 3
-			imageCount.y = 2;
+			this->imageCount.y = 2;
 			this->spritePtr()->move(0.5, 0);
-			this->spritePtr()->setTextureRect(sf::IntRect(imageCount.x * textureSize.x,
-				imageCount.y * textureSize.y, textureSize.x, textureSize.y));
 		}
-		// how often the sprite sheet is changing
+
 		if (f % 20 == 0)
 		{
-			if (imageCount.x == 2)
-				imageCount.x = 0;
-			else
-				imageCount.x++;
+			if (this->imageCount.x == 2) { this->imageCount.x = 0; }
+			else { this->imageCount.x++; }
 		}
+
+		this->spritePtr()->setTextureRect(sf::IntRect(this->imageCount.x * this->textureSize.x,
+			this->imageCount.y * this->textureSize.y, this->textureSize.x, this->textureSize.y));
 	}
+
 	void Collision(Engine::GraphicalGameObject& other)
 	{
 		if (dynamic_cast<ZombieBlast*>(&other))
@@ -146,11 +138,13 @@ public:
 			this->die();
 		}
 	}
+
 	void die()
 	{
 		if (this->respawnManager) { this->respawnManager->died(this); }
 		this->screen->remove(this);
 	}
+
 	sf::Sprite* spritePtr()
 	{
 		return dynamic_cast<sf::Sprite*>(this->graphic);
