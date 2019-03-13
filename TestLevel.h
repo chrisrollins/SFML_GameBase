@@ -2,7 +2,7 @@
 #define TESTLEVEL_H
 
 #include "MainCharacter.h"
-#include "Healthbar.h"
+#include "HealthBar.h"
 #include "PotionUI.h"
 #include "TimerUI.h"
 #include "FileLoadException.h"
