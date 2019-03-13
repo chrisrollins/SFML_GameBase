@@ -16,12 +16,21 @@ public:
 		this->textPtr()->setStyle(sf::Text::Bold);
 		this->textPtr()->setFillColor(sf::Color(179, 45, 0));
 		this->textPtr()->setCharacterSize(50U);
-		this->textPtr()->setPosition(150.f, 150.f);
-		this->textPtr()->setString("Enter your name while you can:");
+		if (DifficultySettings::currentDifficulty != DifficultySettings::TEST)
+		{
+			this->textPtr()->setPosition(150.f, 150.f);
+			this->textPtr()->setString("Enter your name while you can:\n");
+		}
+		else
+		{
+			this->textPtr()->setPosition(100.f, 80.f);
+			this->textPtr()->setString("Oops, you've entered a secret base\n created by your family, but you need \na password to enter:\n");
+		}
+		background.setPosition(600.f, 400.f);
 		texture.loadFromFile("bloodyhands.png");
 		background.setTexture(texture);
-		background.setPosition(600.f, 400.f);
 		ready = false;
+		decline = false;
 		for (auto obj : Menu::getCurrentMenu()->getMenuObjects())
 		{
 			if (obj != this) { obj->disableEvents(); }
@@ -32,28 +41,28 @@ public:
 		win.clear();
 		win.draw(background);
 		win.draw(*this->textPtr());
-		if (ready)
+		Music::ID music;
+		if (ready && DifficultySettings::currentDifficulty != DifficultySettings::TEST)
 		{
 			win.display();
 			do
 			{
 				;
 			} while (clock.getElapsedTime().asSeconds() < 1.5f); // wait for a second for the good luck text to display before entering the game
-			Music::ID music;
 			{
 				switch (DifficultySettings::currentDifficulty)
 				{
 				case DifficultySettings::EASY:
-					music = Music::EasyGame;
+					music = Music::ID::EasyGame;
 					break;
 				case DifficultySettings::NORMAL:
-					music = Music::NormalGame;
+					music = Music::ID::NormalGame;
 					break;
 				case DifficultySettings::HARD:
-					music = Music::HardGame;
+					music = Music::ID::HardGame;
 					break;
 				default:
-					music = Music::EasyGame;
+					music = Music::ID::TestMode;
 					break;
 				}
 				Engine::musicPlayer.stop();
@@ -62,6 +71,32 @@ public:
 				this->screen->remove(this);
 				Menu::getCurrentMenu()->startTestLevel(this->name);
 			}
+		}
+		
+		if (ready && DifficultySettings::currentDifficulty == DifficultySettings::TEST)
+		{
+			music = Music::ID::TestMode;
+			win.display();
+			do
+			{
+				;
+			} while (clock.getElapsedTime().asSeconds() < 1.5f);
+			Engine::musicPlayer.stop();
+			Engine::musicPlayer.play(music);
+			Engine::musicPlayer.setVolume(20.f);
+			this->screen->remove(this);
+			Menu::getCurrentMenu()->startTestLevel(this->name);
+		}
+
+		if (decline)
+		{
+			win.display();
+			do
+			{
+				;
+			} while (clock.getElapsedTime().asSeconds() < 1.5f);
+			decline = false;
+			this->screen->remove(this);
 		}
 	}
 	void TextEntered(sf::Event e)
@@ -73,18 +108,52 @@ public:
 			{
 				this->name = this->name.substr(0, this->name.size() - 1);
 			}
-			this->textPtr()->setString("Enter your name while you can:\n" + this->name);
+
+			if (DifficultySettings::currentDifficulty != DifficultySettings::TEST)
+			{
+				this->textPtr()->setString("Enter your name while you can:\n" + this->name);
+			}
+			else
+			{
+				this->textPtr()->setString("Oops, you've entered a secret base\n created by your family, but you need \na password to enter:\n" + this->name);
+			}
 		}
 		else if (key == static_cast<int>('\r') || key == static_cast<int>('\n'))
 		{
-			this->textPtr()->setString("Enter your name while you can:\n" + this->name + "\n\nGood luck, " + this->name + "!");
-			ready = true;
-			clock.restart();
+			if (DifficultySettings::currentDifficulty != DifficultySettings::TEST)
+			{
+				this->textPtr()->setString("Enter your name while you can:\n" + this->name + "\n\nGood luck, " + this->name + "!");
+				ready = true;
+				clock.restart();
+			}
+			else
+			{
+				this->textPtr()->setPosition(290.f, 280.f);
+				if (this->name != "our game is better than yours! :)")
+				{
+					this->textPtr()->setString("Sorry, get out!!!");
+					decline = true;
+					clock.restart();
+				}
+				else
+				{
+					this->textPtr()->setString("Welcome, my master...");
+					ready = true;
+					clock.restart();
+				}
+			}
 		}
 		else
 		{
 			this->name += static_cast<char>(e.text.unicode);
-			this->textPtr()->setString("Enter your name while you can:\n" + this->name);
+			if (DifficultySettings::currentDifficulty != DifficultySettings::TEST)
+			{
+				this->textPtr()->setString("Enter your name while you can:\n" + this->name);
+			}
+			else
+			{
+				this->textPtr()->setString("Oops, you've entered a secret base\n created by your family, but you need \na password to enter:\n" + this->name);
+			}
 		}
 	}
 private:
@@ -94,16 +163,19 @@ private:
 	sf::Texture texture;
 	sf::Sprite background;
 	bool ready;
+	bool decline;
 	sf::Clock clock;
 };
 
 class TestModeButton : public UIButton
 {
 public:
-	TestModeButton() : UIButton("Test Mode", { 100.f, 100.f }, { 100.f, 100.f })
+	TestModeButton() : UIButton("?", { 200.f, 25.f }, { 100.f, 100.f })
 	{
 		myFont.loadFromFile("DoubleFeature.ttf");
 		this->textPtr()->setFont(myFont);
+		this->textPtr()->setCharacterSize(50);
+		this->textPtr()->setFillColor({ 179, 45, 0 });
 	}
 	void KeyReleased(sf::Event e)
 	{
@@ -112,7 +184,6 @@ public:
 			ZPressed++;
 			if (ZPressed == 4 && this->enabled)
 			{
-				std::cout << "activated" << std::endl;
 				this->activated = true;
 			}
 		}
