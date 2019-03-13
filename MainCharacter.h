@@ -10,6 +10,7 @@
 #include "DifficultySettings.h"
 #include "MageBlast.h"
 #include "AntiMagePotion.h"
+#include "FileLoadException.h"
 #include <ctime>
 #include <vector>
 
@@ -61,7 +62,7 @@ public:
 	MainCharacter(sf::Sprite s, std::string name) : GraphicalGameObject(s)
 	{
 		this->name = name;
-		this->potion_texutre.loadFromFile("antimage_potion.png");
+		if (!this->potion_texutre.loadFromFile("antimage_potion.png")) { throw GameException::ImageFileLoadException("antimage_potion.png"); }
 		this->brainPotion.setTexture(potion_texutre);
 		this->textureSize = this->sprite()->getTexture()->getSize();
 		this->textureSize.x /= 4;
@@ -69,8 +70,8 @@ public:
 		this->imageCount.x = 0;
 		this->sprite()->setTextureRect(sf::IntRect(this->imageCount.x * this->textureSize.x,
 			this->imageCount.y * this->textureSize.y, this->textureSize.x, this->textureSize.y));
-		this->blast_texture.loadFromFile("blast.png");
-		this->super_blast_texture.loadFromFile("brain.png");
+		if (!this->blast_texture.loadFromFile("blast.png")) { throw GameException::ImageFileLoadException("blast.png"); }
+		if (!this->super_blast_texture.loadFromFile("brain.png")) { throw GameException::ImageFileLoadException("brain.png"); }
 		sf::IntRect size = this->sprite()->getTextureRect();
 		sf::Vector2f collisionSizeRatio(0.4f, 0.3f); //these numbers shrink the collision size of the player, and the code below adjusts it to be positioned at the bottom of the sprite
 		this->obstacleCollisionSize.width = static_cast<float>(size.width) * collisionSizeRatio.x;
