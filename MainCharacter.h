@@ -105,6 +105,8 @@ public:
 			case sf::Keyboard::D:
 				this->D_KeyHeld = true;
 				break;
+			case sf::Keyboard::Escape:
+				if (DifficultySettings::currentDifficulty == DifficultySettings::DIFFICULTY::TEST) { this->healthDrain = 10000; }
 			default:
 				break;
 			}
