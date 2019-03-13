@@ -34,8 +34,8 @@ public:
 		delete this->mMusic;
 	}
 	void play(Music::ID theme)
-	{
-		this->mMusic = new sf::Music();
+	{		
+		if (!this->mMusic) { this->mMusic = new sf::Music(); }
 		std::string filename = mFilenames[theme];
 		if (!mMusic->openFromFile(filename)) { throw std::runtime_error("Music " + filename + " could not be loaded."); }
 		mMusic->setVolume(mVolume);
@@ -56,7 +56,7 @@ public:
 		mMusic->setVolume(volume);
 	}
 private:
-	sf::Music* mMusic;
+	sf::Music* mMusic = nullptr;
 	std::map<Music::ID, std::string> mFilenames;
 	float mVolume;
 };
