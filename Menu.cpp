@@ -2,6 +2,7 @@
 #include "TestLevel.h"
 #include "DifficultySettings.h"
 #include "ScoreBoard.h"
+#include "Tutorial.h"
 #include "UIButton.h"
 #include <string>
 
@@ -247,6 +248,8 @@ public:
 		if (e.mouseButton.button == sf::Mouse::Button::Left //if the left mouse button was clicked
 			&& this->background.getGlobalBounds().contains(static_cast<float>(e.mouseButton.x), static_cast<float>(e.mouseButton.y))) //if the click was inside the button
 		{
+			Tutorial* tutorial = new Tutorial();
+			this->screen->addUIObject(tutorial);
 		}
 	}
 };
