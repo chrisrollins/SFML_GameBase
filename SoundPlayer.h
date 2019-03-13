@@ -4,7 +4,7 @@
 #include "SFML/Audio.hpp"
 #include <list>
 #include <map>
-#include <thread>
+#include <memory>
 
 namespace SoundEffect
 {
@@ -42,6 +42,10 @@ public:
 	{
 		auto found = mSoundMap.find(id);
 		return *(found->second);
+	}
+	~SoundHolder()
+	{
+		this->mSoundMap.clear();
 	}
 };
 
