@@ -1,11 +1,5 @@
 #include "SFML/Graphics.hpp"
 #include "Screen.h"
-#include "GameObject.h"
-#include <memory>
-#include <functional>
-#include <iostream>
-#include <cmath>
-#include <queue>
 
 static bool renderStarted = false;
 static int currentFPS;
@@ -73,7 +67,7 @@ namespace Engine
 			}
 		}
 		else
-		{		
+		{
 			removeQueue.push(gameObject);
 		}
 	}
@@ -108,10 +102,10 @@ namespace Engine
 		static sf::RenderWindow window(sf::VideoMode(width, height), title, sf::Style::Close);
 		static sf::Clock clock;
 		static uint64_t frameCount = 0;
-				
+
 		sf::View view(sf::Vector2f(static_cast<float>(width / 2), static_cast<float>(height / 2)), sf::Vector2f(static_cast<float>(width), static_cast<float>(height)));
 		windowPtr = &window;
-		window.setView(view);	
+		window.setView(view);
 
 		if (renderStarted)
 		{
@@ -205,7 +199,7 @@ namespace Engine
 				}
 			}
 		};
-		
+
 		while (window.isOpen() && !pendingSwitch)
 		{
 			clock.restart();
