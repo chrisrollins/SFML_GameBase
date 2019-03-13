@@ -1,17 +1,17 @@
-#ifndef MAGE_BLAST_HEADER
-#define MAGE_BLAST_HEADER
+#ifndef MAGEBLAST_H
+#define MAGEBLAST_H
 
-#include "GameObject.h"
 #include "Screen.h"
 #include "ZombieBlast.h"
-#include <cmath>
+
+using namespace Engine;
 
 enum class DIRECTION
 {
 	UP, DOWN, LEFT, RIGHT
 };
 
-class MageBlast : public Engine::GraphicalGameObject
+class MageBlast : public GraphicalGameObject
 {
 private:
 	sf::Vector2f movePerFrame;
@@ -32,6 +32,7 @@ public:
 		this->movePerFrame = { static_cast<float>(speed * cos(radians)), static_cast<float>(speed * sin(radians)) };
 		this->life = duration;
 	}
+
 	void EveryFrame(uint64_t f)
 	{
 		sf::Sprite* spr = this->spritePtr();
@@ -45,11 +46,9 @@ public:
 			currentColor.a -= (currentColor.a > 13) ? 13 : currentColor.a;
 			spr->setColor(currentColor);
 		}
-		if (this->life <= 0)
-		{
-			this->screen->remove(this);
-		}
+		if (this->life <= 0) { this->screen->remove(this); }
 	}
+
 	void Collision(GraphicalGameObject& other)
 	{
 		if (dynamic_cast<SuperZombieBlast*>(&other) && this->life > 20)
@@ -59,14 +58,17 @@ public:
 			this->movePerFrame.y /= 4.f;
 		}
 	}
+
 	void hitPlayer()
 	{
 		this->hitsAgainstPlayer++;
 	}
+
 	int getHits() const
 	{
 		return this->hitsAgainstPlayer;
 	}
+
 	sf::Sprite* spritePtr()
 	{
 		return dynamic_cast<sf::Sprite*>(this->graphic);

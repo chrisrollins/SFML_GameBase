@@ -1,15 +1,17 @@
-#ifndef DIFFICULTY_SETTINGS_HEADER
-#define DIFFICULTY_SETTINGS_HEADER
+#ifndef DIFFICULTYSETTINGS_H
+#define DIFFICULTYSETTINGS_H
 
 #include <string>
 
 namespace DifficultySettings
 {
+
 	namespace Map
 	{
 		static std::string picture;
 		static std::string fileName;
 	}
+
 	// modifiers are added to the base value
 	// example: Player::maxHealthModifier increases (if positive) or decreases (if negative) the player's max health
 	namespace Player
@@ -54,14 +56,34 @@ namespace DifficultySettings
 		}
 	}
 
-	enum DIFFICULTY { TEST, EASY, NORMAL, HARD };
+	enum class DIFFICULTY { TEST, EASY, NORMAL, HARD };
 
 	static DIFFICULTY currentDifficulty = DIFFICULTY::EASY;
 
 	inline void setDifficulty(DIFFICULTY diff)
 	{
-		currentDifficulty = diff;
+		Player::maxHealthModifier = 0;
+		Player::eatHealModifier = 0;
+		Player::eatDrainFreezeDuration = 0;
+		Player::missingHealthHealBonus = 0.f;
+		Player::healthDrainModifier = 0;
+		Player::highHealthDrainPenalty = 0.f;
+		Player::attackHealthCostModifier = 0;
+		Player::maxPotionNumModifier = 0;
+		Player::potionMakingCitizenRequired = 0;
+		Mage::attackDamageModifier = 0;
+		Mage::touchDamageModifier = 0;
+		Mage::movementSpeedModifier = 0;
+		Mage::healthDrainModifier = 0;
+		Mage::mageHealthModifier = 0;
+		Mage::blastSpeedModifier = 0.f;
+		Citizen::movementSpeedModifier = 0;
+		Score::multiplierPerSecond = 0.f;
+		Score::baseMultiplier = 0.f;
+		Score::cumulativeBonusMultiplier = 0.f;
+		Score::cumulativeBonusMultiplierMax = 0.f;
 		Score::cumulativeBonusMultiplierCurrent = 1.0f;
+		currentDifficulty = diff;
 		switch (diff)
 		{
 		case DIFFICULTY::TEST:
@@ -70,6 +92,7 @@ namespace DifficultySettings
 			Player::missingHealthHealBonus = 0.6f;
 			Player::healthDrainModifier = -1000;
 			Player::maxHealthModifier = 100000;
+			Player::maxPotionNumModifier = 9994;
 			Player::eatDrainFreezeDuration = 12;
 			Player::potionMakingCitizenRequired = 1;
 			Score::baseMultiplier = 0.f;
@@ -102,7 +125,7 @@ namespace DifficultySettings
 			Player::maxPotionNumModifier = -1;
 			Mage::attackDamageModifier = 50;
 			Mage::blastSpeedModifier = 0.8f;
-			Mage::touchDamageModifier = 20;
+			Mage::touchDamageModifier = 10;
 			Mage::movementSpeedModifier = 1;
 			Mage::healthDrainModifier = 1;
 			Mage::mageHealthModifier = 2;
@@ -125,7 +148,7 @@ namespace DifficultySettings
 			Player::maxPotionNumModifier = -2;
 			Mage::attackDamageModifier = 150;
 			Mage::blastSpeedModifier = 1.5f;
-			Mage::touchDamageModifier = 90;
+			Mage::touchDamageModifier = 40;
 			Mage::movementSpeedModifier = 2;
 			Mage::healthDrainModifier = 2;
 			Mage::mageHealthModifier = 7;

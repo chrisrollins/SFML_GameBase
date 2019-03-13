@@ -1,11 +1,5 @@
 #include "SFML/Graphics.hpp"
 #include "Screen.h"
-#include "GameObject.h"
-#include <memory>
-#include <functional>
-#include <iostream>
-#include <cmath>
-#include <queue>
 
 static bool renderStarted = false;
 static int currentFPS;
@@ -73,7 +67,7 @@ namespace Engine
 			}
 		}
 		else
-		{		
+		{
 			removeQueue.push(gameObject);
 		}
 	}
@@ -108,10 +102,10 @@ namespace Engine
 		static sf::RenderWindow window(sf::VideoMode(width, height), title, sf::Style::Close);
 		static sf::Clock clock;
 		static uint64_t frameCount = 0;
-				
+
 		sf::View view(sf::Vector2f(static_cast<float>(width / 2), static_cast<float>(height / 2)), sf::Vector2f(static_cast<float>(width), static_cast<float>(height)));
 		windowPtr = &window;
-		window.setView(view);	
+		window.setView(view);
 
 		if (renderStarted)
 		{
@@ -131,6 +125,7 @@ namespace Engine
 			for (auto const& pair : *objects)
 			{
 				GameObject* obj = pair.second;
+				if (obj->eventsDisabled) { continue; }
 				switch (event.type)
 				{
 				case sf::Event::Resized:
@@ -204,28 +199,10 @@ namespace Engine
 				}
 			}
 		};
-		
+
 		while (window.isOpen() && !pendingSwitch)
 		{
 			clock.restart();
-			/*
-			//remove objects that are pending to be removed
-			while (!removeQueue.empty())
-			{
-				GameObject* toRemove = removeQueue.front();
-				removeQueue.pop();
-				for (auto map : { &currentScreen->objects, &currentScreen->g_objects, &currentScreen->ui_objects })
-				{
-					if (map->find(toRemove->getID()) != map->end())
-					{
-						GameObjectID id = toRemove->getID();
-						toRemove->RemovedFromScreen();
-						map->erase(id);
-						delete toRemove;
-						break;
-					}
-				}
-			}*/
 
 			//run the EveryFrame event on all objects
 			for (auto map : { &currentScreen->objects, &currentScreen->g_objects, &currentScreen->ui_objects })
@@ -233,7 +210,7 @@ namespace Engine
 				for (auto const& pair : *map)
 				{
 					GameObject* obj = pair.second;
-					obj->EveryFrame(frameCount);
+					if (!obj->eventsDisabled) { obj->EveryFrame(frameCount); }
 				}
 			}
 
@@ -355,6 +332,7 @@ namespace Engine
 			for (auto const& p1 : currentScreen->g_objects)
 			{
 				GraphicalGameObject* eventReciever = dynamic_cast<GraphicalGameObject*>(p1.second);
+				if (eventReciever->eventsDisabled) { continue; }
 				sf::Sprite* receiverSprite = dynamic_cast<sf::Sprite*>(eventReciever->getGraphic());
 				if (!receiverSprite) { continue; }
 				for (auto const& p2 : currentScreen->g_objects)

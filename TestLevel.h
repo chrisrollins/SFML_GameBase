@@ -1,23 +1,8 @@
-#ifndef TEST_LEVEL_HEADER
-#define TEST_LEVEL_HEADER
+#ifndef TESTLEVEL_H
+#define TESTLEVEL_H
 
-#include <SFML/Graphics.hpp>
-#include <iostream>
-#include <thread>
-#include <vector>
-#include <ctime>
-#include "Screen.h"
-#include "GameObject.h"
 #include "MainCharacter.h"
-#include "Mage.h"
-#include "AntiMagePotion.h"
-#include "Citizen.h"
-#include "SampleUIObject.h"
-#include "SampleUIText.h"
-#include "Score.h"
-#include "HealthBar.h"
-#include "RespawnManager.h"
-#include "DifficultySettings.h"
+#include "Healthbar.h"
 #include "PotionUI.h"
 #include "TimerUI.h"
 
@@ -27,6 +12,7 @@ class TestLevel
 {
 public:
 	TestLevel() {}
+
 	void start(std::string playerName)
 	{
 		static Screen* oldScreen = nullptr;
@@ -38,7 +24,7 @@ public:
 		levelScreen->addMap(&map);
 
 		sf::Sprite m_Sprite;
-		m_Sprite.setPosition(static_cast<float>(map.width() * map.tileSize().x / 2), 
+		m_Sprite.setPosition(static_cast<float>(map.width() * map.tileSize().x / 2),
 			static_cast<float>(map.height() * map.tileSize().y / 2));
 		static sf::Texture m_Texture;
 		m_Texture.loadFromFile("zombie.png");
@@ -59,7 +45,7 @@ public:
 		citizen_boy_texture.loadFromFile("boy.png");
 		sf::Sprite boy;
 		boy.setTexture(citizen_boy_texture);
-		// 3: the max number
+		// 5: the max number
 		// 200: respawn this object per 200 frames
 		static RespawnManager<Citizen> boyMng(boy, 5, 200);
 		boyMng.clear();
@@ -120,12 +106,13 @@ public:
 		//set up the score object
 		static sf::Text s;
 		static Score score(s);
+		score.unfreeze();
 		score.set(0);
-		Engine::scorePtr = &score;
+		scorePtr = &score;
 		levelScreen->addUIObject(&score);
 
 		static sf::Text t;
-		static TimerUI timer(t);		
+		static TimerUI timer(t);
 		timer.setCharacter(mc_ptr);
 		levelScreen->addUIObject(&timer);
 

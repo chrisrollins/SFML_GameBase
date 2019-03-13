@@ -7,8 +7,9 @@
 
 namespace Music
 {
-	enum ID {
+	enum class ID {
 		Menu,
+		TestMode,
 		EasyGame,
 		NormalGame,
 		HardGame,
@@ -18,43 +19,51 @@ namespace Music
 
 class MusicPlayer : private sf::NonCopyable
 {
+private:
+	sf::Music* mMusic = nullptr;
+	std::map<Music::ID, std::string> mFilenames;
+	float mVolume;
 public:
 	MusicPlayer() : mMusic(), mFilenames(), mVolume(100.f)
 	{
-		mFilenames[Music::Menu] = "theme_menu.ogg";
-		mFilenames[Music::EasyGame] = "theme_easy.ogg";
-		mFilenames[Music::NormalGame] = "theme_normal.ogg";
-		mFilenames[Music::HardGame] = "theme_hard.ogg";
-		mFilenames[Music::GameOver] = "theme_gameover.ogg";
+		this->mFilenames[Music::ID::Menu] = "theme_menu.ogg";
+		this->mFilenames[Music::ID::TestMode] = "theme_test.ogg";
+		this->mFilenames[Music::ID::EasyGame] = "theme_easy.ogg";
+		this->mFilenames[Music::ID::NormalGame] = "theme_normal.ogg";
+		this->mFilenames[Music::ID::HardGame] = "theme_hard.ogg";
+		this->mFilenames[Music::ID::GameOver] = "theme_gameover.ogg";
 	}
+
+	~MusicPlayer()
+	{
+		delete this->mMusic;
+	}
+
 	void play(Music::ID theme)
 	{
-		std::string filename = mFilenames[theme];
-		if (!mMusic.openFromFile(filename))
-			throw std::runtime_error("Music " + filename + " could not be loaded.");
-		mMusic.setVolume(mVolume);
-		mMusic.setLoop(true);
-		mMusic.play();
+		if (!this->mMusic) { this->mMusic = new sf::Music(); }
+		std::string filename = this->mFilenames[theme];
+		if (!this->mMusic->openFromFile(filename)) { throw std::runtime_error("Music " + filename + " could not be loaded."); }
+		this->mMusic->setVolume(mVolume);
+		this->mMusic->setLoop(true);
+		this->mMusic->play();
 	}
+
 	void stop()
 	{
-		mMusic.stop();
+		this->mMusic->stop();
 	}
+
 	void setPaused(bool paused)
 	{
-		if (paused)
-			mMusic.pause();
-		else
-			mMusic.play();
+		if (paused) { this->mMusic->pause(); }
+		else { this->mMusic->play(); }
 	}
+
 	void setVolume(float volume)
 	{
-		mMusic.setVolume(volume);
+		this->mMusic->setVolume(volume);
 	}
-private:
-	sf::Music mMusic;
-	std::map<Music::ID, std::string> mFilenames;
-	float mVolume;
 };
 
 #endif

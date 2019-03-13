@@ -1,7 +1,4 @@
-#include "SFML/Graphics.hpp"
-#include "GameObject.h"
 #include "GameOver.h"
-#include "Menu.h"
 #include "ScoreBoard.h"
 
 GameOver::GameOver(int finalScore, DifficultySettings::DIFFICULTY difficulty) : GraphicalGameObject(sf::Sprite()), finalScore(finalScore), difficulty(difficulty)
@@ -13,6 +10,7 @@ GameOver::GameOver(int finalScore, DifficultySettings::DIFFICULTY difficulty) : 
 	this->backSprite.setTexture(this->backTexture);
 	this->backSprite.setColor({ 255, 255, 255, 255 });
 }
+
 void GameOver::AddedToScreen()
 {
 	sf::IntRect size = this->spritePtr()->getTextureRect();
@@ -21,6 +19,7 @@ void GameOver::AddedToScreen()
 	pos.y = static_cast<float>(Screen::windowHeight / 2 - size.height / 2);
 	this->spritePtr()->setPosition(pos);
 }
+
 void GameOver::EveryFrame(uint64_t f)
 {
 	if (this->internalClock++ < 255)
@@ -30,6 +29,7 @@ void GameOver::EveryFrame(uint64_t f)
 		this->spritePtr()->setColor(color);
 	}
 }
+
 void GameOver::MouseButtonReleased(sf::Event e)
 {
 	if (e.mouseButton.button != sf::Mouse::Button::Left) { return; }
@@ -38,15 +38,13 @@ void GameOver::MouseButtonReleased(sf::Event e)
 	{
 		MainCharacter* mc = dynamic_cast<MainCharacter*>(this->screen->getMainCharacter());
 		ScoreBoard scoreBoard;
-		//std::cout << "easy: " << (this->difficulty == DifficultySettings::DIFFICULTY::EASY) << std::endl;
-		//std::cout << "normal: " << (this->difficulty == DifficultySettings::DIFFICULTY::NORMAL) << std::endl;
-		//std::cout << "hard: " << (this->difficulty == DifficultySettings::DIFFICULTY::HARD) << std::endl;
-		scoreBoard.add(ScoreEntry(mc->getName(), this->finalScore, static_cast<int>(mc->getTotalAliveTime()) ), this->difficulty);
+		scoreBoard.add(ScoreEntry(mc->getName(), this->finalScore, static_cast<int>(mc->getTotalAliveTime())), this->difficulty);
 		this->screen->remove(this);
 		Menu* menu = new Menu();
 		menu->start();
 	}
 }
+
 void GameOver::draw(sf::RenderWindow& win)
 {
 	win.draw(*this->spritePtr());

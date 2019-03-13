@@ -47,9 +47,9 @@ class MainCharacter : public GraphicalGameObject
 	int healthDrain = 20;
 	int additionalDrainPerMage = 2;
 	int numCitizenEated = 0;
-	int eatHeal = 6500;
+	int eatHeal = 7000;
 	int eatDrainFreezeCountdown = 0;
-	int attackHealthCost = 300;
+	int attackHealthCost = 250;
 	int baseSpeed = 3;
 	int speed = 3;
 	int maxSpeed = 4;
@@ -420,14 +420,14 @@ public:
 				{
 					isHurt = true;
 					hurtClock.restart();
-					Engine::soundPlayer.play(SoundEffect::ZombieGroan, 10.f);
+					Engine::soundPlayer.play(SoundEffect::ID::ZombieGroan, 10.f);
 				}
 				else if (hurtClock.getElapsedTime().asSeconds() > 0.5)
 				{
 					isHurt = false;
 				}
 				if (!mage->isAlive()) { return; }
-				this->takeDamage(1000 + DifficultySettings::Mage::touchDamageModifier);
+				this->takeDamage(500 + DifficultySettings::Mage::touchDamageModifier);
 				this->speed = 1;
 			}
 			else if (Citizen* citizen = dynamic_cast<Citizen*>(&other))

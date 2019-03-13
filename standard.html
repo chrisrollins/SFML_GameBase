@@ -1,0 +1,193 @@
+
+
+<!DOCTYPE html
+	PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+	 "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en-US" xml:lang="en-US">
+<head>
+<title>Your Customized Coding Standard</title>
+<meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1" />
+</head>
+<body>
+
+<h1>C++ Coding Standard for Cursed Zombie project</h1>
+<h2>CIS29 "Group 1"</h2>
+<h3>Entity Naming</h3>
+<ul>
+<li><a href="#nncase">
+Names shall begin with a lower case letter,  shall be lower case and words shall begin with an upper case letter.</a>
+<li><a href="#nclasscase">
+Classes shall begin with an upper case letter.</a>
+</ul>
+<h3>Indentation and Spacing</h3>
+<ul>
+<li><a href="#BracesExdented">
+Braces shall follow "Exdented Style".</a>
+<li><a href="#BracesLoop">
+Loop and conditional statements shall always have brace enclosed
+sub-statements.</a>
+<li><a href="#BracesEmpty">
+Braces without any contents may be placed on the same line.</a> (optional)
+<li><a href="#BracesSingleLine">
+Conditional statement braces with only one statement may be placed on the same line as the conditional statement.</a> (optional)
+<li><a href="#StmtPerLine">
+Each statement shall be placed on a line on its own.</a>
+</ul>
+<h3>Files</h3>
+<ul>
+<li><a href="#FileNameCase">
+File name shall be treated as case sensitive.</a>
+<li><a href="#CppFileExt">
+C++ source files shall have extension "<tt>.cpp</tt>".</a>
+<li><a href="#CppHeaderExt">
+C++ header files shall have extension "<tt>.h</tt>".</a>
+<li><a href="#HeaderIncludeGuard">
+Header files must have include guards.</a>
+<li><a href="#HeaderSystemUser">
+System header files shall be included with <> and project
+headers with "".</a>
+</ul>
+<h3>Statements</h3>
+<ul>
+<li><a href="#SwitchDefault">
+All switch statements shall have a default label.</a>
+</ul>
+<h3>Other Typographical Issues</h3>
+<ul>
+<li><a href="#NewCastOps">
+Use the new cast operators.</a>
+<li><a href="#thisPtr">
+<i>this</i> pointer shall be used when referencing class members. </a>
+</ul>
+<hr />
+<h2>Entity Naming</h2>
+<a name="nncase" />
+<h3>Names shall begin with a lower case letter,  shall be lower case and words shall begin with an upper case letter.</h3>
+<a name="nclasscase" />
+<h3>Classes shall begin with an upper case letter.</h3>
+
+<h2>Indentation and Spacing</h2>
+<a name="BracesExdented" />
+<h3>Braces shall follow "Exdented Style".</h3>
+
+The Exdented Bracing Style means that the curly brace pair are lined
+up with the surrounding statement. Statements and declarations
+between the braces are indented relative to the braces.
+
+<a name="BracesLoop" />
+<h3>Loop and conditional statements shall always have brace enclosed
+sub-statements.</h3>
+
+The code looks more consistent if all conditional and loop statements
+have braces.
+<p>
+Even if there is only a single statement after the condition or loop
+statement today, there might be a need for more code in the future.
+
+<a name="BracesEmpty" />
+<h3>Braces without any contents may be placed on the same line.</h3>
+
+<table cellspacing=10 cellpadding=5><tr><td width=20></td><td bgcolor="eeeeee"><pre>
+while (...)
+{}
+</pre></td></tr></table>
+
+or
+
+<table cellspacing=10 cellpadding=5><tr><td width=20></td><td bgcolor="eeeeee"><pre>
+while (...){}
+</pre></td></tr></table>
+
+
+<a name="BracesSingleLine" />
+<h3>Conditional statement braces with only one statement may be placed on the same line as the conditional statement.</h3>
+
+<table cellspacing=10 cellpadding=5><tr><td width=20></td><td bgcolor="eeeeee"><pre>
+if (a < 0) { a = 0; }
+</pre></td></tr></table>
+
+<a name="StmtPerLine" />
+<h3>Each statement shall be placed on a line on its own.</h3>
+
+There is no need to make code compact.
+Putting several statements on the same line only makes the code
+cryptic to read.
+
+<h2>Files</h2>
+<a name="FileNameCase" />
+<h3>File name shall be treated as case sensitive.</h3>
+
+
+<a name="CppFileExt" />
+<h3>C++ source files shall have extension "<tt>.cpp</tt>".</h3>
+
+
+<a name="CppHeaderExt" />
+<h3>C++ header files shall have extension "<tt>.h</tt>".</h3>
+
+
+<a name="HeaderIncludeGuard" />
+<h3>Header files must have include guards.</h3>
+
+The include guard protects against the header file being included
+multiple times.
+<p>
+Example:
+<table cellspacing=10 cellpadding=5><tr><td width=20></td><td bgcolor="eeeeee"><pre>
+#ifndef FILE_H
+#define FILE_H
+...
+#endif
+</pre></td></tr></table>
+
+<a name="HeaderSystemUser" />
+<h3>System header files shall be included with <> and project
+headers with "".</h3>
+
+<h2>Statements</h2>
+<a name="SwitchDefault" />
+<h3>All switch statements shall have a default label.</h3>
+
+Even if there is no action for the default label, it shall be included
+to show that the programmer has considered values not covered by case
+labels.
+If the case labels cover all possibilities, it is useful to put an
+assertion there to document the fact that it is impossible to get
+here.
+An assertion also protects from a future situation where a new
+possibility is introduced by mistake.
+
+<h2>Other Typographical Issues</h2>
+<a name="NewCastOps" />
+<h3>Use the new cast operators.</h3>
+
+Use <tt>dynamic_cast</tt>, <tt>const_cast</tt>, <tt>reinterpret_cast</tt>
+and <tt>static_cast</tt> instead of the traditional C cast notation.
+These document better what is being performed.
+
+<a name="thisPtr" />
+<h3><i>this</i> pointer shall be used when referencing class members.</h3>
+<p>
+Example:
+<table cellspacing=10 cellpadding=5><tr><td width=20></td><td bgcolor="eeeeee"><pre>
+class Foo
+{
+public:
+    ...
+    void getValue()
+    {
+        return this->value;
+    }
+    ...
+private:
+    ...
+    int value;
+    ...
+}
+</pre></td></tr></table>
+
+<hr />
+<i>Generated 2019-03-07 by <a href="http://www.rosvall.ie/CSG">Coding Standard Generator</a> version 1.13.</i>
+
+</body>
+</html>

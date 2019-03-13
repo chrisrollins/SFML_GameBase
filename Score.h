@@ -1,66 +1,84 @@
 #ifndef SCORE_H
 #define SCORE_H
 
+#include "Screen.h"
+#include "DifficultySettings.h"
 #include <iostream>
 #include <string>
-#include "Screen.h"
-#include "GameObject.h"
-#include "DifficultySettings.h"
 
 namespace Engine
 {
-	class Score : public GraphicalGameObject 
+	class Score : public GraphicalGameObject
 	{
+	private:
+		bool frozen;
+		int number = 0;
+		sf::Font font;
+		sf::Text* text() { return dynamic_cast<sf::Text*>(this->getGraphic()); }
 	public:
-		Score(sf::Text t) : GraphicalGameObject(t) 
+		Score(sf::Text t) : GraphicalGameObject(t)
 		{
-			font.loadFromFile("zombie.ttf");
+			this->font.loadFromFile("zombie.ttf");
 			this->text()->setFont(font);
 			this->text()->setStyle(sf::Text::Bold);
-			this->text()->setOutlineColor(sf::Color(179, 45, 0));
+			this->text()->setOutlineColor({ 179, 45, 0 });
 			this->text()->setOutlineThickness(2.f);
 			this->text()->setFillColor(sf::Color::Black);
 			this->text()->setPosition(830.f, 10.f);
 			this->text()->setLetterSpacing(3.f);
 			this->text()->setString("Score: 0");
 		}
+
 		int operator++()
 		{
 			*this += 1;
 		}
+
 		int operator--()
 		{
 			*this -= 1;
 		}
+
 		int operator+=(const int& n)
 		{
 			this->set(this->number + n);
 			return this->number;
 		}
+
 		int operator-=(const int& n)
 		{
 			this->set(this->number - n);
 			return this->number;
 		}
+
 		int operator=(const int& n)
 		{
 			this->set(n);
 			return this->number;
 		}
+
 		void set(int n)
 		{
 			if (this->frozen) { return; }
 			this->number = n;
-			this->text()->setString("Score: " + std::to_string(number));
+			this->text()->setString("Score: " + std::to_string(this->number));
 		}
+
 		int get() const
 		{
 			return this->number;
 		}
+
 		void freeze()
 		{
-			frozen = true;
+			this->frozen = true;
 		}
+
+		void unfreeze()
+		{
+			this->frozen = false;
+		}
+
 		void EveryFrame(uint64_t f) {
 			int n = number, count = 0;
 			while (n) {
@@ -73,11 +91,6 @@ namespace Engine
 				if (DifficultySettings::Score::baseMultiplier < 0.5f) { DifficultySettings::Score::baseMultiplier = 0.5f; }
 			}
 		}
-	private:
-		bool frozen;
-		int number = 0;
-		sf::Font font;
-		sf::Text* text() { return dynamic_cast<sf::Text*>(this->getGraphic()); }
 	};
 
 	static Score* scorePtr;

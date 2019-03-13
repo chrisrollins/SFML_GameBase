@@ -14,6 +14,7 @@
 !*.ttf
 !*.dat
 !*.txt
+!*.html
 easyScores.dat
 normalScores.dat
 hardScores.dat
