@@ -1,15 +1,7 @@
 #ifndef ANTIMAGEPOTION_H
 #define ANTIMAGEPOTION_H
 
-#include "GameObject.h"
 #include "Screen.h"
-#include "DifficultySettings.h"
-#include "Score.h"
-#include "MainCharacter.h"
-#include <vector>
-#include <ctime>
-
-class MainCharacter;
 
 class AntiMagePotion : public Engine::GraphicalGameObject
 {
