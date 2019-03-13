@@ -170,10 +170,12 @@ private:
 class TestModeButton : public UIButton
 {
 public:
-	TestModeButton() : UIButton("?", { 100.f, 100.f }, { 100.f, 100.f })
+	TestModeButton() : UIButton("?", { 200.f, 25.f }, { 100.f, 100.f })
 	{
 		myFont.loadFromFile("DoubleFeature.ttf");
 		this->textPtr()->setFont(myFont);
+		this->textPtr()->setCharacterSize(50);
+		this->textPtr()->setFillColor({ 179, 45, 0 });
 	}
 	void KeyReleased(sf::Event e)
 	{
