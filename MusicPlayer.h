@@ -29,32 +29,34 @@ public:
 		mFilenames[Music::HardGame] = "theme_hard.ogg";
 		mFilenames[Music::GameOver] = "theme_gameover.ogg";
 	}
+	~MusicPlayer()
+	{
+		delete this->mMusic;
+	}
 	void play(Music::ID theme)
 	{
+		this->mMusic = new sf::Music();
 		std::string filename = mFilenames[theme];
-		if (!mMusic.openFromFile(filename))
-			throw std::runtime_error("Music " + filename + " could not be loaded.");
-		mMusic.setVolume(mVolume);
-		mMusic.setLoop(true);
-		mMusic.play();
+		if (!mMusic->openFromFile(filename)) { throw std::runtime_error("Music " + filename + " could not be loaded."); }
+		mMusic->setVolume(mVolume);
+		mMusic->setLoop(true);
+		mMusic->play();
 	}
 	void stop()
 	{
-		mMusic.stop();
+		mMusic->stop();
 	}
 	void setPaused(bool paused)
 	{
-		if (paused)
-			mMusic.pause();
-		else
-			mMusic.play();
+		if (paused) { mMusic->pause(); }
+		else { mMusic->play(); }
 	}
 	void setVolume(float volume)
 	{
-		mMusic.setVolume(volume);
+		mMusic->setVolume(volume);
 	}
 private:
-	sf::Music mMusic;
+	sf::Music* mMusic;
 	std::map<Music::ID, std::string> mFilenames;
 	float mVolume;
 };
