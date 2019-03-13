@@ -30,24 +30,18 @@ namespace SoundEffect
 class SoundHolder
 {
 private:
-	std::map<SoundEffect::ID, std::unique_ptr<sf::SoundBuffer>> mSoundMap;
+	std::map<SoundEffect::ID, sf::SoundBuffer> mSoundMap;
 public:
 	void loadSoundEffect(SoundEffect::ID id, const std::string& filename)
 	{
-		std::unique_ptr<sf::SoundBuffer> sound(new sf::SoundBuffer);
-		sound->loadFromFile(filename);
-		this->mSoundMap.insert(std::make_pair(id, std::move(sound)));
+		this->mSoundMap.emplace(id, sf::SoundBuffer());
+		this->mSoundMap[id].loadFromFile(filename);
 	}
 
 	sf::SoundBuffer& getSoundBuffer(SoundEffect::ID id)
 	{
 		auto found = this->mSoundMap.find(id);
-		return *(found->second);
-	}
-
-	~SoundHolder()
-	{
-		this->mSoundMap.clear();
+		return found->second;
 	}
 };
 
