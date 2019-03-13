@@ -165,7 +165,6 @@ namespace Engine
 		}
 		void RemovedFromScreen()
 		{
-			std::cout << "r" << std::endl;
 			for (auto obj : Menu::getCurrentMenu()->getMenuObjects())
 			{
 				if (obj != this) { obj->enableEvents(); }
