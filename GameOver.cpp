@@ -1,12 +1,13 @@
 #include "GameOver.h"
 #include "ScoreBoard.h"
+#include "FileLoadException.h"
 
 GameOver::GameOver(int finalScore, DifficultySettings::DIFFICULTY difficulty) : GraphicalGameObject(sf::Sprite()), finalScore(finalScore), difficulty(difficulty)
 {
-	this->mainTexture.loadFromFile("gameover.png");
+	if (!this->mainTexture.loadFromFile("gameover.png")) { throw GameException::ImageFileLoadException("gameover.png"); }
 	this->spritePtr()->setTexture(this->mainTexture);
 	this->spritePtr()->setColor({ 255, 255, 255, 0 });
-	this->backTexture.loadFromFile("gameover_back.png");
+	if (!this->backTexture.loadFromFile("gameover_back.png")) { throw GameException::ImageFileLoadException("gameover_back.png"); }
 	this->backSprite.setTexture(this->backTexture);
 	this->backSprite.setColor({ 255, 255, 255, 255 });
 }

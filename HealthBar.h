@@ -8,7 +8,7 @@ class HealthBar : public GraphicalGameObject
 private:
 	sf::RectangleShape* maxPtr() { return &this->maxHealthBar; } //max health
 	sf::RectangleShape* currPtr() { return dynamic_cast<sf::RectangleShape*>(this->getGraphic()); }	//current health
-	MainCharacter * character = nullptr;
+	MainCharacter* character = nullptr;
 	sf::RectangleShape maxHealthBar;
 	sf::Clock alarmClock;
 	bool isAlarming = false;
@@ -19,11 +19,12 @@ public:
 		this->maxPtr()->setPosition(50.f, 50.f);
 		this->maxPtr()->setFillColor({ 255, 255, 255, 140 });
 		this->maxPtr()->setOutlineColor({ 0, 0, 0, 100 });
+		this->maxPtr()->setOutlineThickness(3);
 		this->currPtr()->setOutlineThickness(3);
 		this->currPtr()->setOutlineColor({ 0, 0, 0, 100 });
 	}
 
-	void setCharacter(MainCharacter * mc) 
+	void setCharacter(MainCharacter* mc) 
 	{
 		this->character = mc;
 		float fHealth = static_cast<float>(this->character->getHealth());
