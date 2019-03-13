@@ -1,15 +1,17 @@
-#ifndef DIFFICULTY_SETTINGS_HEADER
-#define DIFFICULTY_SETTINGS_HEADER
+#ifndef DIFFICULTYSETTINGS_H
+#define DIFFICULTYSETTINGS_H
 
 #include <string>
 
 namespace DifficultySettings
 {
+
 	namespace Map
 	{
 		static std::string picture;
 		static std::string fileName;
 	}
+
 	// modifiers are added to the base value
 	// example: Player::maxHealthModifier increases (if positive) or decreases (if negative) the player's max health
 	namespace Player
@@ -54,7 +56,7 @@ namespace DifficultySettings
 		}
 	}
 
-	enum DIFFICULTY { TEST, EASY, NORMAL, HARD };
+	enum class DIFFICULTY { TEST, EASY, NORMAL, HARD };
 
 	static DIFFICULTY currentDifficulty = DIFFICULTY::EASY;
 
@@ -80,8 +82,8 @@ namespace DifficultySettings
 		Score::baseMultiplier = 0.f;
 		Score::cumulativeBonusMultiplier = 0.f;
 		Score::cumulativeBonusMultiplierMax = 0.f;
-		currentDifficulty = diff;
 		Score::cumulativeBonusMultiplierCurrent = 1.0f;
+		currentDifficulty = diff;
 		switch (diff)
 		{
 		case DIFFICULTY::TEST:

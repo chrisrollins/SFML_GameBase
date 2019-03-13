@@ -6,46 +6,44 @@
 #include <string>
 
 using namespace Engine;
-using namespace std;
 
 class PotionUI : public GraphicalGameObject
 {
+private:
+	MainCharacter* character = nullptr;
+	sf::Font font;
+	sf::Text text;
+	sf::Sprite* spritePtr() { return dynamic_cast<sf::Sprite*>(this->getGraphic()); }
 public:
 	PotionUI(sf::Sprite s) : GraphicalGameObject(s)
 	{
-		potion()->setPosition(50.f, 70.f);
-		font.loadFromFile("zombie.ttf");
-		text.setFont(font);
-        text.setStyle(sf::Text::Bold);
-		text.setLetterSpacing(3.f);
-		text.setOutlineColor(sf::Color(163, 19, 88));
-		text.setOutlineThickness(2.f);
-		text.setFillColor(sf::Color::Black);
+		this->spritePtr()->setPosition(50.f, 70.f);
+		this->font.loadFromFile("zombie.ttf");
+		this->text.setFont(font);
+		this->text.setStyle(sf::Text::Bold);
+		this->text.setLetterSpacing(3.f);
+		this->text.setOutlineColor({ 163, 19, 88 });
+		this->text.setOutlineThickness(2.f);
+		this->text.setFillColor(sf::Color::Black);
 	}
 
-	void setCharacter(MainCharacter * mc) 
+	void setCharacter(MainCharacter * mc)
 	{
 		this->character = mc;
 	}
 
-	void EveryFrame(uint64_t f) 
+	void EveryFrame(uint64_t f)
 	{
-		string currNum = to_string(character->getPotionNum()) + "/" + to_string(character->getMaxPotionNum());
-		text.setString(currNum);
+		std::string currNum = std::to_string(this->character->getPotionNum()) + "/" + std::to_string(this->character->getMaxPotionNum());
+		this->text.setString(currNum);
 	}
 
 	void draw(sf::RenderWindow& win)
 	{
-		win.draw(*potion());
-		text.setPosition(potion()->getPosition().x + 50, potion()->getPosition().y - 5);
-		win.draw(text);
+		win.draw(*this->spritePtr());
+		this->text.setPosition(this->spritePtr()->getPosition().x + 50, this->spritePtr()->getPosition().y - 5);
+		win.draw(this->text);
 	}
-
-private:
-	sf::Sprite* potion() { return dynamic_cast<sf::Sprite*>(this->getGraphic()); }
-	MainCharacter* character = nullptr;
-	sf::Font font;
-	sf::Text text;
 };
 
 #endif

@@ -1,11 +1,10 @@
-﻿#ifndef MENU_HEADER
-#define MENU_HEADER
+﻿#ifndef MENU_H
+#define MENU_H
 
-#include "SFML/Graphics.hpp"
 #include "Screen.h"
-#include "GameObject.h"
 #include "UIButton.h"
 #include "TestLevel.h"
+#include "DifficultySettings.h"
 #include <vector>
 #include <string>
 
@@ -15,6 +14,10 @@ namespace Engine
 {
 	class Menu
 	{
+	private:
+		std::vector<GameObject*> menuObjects;
+		Screen menuScreen;
+		TestLevel testLevel;
 	public:
 		Menu();
 		~Menu();
@@ -22,11 +25,9 @@ namespace Engine
 		void startTestLevel(std::string playerName);
 		std::vector<GameObject*>& getMenuObjects() { return this->menuObjects; }
 		static Menu* getCurrentMenu();
-	private:
-		std::vector<GameObject*> menuObjects;
-		Screen menuScreen;
-		TestLevel testLevel;
 	};
+
+	static Menu* currentMenu = nullptr;
 }
 
 #endif

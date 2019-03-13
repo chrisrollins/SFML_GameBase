@@ -1,12 +1,13 @@
-#ifndef SCREEN_HEADER
-#define SCREEN_HEADER
+#ifndef SCREEN_H
+#define SCREEN_H
 
-#include "SFML/Graphics.hpp"
 #include "GameObject.h"
 #include "TileMap.h"
 #include "MusicPlayer.h"
 #include "SoundPlayer.h"
 #include <map>
+#include <functional>
+#include <queue>
 
 namespace Engine
 {

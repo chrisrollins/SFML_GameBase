@@ -1,14 +1,15 @@
-#ifndef GAME_OBJECT_HEADER
-#define GAME_OBJECT_HEADER
+#ifndef GAMEOBJECT_H
+#define GAMEOBJECT_H
 
 #include "SFML/Graphics.hpp"
 #include <cstdint>
 #include <map>
+#include <iostream>
 
 namespace Engine
 {
 	typedef uint64_t GameObjectID;
-    class Screen;
+	class Screen;
 	class GameObject
 	{
 	public:

@@ -1,6 +1,4 @@
 #include "GameObject.h"
-#include "SFML/Graphics.hpp"
-#include <iostream>
 
 namespace Engine
 {
@@ -10,12 +8,10 @@ namespace Engine
 		count++;
 		return count;
 	}
-	
-	//ctors
 
 	GameObject::GameObject()
 	{
-		this->id = generateID();	
+		this->id = generateID();
 	}
 
 	GraphicalGameObject::GraphicalGameObject(sf::Sprite s)
@@ -52,14 +48,13 @@ namespace Engine
 	{
 		this->graphic = new sf::VertexBuffer(vb);
 	}
-	/////
 
 	void GraphicalGameObject::draw(sf::RenderWindow& win)
 	{
 		win.draw(*this->graphic);
 	}
 
-	void GraphicalGameObject::Collision(GraphicalGameObject& otherObject)
+	void GraphicalGameObject::Collision(GraphicalGameObject& otherObject) 
 	{
 
 	}
@@ -74,102 +69,126 @@ namespace Engine
 		return this->graphic;
 	}
 
-	void GameObject::EveryFrame(uint64_t frameNumber)
+	void GameObject::EveryFrame(uint64_t frameNumber) 
 	{
 
 	}
+
 	void GameObject::Resized(sf::Event event)
 	{
 
 	}
+
 	void GameObject::LostFocus(sf::Event event)
 	{
 
 	}
+
 	void GameObject::GainedFocus(sf::Event event)
 	{
 
 	}
+
 	void GameObject::TextEntered(sf::Event event)
 	{
 
 	}
+
 	void GameObject::KeyPressed(sf::Event event)
 	{
 
 	}
+
 	void GameObject::KeyReleased(sf::Event event)
 	{
 
 	}
+
 	void GameObject::MouseWheelMoved(sf::Event event)
 	{
 
 	}
+
 	void GameObject::MouseWheelScrolled(sf::Event event)
 	{
 
 	}
+
 	void GameObject::MouseButtonPressed(sf::Event event)
 	{
 
 	}
+
 	void GameObject::MouseButtonReleased(sf::Event event)
 	{
 
 	}
+
 	void GameObject::MouseMoved(sf::Event event)
 	{
 
 	}
+
 	void GameObject::MouseEntered(sf::Event event)
 	{
 
 	}
+
 	void GameObject::MouseLeft(sf::Event event)
 	{
 
 	}
+
 	void GameObject::JoystickButtonPressed(sf::Event event)
 	{
 
 	}
+
 	void GameObject::JoystickButtonReleased(sf::Event event)
 	{
 
 	}
+
 	void GameObject::JoystickMoved(sf::Event event)
 	{
 
 	}
+
 	void GameObject::JoystickConnected(sf::Event event)
 	{
 
 	}
+
 	void GameObject::JoystickDisconnected(sf::Event event)
 	{
 
 	}
+
 	void GameObject::TouchBegan(sf::Event event)
 	{
 
 	}
+
 	void GameObject::TouchMoved(sf::Event event)
 	{
 
 	}
+
 	void GameObject::TouchEnded(sf::Event event)
 	{
 
 	}
+
 	void GameObject::SensorChanged(sf::Event event)
 	{
 
 	}
+
 	void GameObject::AddedToScreen()
 	{
 
 	}
+
 	void GameObject::RemovedFromScreen()
 	{
 
