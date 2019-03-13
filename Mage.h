@@ -1,22 +1,21 @@
-#ifndef MAGE_HEADER
-#define MAGE_HEADER
+#ifndef MAGE_H
+#define MAGE_H
 
-#include <ctime>
-#include <cmath>
-#include <unordered_set>
-#include "GameObject.h"
+#include "Screen.h"
 #include "RespawnManager.h"
 #include "ZombieBlast.h"
 #include "MageBlast.h"
-#include "Screen.h"
 #include "DifficultySettings.h"
 #include "Score.h"
+#include <unordered_set>
+
+using namespace Engine;
 
 template<typename T> class RespawnManager;
 
 static int numMagesAlive;
 
-class MageHealthBar : public Engine::GraphicalGameObject
+class MageHealthBar : public GraphicalGameObject
 {
 private:
 	int maxHealth;
@@ -30,21 +29,24 @@ public:
 		this->blockingCollision = false;
 		this->ignoreObstacles = true;
 	}
+
 	void setPosition(sf::Vector2f pos)
 	{
 		this->rectPtr()->setPosition(pos);
 	}
+
 	void setMaxHealth(int maxHealth)
 	{
 		this->maxHealth = maxHealth;
 	}
+
 	void setCurrHealth(int health)
 	{
-		this->rectPtr()->setSize({ 37.f * health / maxHealth, 5.f });
+		this->rectPtr()->setSize({37.f * health / this->maxHealth, 5.f});
 	}
 };
 
-class Mage : public Engine::GraphicalGameObject
+class Mage : public GraphicalGameObject
 {
 private:
 	friend class RespawnManager<Mage>;
@@ -52,17 +54,17 @@ private:
 	bool A_KeyHeld = false;
 	bool S_KeyHeld = false;
 	bool D_KeyHeld = false;
-	bool alive;
-	int deathCount;
+	bool alive = true;
+	int deathCount = 0;
 	int health = 3 + DifficultySettings::Mage::mageHealthModifier;
 	std::unordered_set<GameObjectID> blastsHitBy;
-	bool isShooting;
+	bool isShooting = false;;
 	uint64_t internalClock = 0;
-	int bullet_cooldown;
+	int bullet_cooldown = 0;
 	sf::Vector2u textureSize;
 	sf::Vector2u imageCount;
 	sf::Vector2u currentImage;
-	MageHealthBar* healthBar;
+	MageHealthBar* healthBar = nullptr;
 	RespawnManager<Mage>* respawnManager = nullptr;
 	sf::Sprite* spritePtr()
 	{
@@ -74,39 +76,40 @@ public:
 		this->respawnManager = respawnManager;
 	}
 
-	Mage(sf::Sprite s) : Engine::GraphicalGameObject(s)
+	Mage(sf::Sprite s) : GraphicalGameObject(s)
 	{
-		textureSize = this->spritePtr()->getTexture()->getSize();
-		textureSize.x /= 4;
-		textureSize.y /= 12;
-		imageCount.x = 0;
-		alive = true;
-		deathCount = 0;
-		isShooting = false;
-		bullet_cooldown = 0;
+		this->textureSize = this->spritePtr()->getTexture()->getSize();
+		this->textureSize.x /= 4;
+		this->textureSize.y /= 12;
+		this->imageCount.x = 0;
 
-		W_KeyHeld = false;
-		A_KeyHeld = false;
-		S_KeyHeld = false;
-		D_KeyHeld = false;
+		this->W_KeyHeld = false;
+		this->A_KeyHeld = false;
+		this->S_KeyHeld = false;
+		this->D_KeyHeld = false;
+
+		srand(static_cast<unsigned int>(time(0) * this->getID()));
 		switch (rand() % 4)
 		{
 		case 0:
-			W_KeyHeld = true;
+			this->W_KeyHeld = true;
 			break;
 		case 1:
-			A_KeyHeld = true;
+			this->A_KeyHeld = true;
 			break;
 		case 2:
-			S_KeyHeld = true;
+			this->S_KeyHeld = true;
 			break;
 		case 3:
-			D_KeyHeld = true;
+			this->D_KeyHeld = true;
+			break;
+		default:
 			break;
 		}
 
 		numMagesAlive++;
 	}
+
 	void AddedToScreen()
 	{
 		this->healthBar = new MageHealthBar();
@@ -118,17 +121,19 @@ public:
 		this->healthBar->setPosition(pos);
 		this->screen->add(this->healthBar);
 	}
+
 	void EveryFrame(uint64_t f)
 	{
-		internalClock++;
+		this->internalClock++;
 		srand(static_cast<unsigned int>(time(0) * this->getID()));
-		if (alive)
+		if (this->alive)
 		{
 			sf::Vector2f healthBarPos = this->spritePtr()->getPosition();
 			healthBarPos.y -= 10.f;
 			healthBarPos.x += 5.f;
 			this->healthBar->setPosition(healthBarPos);
-			if (internalClock % 120 == 0)
+
+			if (this->internalClock % 120 == 0)
 			{
 				GraphicalGameObject* player = dynamic_cast<GraphicalGameObject*>(this->screen->getMainCharacter());
 				sf::Vector2f playerPosition = dynamic_cast<sf::Transformable*>(player->getGraphic())->getPosition();
@@ -156,65 +161,54 @@ public:
 					else { this->W_KeyHeld = true; }
 				}
 			}
+
 			if (this->W_KeyHeld)
 			{
-				if (!isShooting)
-					imageCount.y = 3;
+				if (!this->isShooting) { this->imageCount.y = 3; }
 				this->spritePtr()->move(0, -0.5);
-				this->spritePtr()->setTextureRect(sf::IntRect(imageCount.x * textureSize.x,
-					imageCount.y * textureSize.y, textureSize.x, textureSize.y));
-				if (internalClock % 100 == 0 && !isShooting)
+				if (this->internalClock % 100 == 0 && !this->isShooting)
 				{
-					imageCount.y = 7;
-					isShooting = true;
-					bullet_cooldown = 0;
+					this->imageCount.y = 7;
+					this->isShooting = true;
+					this->bullet_cooldown = 0;
 				}
-
 			}
+
 			if (this->A_KeyHeld)
 			{
-				if (!isShooting)
-					imageCount.y = 1;
+				if (!this->isShooting) { this->imageCount.y = 1; }
 				this->spritePtr()->move(-0.5, 0);
-				this->spritePtr()->setTextureRect(sf::IntRect(imageCount.x * textureSize.x,
-					imageCount.y * textureSize.y, textureSize.x, textureSize.y));
-				if (internalClock % 100 == 0 && !isShooting)
+				if (this->internalClock % 100 == 0 && !this->isShooting)
 				{
-					imageCount.y = 5;
-					isShooting = true;
-					bullet_cooldown = 0;
-				}
-			}
-			if (this->S_KeyHeld)
-			{
-				if (!isShooting)
-					imageCount.y = 0;
-				this->spritePtr()->move(0, 0.5);
-				this->spritePtr()->setTextureRect(sf::IntRect(imageCount.x * textureSize.x,
-					imageCount.y * textureSize.y, textureSize.x, textureSize.y));
-				if (internalClock % 100 == 0 && !isShooting)
-				{
-					imageCount.y = 4;
-					isShooting = true;
-					bullet_cooldown = 0;
-				}
-			}
-			if (this->D_KeyHeld)
-			{
-				// row 3
-				if (!isShooting)
-					imageCount.y = 2;
-				this->spritePtr()->move(0.5, 0);
-				this->spritePtr()->setTextureRect(sf::IntRect(imageCount.x * textureSize.x,
-					imageCount.y * textureSize.y, textureSize.x, textureSize.y));
-				if (internalClock % 100 == 0 && !isShooting)
-				{
-					imageCount.y = 6;
-					isShooting = true;
-					bullet_cooldown = 0;
+					this->imageCount.y = 5;
+					this->isShooting = true;
+					this->bullet_cooldown = 0;
 				}
 			}
 
+			if (this->S_KeyHeld)
+			{
+				if (!this->isShooting) { this->imageCount.y = 0; }
+				this->spritePtr()->move(0, 0.5);
+				if (this->internalClock % 100 == 0 && !this->isShooting)
+				{
+					this->imageCount.y = 4;
+					this->isShooting = true;
+					this->bullet_cooldown = 0;
+				}
+			}
+
+			if (this->D_KeyHeld)
+			{
+				if (!this->isShooting) { this->imageCount.y = 2; }
+				this->spritePtr()->move(0.5, 0);
+				if (this->internalClock % 100 == 0 && !this->isShooting)
+				{
+					this->imageCount.y = 6;
+					this->isShooting = true;
+					this->bullet_cooldown = 0;
+				}
+			}
 
 			if (this->internalClock % 100 == 0)
 			{
@@ -225,46 +219,32 @@ public:
 			}
 
 			// shooting delay
-			bullet_cooldown++;
-			if (bullet_cooldown == 50)
+			this->bullet_cooldown++;
+			if (this->bullet_cooldown == 50) { this->isShooting = false; }
+
+			if (this->internalClock % 15 == 0)
 			{
-				isShooting = false;
-			}
-			// how often the sprite sheet is changing
-			if (internalClock % 15 == 0)
-			{
-				if (imageCount.x == 3)
-					imageCount.x = 0;
-				else
-					imageCount.x++;
+				if (this->imageCount.x == 3) { this->imageCount.x = 0; }
+				else { this->imageCount.x++; }
 			}
 		}
 		else
 		{
-			if (this->W_KeyHeld)
-			{
-				imageCount.y = 11;
-			}
-			if (this->A_KeyHeld)
-				imageCount.y = 9;
-			if (this->S_KeyHeld)
-				imageCount.y = 8;
-			if (this->D_KeyHeld)
-				imageCount.y = 10;
-			imageCount.x = deathCount;
-			if (internalClock % 30 == 0)
-			{
-				deathCount++;
-			}
-			this->spritePtr()->setTextureRect(sf::IntRect(imageCount.x * textureSize.x,
-				imageCount.y * textureSize.y, textureSize.x, textureSize.y));
-			if (deathCount == 3)
-				this->screen->remove(this);
+			if (this->W_KeyHeld) { this->imageCount.y = 11; }
+			if (this->A_KeyHeld) { this->imageCount.y = 9; }
+			if (this->S_KeyHeld) { this->imageCount.y = 8; }
+			if (this->D_KeyHeld) { this->imageCount.y = 10; }
+			this->imageCount.x = this->deathCount;
+			if (this->internalClock % 30 == 0) { this->deathCount++; }
+			if (this->deathCount == 3) { this->screen->remove(this); }
 		}
+		this->spritePtr()->setTextureRect(sf::IntRect(this->imageCount.x * this->textureSize.x,
+			this->imageCount.y * this->textureSize.y, this->textureSize.x, this->textureSize.y));
 	}
+	
 	void Collision(GraphicalGameObject& other)
 	{
-		if (alive)
+		if (this->alive)
 		{
 			if (ZombieBlast* blast = dynamic_cast<ZombieBlast*>(&other))
 			{
@@ -274,19 +254,21 @@ public:
 				this->healthBar->setCurrHealth(this->health);
 				if (this->health > 0) { return; }
 				if (this->respawnManager) { this->respawnManager->died(this); }
-				alive = false;
+				this->alive = false;
 				numMagesAlive--;
 				DifficultySettings::Score::cumulativeBonusMultiplierCurrent = fmin(DifficultySettings::Score::cumulativeBonusMultiplierMax, DifficultySettings::Score::cumulativeBonusMultiplierCurrent + DifficultySettings::Score::cumulativeBonusMultiplier);
-				(*Engine::scorePtr) += DifficultySettings::Score::applyMultipliers(20);
-				Engine::soundPlayer.play(SoundEffect::ID::MageDeath, 30.f);
+				(*scorePtr) += DifficultySettings::Score::applyMultipliers(20);
+				soundPlayer.play(SoundEffect::ID::MageDeath, 30.f);
 				this->screen->remove(this->healthBar);
 			}
 		}
 	}
+
 	bool isAlive() const
 	{
 		return this->alive;
 	}
+
 	int getHealth() const
 	{
 		return this->health;
