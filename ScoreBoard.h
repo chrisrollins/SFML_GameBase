@@ -267,30 +267,9 @@ namespace Engine
 			stream << std::setw((ScoreEntry::rankWidth + ScoreEntry::nameWidth + ScoreEntry::scoreWidth + ScoreEntry::timeWidth) / 2) << columnLabel << std::endl;
 			stream << std::left << std::setw(ScoreEntry::rankWidth) << "Rank" << std::setw(ScoreEntry::nameWidth) << "Name"
 				<< std::setw(ScoreEntry::scoreWidth) << "Score" << setw(ScoreEntry::timeWidth) << "Time" << std::endl;
-//			int minute;
-//			int second;
-//			string tempName;
 			for (int i = list->getBoardSize() - 1; i >= 0 && scoreArray[i].getScore() != 0; i--)
 			{
 				stream << std::left << std::setw(ScoreEntry::rankWidth) << list->getBoardSize() - i << std::setw(ScoreEntry::nameWidth);
-				/*if (scoreArray[i].getName().length() >= 10)
-				{
-					tempName = scoreArray[i].getName().substr(0, 10);
-					stream << tempName;
-				}
-				else
-				{
-					stream << scoreArray[i].getName();
-				}
-				stream << std::setw(scoreWidth) << std::to_string(scoreArray[i].getScore());
-				minute = static_cast<int>(scoreArray[i].getTimeInSeconds() / 60);
-				second = static_cast<int>(scoreArray[i].getTimeInSeconds() - minute * 60);
-				if (minute < 10)
-					stream << "0";
-				stream << minute << ":";
-				if (second < 10)
-					stream << "0";
-				stream << second << std::endl;*/
 				stream << scoreArray[i] << std::endl;
 			}
 			//std::cout << stream.str() << std::endl;

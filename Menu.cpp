@@ -36,6 +36,13 @@ public:
 			if (obj != this) { obj->disableEvents(); }
 		}
 	}
+	void RemovedFromScreen()
+	{
+		for (auto obj : Menu::getCurrentMenu()->getMenuObjects())
+		{
+			if (obj != this) { obj->enableEvents(); }
+		}
+	}
 	void draw(sf::RenderWindow& win)
 	{
 		win.clear();

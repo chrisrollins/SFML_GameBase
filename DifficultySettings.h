@@ -90,6 +90,7 @@ namespace DifficultySettings
 			Player::missingHealthHealBonus = 0.6f;
 			Player::healthDrainModifier = -1000;
 			Player::maxHealthModifier = 100000;
+			Player::maxPotionNumModifier = 9994;
 			Player::eatDrainFreezeDuration = 12;
 			Player::potionMakingCitizenRequired = 1;
 			Score::baseMultiplier = 0.f;
