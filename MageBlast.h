@@ -3,6 +3,7 @@
 
 #include "Screen.h"
 #include "ZombieBlast.h"
+#include "FileLoadException.h"
 
 using namespace Engine;
 
@@ -23,7 +24,7 @@ public:
 	{
 		this->ignoreObstacles = true;
 		this->blockingCollision = false;
-		this->texture.loadFromFile("mageblast.png");
+		if (!this->texture.loadFromFile("mageblast.png")) { throw GameException::ImageFileLoadException("mageblast.png"); }
 		this->spritePtr()->setTexture(this->texture);
 		this->spritePtr()->setPosition(pos);
 		sf::Vector2u size = this->texture.getSize();

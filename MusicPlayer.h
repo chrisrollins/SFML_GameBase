@@ -1,9 +1,10 @@
 #ifndef MUSICPLAYER_H
 #define MUSICPLAYER_H
 
-#include "SFML/Audio.hpp"
 #include <map>
 #include <stdexcept>
+#include "SFML/Audio.hpp"
+#include "FileLoadException.h"
 
 namespace Music
 {
@@ -43,7 +44,7 @@ public:
 	{
 		if (!this->mMusic) { this->mMusic = new sf::Music(); }
 		std::string filename = this->mFilenames[theme];
-		if (!this->mMusic->openFromFile(filename)) { throw std::runtime_error("Music " + filename + " could not be loaded."); }
+		if (!this->mMusic->openFromFile(filename)) { throw GameException::SoundFileLoadException(filename); }
 		this->mMusic->setVolume(mVolume);
 		this->mMusic->setLoop(true);
 		this->mMusic->play();

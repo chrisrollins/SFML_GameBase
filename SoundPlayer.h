@@ -32,10 +32,10 @@ class SoundHolder
 private:
 	std::map<SoundEffect::ID, sf::SoundBuffer> mSoundMap;
 public:
-	void loadSoundEffect(SoundEffect::ID id, const std::string& filename)
+	bool loadSoundEffect(SoundEffect::ID id, const std::string& filename)
 	{
 		this->mSoundMap.emplace(id, sf::SoundBuffer());
-		this->mSoundMap[id].loadFromFile(filename);
+		return this->mSoundMap[id].loadFromFile(filename);
 	}
 
 	sf::SoundBuffer& getSoundBuffer(SoundEffect::ID id)
@@ -53,21 +53,23 @@ private:
 public:
 	SoundPlayer() :mSoundContainer(), mSounds()
 	{
-		this->mSoundContainer.loadSoundEffect(SoundEffect::ID::ZombieEat1, "zombie_eat1.ogg");
-		this->mSoundContainer.loadSoundEffect(SoundEffect::ID::ZombieEat2, "zombie_eat2.ogg");
-		this->mSoundContainer.loadSoundEffect(SoundEffect::ID::ZombieEat3, "zombie_eat3.ogg");
-		this->mSoundContainer.loadSoundEffect(SoundEffect::ID::ZombieBurp1, "zombie_burp1.ogg");
-		this->mSoundContainer.loadSoundEffect(SoundEffect::ID::ZombieBurp2, "zombie_burp2.ogg");
-		this->mSoundContainer.loadSoundEffect(SoundEffect::ID::ZombieBurp3, "zombie_burp3.ogg");
-		this->mSoundContainer.loadSoundEffect(SoundEffect::ID::ZombieBurp4, "zombie_burp4.ogg");
-		this->mSoundContainer.loadSoundEffect(SoundEffect::ID::ZombieAttack, "zombie_attack.ogg");
-		this->mSoundContainer.loadSoundEffect(SoundEffect::ID::ZombieGroan, "zombie_hurt.ogg");
-		this->mSoundContainer.loadSoundEffect(SoundEffect::ID::ZombieDeath, "zombie_death.ogg");
-		this->mSoundContainer.loadSoundEffect(SoundEffect::ID::MageDeath, "mage_death.ogg");
-		this->mSoundContainer.loadSoundEffect(SoundEffect::ID::Potion, "potion.ogg");
-		this->mSoundContainer.loadSoundEffect(SoundEffect::ID::Trap, "trap.ogg");
-		this->mSoundContainer.loadSoundEffect(SoundEffect::ID::Alarm, "alarm.ogg");
-		this->mSoundContainer.loadSoundEffect(SoundEffect::ID::MenuClick, "menu_buttonclick.ogg");
+		#define LOAD(id, soundFile) if(!this->mSoundContainer.loadSoundEffect(id, soundFile)) { throw GameException::SoundFileLoadException(soundFile); }
+		LOAD(SoundEffect::ID::ZombieEat1, "zombie_eat1.ogg");
+		LOAD(SoundEffect::ID::ZombieEat2, "zombie_eat2.ogg");
+		LOAD(SoundEffect::ID::ZombieEat3, "zombie_eat3.ogg");
+		LOAD(SoundEffect::ID::ZombieBurp1, "zombie_burp1.ogg");
+		LOAD(SoundEffect::ID::ZombieBurp2, "zombie_burp2.ogg");
+		LOAD(SoundEffect::ID::ZombieBurp3, "zombie_burp3.ogg");
+		LOAD(SoundEffect::ID::ZombieBurp4, "zombie_burp4.ogg");
+		LOAD(SoundEffect::ID::ZombieAttack, "zombie_attack.ogg");
+		LOAD(SoundEffect::ID::ZombieGroan, "zombie_hurt.ogg");
+		LOAD(SoundEffect::ID::ZombieDeath, "zombie_death.ogg");
+		LOAD(SoundEffect::ID::MageDeath, "mage_death.ogg");
+		LOAD(SoundEffect::ID::Potion, "potion.ogg");
+		LOAD(SoundEffect::ID::Trap, "trap.ogg");
+		LOAD(SoundEffect::ID::Alarm, "alarm.ogg");
+		LOAD(SoundEffect::ID::MenuClick, "menu_buttonclick.ogg");
+		#undef LOAD
 	}
 
 	void play(SoundEffect::ID effect, float volume)

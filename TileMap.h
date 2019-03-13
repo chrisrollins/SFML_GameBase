@@ -37,8 +37,7 @@ namespace Engine
 		bool load(const std::string& tileset, const std::string& mapTable)
 		{
 			// load the tileset texture
-			if (!this->m_tileset.loadFromFile(tileset))
-				return false;
+			if (!this->m_tileset.loadFromFile(tileset)) { return false; }
 
 			int * tileTable;
 			tileTable = readFromFile(mapTable);

@@ -16,7 +16,7 @@ private:
 public:
 	PlayerNameEntry() : GraphicalGameObject(sf::Text())
 	{
-		this->font.loadFromFile("Lycanthrope.ttf");
+		if (!this->font.loadFromFile("Lycanthrope.ttf")) { throw GameException::FontFileLoadException("Lycanthrope.ttf"); }
 		this->textPtr()->setFont(this->font);
 		this->textPtr()->setStyle(sf::Text::Bold);
 		this->textPtr()->setFillColor({ 179, 45, 0 });
@@ -32,7 +32,7 @@ public:
 			this->textPtr()->setString("Oops, you've entered a secret base\n created by your family, but the \nguardian requires a password:\n");
 		}
 		this->background.setPosition(600.f, 400.f);
-		this->texture.loadFromFile("bloodyhands.png");
+		if (!this->texture.loadFromFile("bloodyhands.png")) { throw GameException::ImageFileLoadException("bloodyhands.png"); }
 		this->background.setTexture(texture);
 		for (auto obj : Menu::getCurrentMenu()->getMenuObjects()) { if (obj != this) { obj->disableEvents(); } }
 	}
@@ -163,7 +163,7 @@ private:
 public:
 	TestModeButton() : GraphicalGameObject(sf::Sprite())
 	{
-		this->guardianTexture.loadFromFile("guardian.png");
+		if (!this->guardianTexture.loadFromFile("guardian.png")) { throw GameException::ImageFileLoadException("guardian.png"); }
 		this->guardianTexture.setSmooth(true);
 		this->spritePtr()->setTexture(this->guardianTexture);
 		this->textureSize = this->spritePtr()->getTexture()->getSize();
@@ -191,9 +191,9 @@ public:
 		if (e.key.code == sf::Keyboard::Enter)
 		{
 			this->enterPressed = true;
-			if (this->enterPressed && this->enabled) 
-			{ 
-				this->activated = true; 
+			if (this->enterPressed && this->enabled)
+			{
+				this->activated = true;
 				this->spritePtr()->setColor(this->color);
 			}
 		}
@@ -230,7 +230,7 @@ private:
 public:
 	MenuBackground() : GraphicalGameObject(sf::Sprite())
 	{
-		this->backgroundTexture.loadFromFile("menu_background.png");
+		if (!this->backgroundTexture.loadFromFile("menu_background.png")) { throw GameException::ImageFileLoadException("menu_background.png"); }
 		this->spritePtr()->setTexture(this->backgroundTexture);
 	}
 };
@@ -243,7 +243,7 @@ private:
 public:
 	EasyLevelButton() : GraphicalGameObject(sf::Sprite())
 	{
-		this->easyButtonTexture.loadFromFile("menu_easy.png");
+		if (!this->easyButtonTexture.loadFromFile("menu_easy.png")) { throw GameException::ImageFileLoadException("menu_easy.png"); }
 		this->spritePtr()->setTexture(this->easyButtonTexture);
 		this->spritePtr()->setPosition(440.f, 170.f);
 	}
@@ -268,7 +268,7 @@ private:
 public:
 	NormalLevelButton() : GraphicalGameObject(sf::Sprite())
 	{
-		this->normalButtonTexture.loadFromFile("menu_normal.png");
+		if (!this->normalButtonTexture.loadFromFile("menu_normal.png")) { throw GameException::ImageFileLoadException("menu_normal.png"); }
 		this->spritePtr()->setTexture(this->normalButtonTexture);
 		this->spritePtr()->setPosition(400.f, 260.f);
 	}
@@ -293,7 +293,7 @@ private:
 public:
 	HardLevelButton() : GraphicalGameObject(sf::Sprite())
 	{
-		this->hardButtonTexture.loadFromFile("menu_insane.png");
+		if (!this->hardButtonTexture.loadFromFile("menu_insane.png")) { throw GameException::ImageFileLoadException("menu_insane.png"); }
 		this->spritePtr()->setTexture(this->hardButtonTexture);
 		this->spritePtr()->setPosition(420.f, 360.f);
 	}
@@ -318,7 +318,7 @@ private:
 public:
 	TutorialButton() : GraphicalGameObject(sf::Sprite())
 	{
-		this->tutorialButtonTexture.loadFromFile("menu_tutorial.png");
+		if (!this->tutorialButtonTexture.loadFromFile("menu_tutorial.png")) { throw GameException::ImageFileLoadException("menu_tutorial.png"); }
 		this->spritePtr()->setTexture(this->tutorialButtonTexture);
 		this->spritePtr()->setPosition(390.f, 450.f);
 	}
@@ -342,7 +342,7 @@ private:
 public:
 	ScoreboardButton() : GraphicalGameObject(sf::Sprite())
 	{
-		this->scoreButtonTexture.loadFromFile("menu_score.png");
+		if (!this->scoreButtonTexture.loadFromFile("menu_score.png")) { throw GameException::ImageFileLoadException("menu_score.png"); }
 		this->spritePtr()->setTexture(this->scoreButtonTexture);
 		this->spritePtr()->setPosition(420.f, 540.f);
 	}
@@ -366,7 +366,7 @@ private:
 public:
 	QuitButton() : GraphicalGameObject(sf::Sprite())
 	{
-		this->quitButtonTexture.loadFromFile("menu_escape.png");
+		if (!this->quitButtonTexture.loadFromFile("menu_escape.png")) { throw GameException::ImageFileLoadException("menu_escape.png"); }
 		this->spritePtr()->setTexture(this->quitButtonTexture);
 		this->spritePtr()->setPosition(410.f, 630.f);
 	}

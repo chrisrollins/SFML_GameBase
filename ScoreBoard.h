@@ -2,6 +2,7 @@
 #define SCOREBOARD_H
 
 #include "Menu.h"
+#include "FileLoadException.h"
 #include <iostream>
 #include <iomanip>
 #include <fstream>
@@ -113,6 +114,7 @@ namespace Engine
 		void loadFromDataFile(std::string fileName)
 		{
 			std::ifstream file(fileName, std::ios::binary);
+			if (file.bad()) { throw GameException::DataFileLoadException(fileName); }
 			file.read(reinterpret_cast<char*>(this->scores), sizeof(ScoreEntry) * numScores);
 			file.close();
 		}
@@ -120,6 +122,7 @@ namespace Engine
 		void writeToDataFile(std::string fileName)
 		{
 			std::ofstream file(fileName, std::ios::binary | std::ios::trunc);
+			if (file.bad()) { throw GameException::DataFileLoadException(fileName); }
 			file.write(reinterpret_cast<char*>(this->scores), sizeof(ScoreEntry) * numScores);
 			file.close();
 		}
@@ -172,20 +175,20 @@ namespace Engine
 	public:
 		ScoreBoard() : GraphicalGameObject(sf::RectangleShape()), easyFileName("easyScores.dat"), normalFileName("normalScores.dat"), hardFileName("hardScores.dat")
 		{
-			this->xButtonTexture.loadFromFile("x_button.png");
+			if (!this->xButtonTexture.loadFromFile("x_button.png")) { throw GameException::ImageFileLoadException("x_button.png"); }
 			this->xButton.setTexture(this->xButtonTexture);
-			this->backgroundTexture.loadFromFile("scoreboard.png");
+			if (!this->backgroundTexture.loadFromFile("scoreboard.png")) { throw GameException::ImageFileLoadException("scoreboard.png"); }
 			this->background.setTexture(this->backgroundTexture);
-			this->ezButtonTexture.loadFromFile("easy_button.png");
+			if (!this->ezButtonTexture.loadFromFile("easy_button.png")) { throw GameException::ImageFileLoadException("easy_button.png"); }
 			this->ezButton.setTexture(this->ezButtonTexture);
-			this->normalButtonTexture.loadFromFile("normal_button.png");
+			if (!this->normalButtonTexture.loadFromFile("normal_button.png")) { throw GameException::ImageFileLoadException("normal_button.png"); };
 			this->normalButton.setTexture(this->normalButtonTexture);
-			this->insaneButtonTexture.loadFromFile("insane_button.png");
+			if (!this->insaneButtonTexture.loadFromFile("insane_button.png")) { throw GameException::ImageFileLoadException("insane_button.png"); };
 			this->insaneButton.setTexture(insaneButtonTexture);
 			this->easyScores.loadFromDataFile(this->easyFileName);
 			this->normalScores.loadFromDataFile(this->normalFileName);
 			this->hardScores.loadFromDataFile(this->hardFileName);
-			this->font.loadFromFile("harting.ttf");
+			if (!this->font.loadFromFile("harting.ttf")) { throw GameException::FontFileLoadException("harting.ttf"); }
 			for (auto txt : { &this->easyColumn, &this->normalColumn, &this->hardColumn })
 			{
 				txt->setFillColor({ 179, 45, 0, 255 });

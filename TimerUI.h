@@ -2,6 +2,7 @@
 #define TIMERUI_H
 
 #include "MainCharacter.h"
+#include "FileLoadException.h"
 #include <string>
 #include <sstream>
 #include <iomanip>
@@ -19,7 +20,7 @@ private:
 public:
 	TimerUI(sf::Text t) : GraphicalGameObject(t)
 	{
-		font.loadFromFile("zombie.ttf");
+		if (!font.loadFromFile("zombie.ttf")) { throw GameException::FontFileLoadException("zombie.ttf"); }
 		this->text()->setFont(font);
 		this->text()->setStyle(sf::Text::Bold);
 		this->text()->setOutlineColor(sf::Color(179, 45, 0));
