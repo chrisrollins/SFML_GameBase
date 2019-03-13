@@ -22,6 +22,17 @@ public:
 		this->xButton.setTexture(this->xButtonTexture);
 		this->xButton.setPosition(Engine::Screen::windowWidth - 55.f, 15.f);
 		showStory = true;
+		for (auto obj : Menu::getCurrentMenu()->getMenuObjects())
+		{
+			if (obj != this) { obj->disableEvents(); }
+		}
+	}
+	void RemovedFromScreen()
+	{
+		for (auto obj : Menu::getCurrentMenu()->getMenuObjects())
+		{
+			if (obj != this) { obj->enableEvents(); }
+		}
 	}
 	void MouseButtonReleased(sf::Event e)
 	{
