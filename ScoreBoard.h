@@ -10,6 +10,7 @@
 #include <vector>
 #include "DifficultySettings.h"
 #include "GameObject.h"
+#include "Screen.h"
 
 namespace Engine
 {
@@ -21,7 +22,7 @@ namespace Engine
 
 		}
 		ScoreEntry(std::string name, int score, int timeInSeconds) : score(score), time(timeInSeconds)
-		{			
+		{
 			size_t length = name.size();
 			if (length > 255) { length = 255; }
 			if (length > 0) { memcpy(this->name, name.c_str(), length);	}
@@ -173,7 +174,7 @@ namespace Engine
 			}
 		}
 		void draw(sf::RenderWindow& win)
-		{			
+		{
 			win.draw(*this->graphic);
 			win.draw(this->xButtonSprite);
 			win.draw(this->easyColumn);
@@ -185,18 +186,18 @@ namespace Engine
 		{
 			std::ostringstream stream;
 			const ScoreEntry* scoreArray = list->getScores();
-			const char* columnLabel = (column == &this->easyColumn) ? "Easy" : (column == &this->normalColumn) ? "Normal" : "Hard";			
+			const char* columnLabel = (column == &this->easyColumn) ? "Easy" : (column == &this->normalColumn) ? "Normal" : "Hard";
 			const int nameWidth = 10;
 			const int scoreWidth = 7;
 			const int timeWidth = 5;
-			stream << setw(nameWidth + scoreWidth + timeWidth) << columnLabel << '\n';
-			stream << std::setw(nameWidth) << "Name" << "     " << std::setw(scoreWidth) << "Score" << "     " << setw(timeWidth) << "Time\n";
+			stream << std::setw(nameWidth + scoreWidth + timeWidth) << columnLabel << '\n';
+			stream << std::setw(nameWidth) << "Name" << "     " << std::setw(scoreWidth) << "Score" << "     " << std::setw(timeWidth) << "Time\n";
 			for (int i = list->getBoardSize() - 1; i >= 0; i--)
 			{
-				stream << std::left << std::setw(nameWidth) << scoreArray[i].getName() << "  -  " << std::setw(scoreWidth) << std::to_string(scoreArray[i].getScore()) << "  -  " << setw(timeWidth) << std::to_string(scoreArray[i].getTimeInSeconds()) << '\n';
+				stream << std::left << std::setw(nameWidth) << scoreArray[i].getName() << "  -  " << std::setw(scoreWidth) << std::to_string(scoreArray[i].getScore()) << "  -  " << std::setw(timeWidth) << std::to_string(scoreArray[i].getTimeInSeconds()) << '\n';
 			}
 			//std::cout << stream.str() << std::endl;
-			column->setString(stream.str());			
+			column->setString(stream.str());
 		}
 		std::string easyFileName;
 		std::string normalFileName;
