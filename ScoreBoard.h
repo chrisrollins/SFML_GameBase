@@ -1,49 +1,57 @@
 #ifndef SCOREBOARD_H
 #define SCOREBOARD_H
 
+#include "Menu.h"
 #include <iostream>
 #include <iomanip>
-#include <string>
 #include <fstream>
 #include <sstream>
 #include <cstring>
 #include <cstdlib>
-#include "DifficultySettings.h"
-#include "GameObject.h"
-#include "Menu.h"
 
 namespace Engine
 {
 	struct ScoreEntry
 	{
+	private:
+		int score;
+		int time;
+		char name[256] = { };
 	public:
 		ScoreEntry() : ScoreEntry("", 0, 0) {}
+
 		ScoreEntry(std::string name, int score, int timeInSeconds) : score(score), time(timeInSeconds)
 		{
 			size_t length = name.size();
 			if (length > 255) { length = 255; }
 			if (length > 0) { memcpy(this->name, name.c_str(), length); }
 		}
+
 		int getScore() const
 		{
 			return this->score;
 		}
+
 		int getTimeInSeconds() const
 		{
 			return this->time;
 		}
+
 		std::string getName() const
 		{
 			return std::string(this->name);
 		}
+
 		bool operator >(const ScoreEntry& other) const
 		{
 			return this->score > other.getScore();
 		}
+
 		bool operator <(const ScoreEntry& other) const
 		{
 			return this->score < other.getScore();
 		}
+
 		bool operator ==(const ScoreEntry& other) const
 		{
 			return this->score == other.getScore();
@@ -53,11 +61,6 @@ namespace Engine
 		static const int nameWidth = 16;
 		static const int scoreWidth = 12;
 		static const int timeWidth = 8;
-
-	private:
-		int score;
-		int time;
-		char name[256] = { };
 	};
 
 	inline std::ostream& operator << (std::ostream& os, const ScoreEntry& entry)
@@ -96,20 +99,24 @@ namespace Engine
 			qsort(this->scores, numScores, sizeof(ScoreEntry), sortFunc);
 			return true;
 		}
+
 		size_t getBoardSize() const
 		{
 			return numScores;
 		}
+
 		const ScoreEntry* getScores() const
 		{
 			return this->scores;
 		}
+
 		void loadFromDataFile(std::string fileName)
 		{
 			std::ifstream file(fileName, std::ios::binary);
 			file.read(reinterpret_cast<char*>(this->scores), sizeof(ScoreEntry) * numScores);
 			file.close();
 		}
+
 		void writeToDataFile(std::string fileName)
 		{
 			std::ofstream file(fileName, std::ios::binary | std::ios::trunc);
@@ -120,6 +127,48 @@ namespace Engine
 
 	class ScoreBoard : public GraphicalGameObject
 	{
+	private:
+		std::string easyFileName;
+		std::string normalFileName;
+		std::string hardFileName;
+		ScoreList easyScores;
+		ScoreList normalScores;
+		ScoreList hardScores;
+		sf::Font font;
+		sf::Text easyColumn;
+		sf::Text normalColumn;
+		sf::Text hardColumn;
+		sf::Texture xButtonTexture;
+		sf::Sprite xButton;
+		sf::Texture ezButtonTexture;
+		sf::Sprite ezButton;
+		sf::Texture normalButtonTexture;
+		sf::Sprite normalButton;
+		sf::Texture insaneButtonTexture;
+		sf::Sprite insaneButton;
+		sf::Texture backgroundTexture;
+		sf::Sprite background;
+		sf::Sprite* backgroundPtr() { return dynamic_cast<sf::Sprite*>(this->graphic); }
+		bool showEasy = false;
+		bool showNormal = false;
+		bool showInsane = false;
+		bool showScoreChoice = false; // used here to control when return to the first page of scoreboard
+		void updateColumnText(sf::Text* column, ScoreList* list)
+		{
+			std::ostringstream stream;
+			const ScoreEntry* scoreArray = list->getScores();
+			const char* columnLabel = (column == &this->easyColumn) ? "Easy" : (column == &this->normalColumn) ? "Normal" : "Insane";
+			stream << std::setw((ScoreEntry::rankWidth + ScoreEntry::nameWidth + ScoreEntry::scoreWidth + ScoreEntry::timeWidth) / 2) << columnLabel << std::endl;
+			stream << std::left << std::setw(ScoreEntry::rankWidth) << "Rank" << std::setw(ScoreEntry::nameWidth) << "Name"
+				<< std::setw(ScoreEntry::scoreWidth) << "Score" << std::setw(ScoreEntry::timeWidth) << "Time" << std::endl;
+			for (int i = list->getBoardSize() - 1; i >= 0 && scoreArray[i].getScore() != 0; i--)
+			{
+				stream << std::left << std::setw(ScoreEntry::rankWidth) << list->getBoardSize() - i << std::setw(ScoreEntry::nameWidth);
+				stream << scoreArray[i] << std::endl;
+			}
+			//std::cout << stream.str() << std::endl;
+			column->setString(stream.str());
+		}
 	public:
 		ScoreBoard() : GraphicalGameObject(sf::RectangleShape()), easyFileName("easyScores.dat"), normalFileName("normalScores.dat"), hardFileName("hardScores.dat")
 		{
@@ -154,22 +203,14 @@ namespace Engine
 			updateColumnText(&this->easyColumn, &this->easyScores);
 			updateColumnText(&this->normalColumn, &this->normalScores);
 			updateColumnText(&this->hardColumn, &this->hardScores);
-			showEasy = false;
-			showNormal = false;
-			showInsane = false;
-			showScoreChoice = false;
-			for (auto obj : Menu::getCurrentMenu()->getMenuObjects())
-			{
-				if (obj != this) { obj->disableEvents(); }
-			}
+			for (auto obj : Menu::getCurrentMenu()->getMenuObjects()) { if (obj != this) { obj->disableEvents(); } }
 		}
+
 		void RemovedFromScreen()
 		{
-			for (auto obj : Menu::getCurrentMenu()->getMenuObjects())
-			{
-				if (obj != this) { obj->enableEvents(); }
-			}
+			for (auto obj : Menu::getCurrentMenu()->getMenuObjects()) { if (obj != this) { obj->enableEvents(); } }
 		}
+
 		bool add(ScoreEntry s, DifficultySettings::DIFFICULTY difficulty)
 		{
 			ScoreList* list = nullptr;
@@ -200,54 +241,56 @@ namespace Engine
 			updateColumnText(column, list);
 			return true;
 		}
+
 		void MouseButtonReleased(sf::Event e)
 		{
 			if (e.mouseButton.button != sf::Mouse::Button::Left) { return; }
 			sf::Vector2i mouse = this->screen->getMousePosition();
-			if (!showScoreChoice && this->xButton.getGlobalBounds().contains(static_cast<float>(mouse.x), static_cast<float>(mouse.y)))
+			if (!this->showScoreChoice && this->xButton.getGlobalBounds().contains(static_cast<float>(mouse.x), static_cast<float>(mouse.y)))
 			{
 				this->screen->remove(this);
 			}
-			if (showScoreChoice && this->xButton.getGlobalBounds().contains(static_cast<float>(mouse.x), static_cast<float>(mouse.y)))
+			if (this->showScoreChoice && this->xButton.getGlobalBounds().contains(static_cast<float>(mouse.x), static_cast<float>(mouse.y)))
 			{
-				showEasy = false;
-				showNormal = false;
-				showInsane = false;
+				this->showEasy = false;
+				this->showNormal = false;
+				this->showInsane = false;
 			}
 			if (this->ezButton.getGlobalBounds().contains(static_cast<float>(mouse.x), static_cast<float>(mouse.y)))
 			{
-				showEasy = true;
-				showScoreChoice = true;
+				this->showEasy = true;
+				this->showScoreChoice = true;
 			}
 			if (this->normalButton.getGlobalBounds().contains(static_cast<float>(mouse.x), static_cast<float>(mouse.y)))
 			{
-				showNormal = true;
-				showScoreChoice = true;
+				this->showNormal = true;
+				this->showScoreChoice = true;
 			}
 			if (this->insaneButton.getGlobalBounds().contains(static_cast<float>(mouse.x), static_cast<float>(mouse.y)))
 			{
-				showInsane = true;
-				showScoreChoice = true;
+				this->showInsane = true;
+				this->showScoreChoice = true;
 			}
 		}
+
 		void draw(sf::RenderWindow& win)
 		{
 			win.clear();
-			if (!showEasy && !showNormal && !showInsane)
+			if (!this->showEasy && !this->showNormal && !this->showInsane)
 			{
 				win.draw(this->background);
 				win.draw(this->ezButton);
 				win.draw(this->normalButton);
 				win.draw(this->insaneButton);
 				win.draw(this->xButton);
-				showScoreChoice = false;
+				this->showScoreChoice = false;
 			}
-			else if (showEasy)
+			else if (this->showEasy)
 			{
 				win.draw(this->easyColumn);
 				win.draw(this->xButton);
 			}
-			else if (showNormal)
+			else if (this->showNormal)
 			{
 				win.draw(this->normalColumn);
 				win.draw(this->xButton);
@@ -258,48 +301,6 @@ namespace Engine
 				win.draw(this->xButton);
 			}
 		}
-	private:
-		void updateColumnText(sf::Text* column, ScoreList* list)
-		{
-			std::ostringstream stream;
-			const ScoreEntry* scoreArray = list->getScores();
-			const char* columnLabel = (column == &this->easyColumn) ? "Easy" : (column == &this->normalColumn) ? "Normal" : "Insane";
-			stream << std::setw((ScoreEntry::rankWidth + ScoreEntry::nameWidth + ScoreEntry::scoreWidth + ScoreEntry::timeWidth) / 2) << columnLabel << std::endl;
-			stream << std::left << std::setw(ScoreEntry::rankWidth) << "Rank" << std::setw(ScoreEntry::nameWidth) << "Name"
-				<< std::setw(ScoreEntry::scoreWidth) << "Score" << setw(ScoreEntry::timeWidth) << "Time" << std::endl;
-			for (int i = list->getBoardSize() - 1; i >= 0 && scoreArray[i].getScore() != 0; i--)
-			{
-				stream << std::left << std::setw(ScoreEntry::rankWidth) << list->getBoardSize() - i << std::setw(ScoreEntry::nameWidth);
-				stream << scoreArray[i] << std::endl;
-			}
-			//std::cout << stream.str() << std::endl;
-			column->setString(stream.str());
-		}
-		std::string easyFileName;
-		std::string normalFileName;
-		std::string hardFileName;
-		ScoreList easyScores;
-		ScoreList normalScores;
-		ScoreList hardScores;
-		sf::Font font;
-		sf::Text easyColumn;
-		sf::Text normalColumn;
-		sf::Text hardColumn;
-		sf::Texture xButtonTexture;
-		sf::Sprite xButton;
-		sf::Texture ezButtonTexture;
-		sf::Sprite ezButton;
-		sf::Texture normalButtonTexture;
-		sf::Sprite normalButton;
-		sf::Texture insaneButtonTexture;
-		sf::Sprite insaneButton;
-		sf::Texture backgroundTexture;
-		sf::Sprite background;
-		sf::Sprite* backgroundPtr() { return dynamic_cast<sf::Sprite*>(this->graphic); }
-		bool showEasy;
-		bool showNormal;
-		bool showInsane;
-		bool showScoreChoice; // used here to control when return to the easy / normal / insane mode choice of showing scores
 	};
 }
 
