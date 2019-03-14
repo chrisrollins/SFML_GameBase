@@ -3,6 +3,9 @@
 
 #include "Menu.h"
 #include "FileLoadException.h"
+#include "DifficultySettings.h"
+#include "GameObject.h"
+#include "Screen.h"
 #include <iostream>
 #include <iomanip>
 #include <fstream>
@@ -10,10 +13,6 @@
 #include <cstring>
 #include <cstdlib>
 #include <vector>
-#include "DifficultySettings.h"
-#include "GameObject.h"
-#include "Screen.h"
-
 
 namespace Engine
 {
@@ -108,7 +107,7 @@ namespace Engine
 
 		size_t getBoardSize() const
 		{
-			return numScores;
+			return this->numScores;
 		}
 
 		const ScoreEntry* getScores() const
