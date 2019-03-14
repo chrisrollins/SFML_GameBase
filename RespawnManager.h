@@ -12,7 +12,7 @@ template <typename T>
 class RespawnManager : public GameObject
 {
 private:
-	std::map<Engine::GameObjectID, T*> characters;
+	std::map<GameObjectID, T*> characters;
 	size_t max;
 	int respawnSpeed;
 	int cooldown = 0;
