@@ -150,7 +150,6 @@ public:
 				soundPlayer.play(SoundEffect::ID::ZombieAttack, 40.f);
 				if (this->health > 0.2 * this->maxHealth) { this->changeHealth(-1 * this->attackHealthCost); } //health cost of ranged attack only applies if health is above 20%
 				sf::Vector2i mousePos = this->screen->getMousePosition();
-				sf::Vector2f distance = static_cast<sf::Vector2f>(mousePos) - this->sprite()->getPosition();
 				sf::Vector2f shotOrigin = this->sprite()->getPosition();
 				sf::IntRect size = this->sprite()->getTextureRect();
 				shotOrigin.x += static_cast<float>(size.width / 2);
@@ -162,7 +161,6 @@ public:
 			{
 				soundPlayer.play(SoundEffect::ID::ZombieAttack, 40.f);
 				sf::Vector2i mousePos = this->screen->getMousePosition();
-				sf::Vector2f distance = static_cast<sf::Vector2f>(mousePos) - this->sprite()->getPosition();
 				sf::Vector2f shotOrigin = this->sprite()->getPosition();
 				sf::IntRect size = this->sprite()->getTextureRect();
 				shotOrigin.x += static_cast<float>(size.width / 2);
@@ -201,7 +199,7 @@ public:
 				else { this->imageCount.x++; }
 			}
 			if (!this->W_KeyHeld && !this->A_KeyHeld && !this->S_KeyHeld && !this->D_KeyHeld) { this->imageCount.x = 0; }
-			
+
 			if (this->W_KeyHeld)
 			{
 				this->imageCount.y = 3;

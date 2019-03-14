@@ -9,6 +9,11 @@
 #include <sstream>
 #include <cstring>
 #include <cstdlib>
+#include <vector>
+#include "DifficultySettings.h"
+#include "GameObject.h"
+#include "Screen.h"
+
 
 namespace Engine
 {

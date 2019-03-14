@@ -2,6 +2,10 @@
 #define ANTIMAGEPOTION_H
 
 #include "Screen.h"
+#include "DifficultySettings.h"
+#include "Score.h"
+#include <vector>
+#include <ctime>
 
 class AntiMagePotion : public Engine::GraphicalGameObject
 {
