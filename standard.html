@@ -32,6 +32,8 @@ Braces without any contents may be placed on the same line.</a> (optional)
 Conditional statement braces with only one statement may be placed on the same line as the conditional statement.</a> (optional)
 <li><a href="#StmtPerLine">
 Each statement shall be placed on a line on its own.</a>
+<li><a href="#FuncSpacing">
+Functions and class methods shall be separated by an additional new line.</a>
 </ul>
 <h3>Files</h3>
 <ul>
@@ -112,6 +114,22 @@ if (a < 0) { a = 0; }
 There is no need to make code compact.
 Putting several statements on the same line only makes the code
 cryptic to read.
+
+<a name="FuncSpacing" />
+<h3>Functions and class methods shall be separated by an additional new line.</h3>
+Example:
+<table cellspacing=10 cellpadding=5><tr><td width=20></td><td bgcolor="eeeeee"><pre>
+void foo()
+{
+    ...
+}
+
+void bar()
+{
+    ...
+}
+</pre></td></tr></table>
+
 
 <h2>Files</h2>
 <a name="FileNameCase" />
