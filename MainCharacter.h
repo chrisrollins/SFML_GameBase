@@ -24,8 +24,6 @@ class MainCharacter : public GraphicalGameObject
 	bool dKeyHeld = false;
 	DIRECTION direction = DIRECTION::DOWN;
 	AntiMagePotion* potionPtr = nullptr;
-	sf::Sprite brainPotion;
-	sf::Texture potionTexutre;
 	sf::Texture blastTexture;
 	sf::Texture superBlastTexture;
 	sf::Vector2u textureSize;
@@ -62,8 +60,6 @@ public:
 	MainCharacter(sf::Sprite s, std::string name) : GraphicalGameObject(s)
 	{
 		this->name = name;
-		if (!this->potionTexutre.loadFromFile("antimage_potion.png")) { throw GameException::ImageFileLoadException("antimage_potion.png"); }
-		this->brainPotion.setTexture(potionTexutre);
 		this->textureSize = this->sprite()->getTexture()->getSize();
 		this->textureSize.x /= 4;
 		this->textureSize.y /= 12;
@@ -274,9 +270,9 @@ public:
 			if (this->imageCount.x == 3) { this->die(); }
 		}
 
-		if (!this->isDead) {
-			this->sprite()->setTextureRect(sf::IntRect(this->imageCount.x * this->textureSize.x,
-				this->imageCount.y * this->textureSize.y, this->textureSize.x, this->textureSize.y));
+		if (!this->isDead)
+		{
+			this->sprite()->setTextureRect(sf::IntRect(this->imageCount.x * this->textureSize.x, this->imageCount.y * this->textureSize.y, this->textureSize.x, this->textureSize.y));
 		}
 	}
 
@@ -455,8 +451,8 @@ public:
 					this->spawnPositions = this->screen->getMap()->getSafeSpawnPositions();
 					size_t randIndex = rand() % spawnPositions.size();
 					sf::Vector2f position = spawnPositions[randIndex];
-					brainPotion.setPosition(position);
-					potionPtr = new AntiMagePotion(brainPotion);
+					potionPtr = new AntiMagePotion();
+					potionPtr->spritePtr()->setPosition(position);
 					this->screen->add(potionPtr);
 				}
 				float missingHealthBonus = DifficultySettings::Player::missingHealthHealBonus;
