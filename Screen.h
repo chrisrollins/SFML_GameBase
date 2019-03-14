@@ -32,8 +32,8 @@ namespace Engine
 	private:
 		typedef std::map<GameObjectID, GameObject*> GameObjectMap;
 		GameObjectMap objects;
-		GameObjectMap g_objects; //GraphicalGameObjects go here so during rendering it doesn't have to check the other ones
-		GameObjectMap ui_objects; //UI objects have an absolute position on the screen so they follow the view. they have no collision either.
+		GameObjectMap gObjects; //GraphicalGameObjects go here so during rendering it doesn't have to check the other ones
+		GameObjectMap uiObjects; //UI objects have an absolute position on the screen so they follow the view. they have no collision either.
 		GameObject* mainCharacter = nullptr;
 		TileMap* map = nullptr;
 	};
