@@ -18,16 +18,16 @@ using namespace Engine;
 
 class MainCharacter : public GraphicalGameObject
 {
-	bool W_KeyHeld = false;
-	bool A_KeyHeld = false;
-	bool S_KeyHeld = false;
-	bool D_KeyHeld = false;
+	bool wKeyHeld = false;
+	bool aKeyHeld = false;
+	bool sKeyHeld = false;
+	bool dKeyHeld = false;
 	DIRECTION direction = DIRECTION::DOWN;
 	AntiMagePotion* potionPtr = nullptr;
 	sf::Sprite brainPotion;
-	sf::Texture potion_texutre;
-	sf::Texture blast_texture;
-	sf::Texture super_blast_texture;
+	sf::Texture potionTexutre;
+	sf::Texture blastTexture;
+	sf::Texture superBlastTexture;
 	sf::Vector2u textureSize;
 	sf::Vector2u imageCount;
 	sf::Vector2u currentImage;
@@ -62,16 +62,16 @@ public:
 	MainCharacter(sf::Sprite s, std::string name) : GraphicalGameObject(s)
 	{
 		this->name = name;
-		if (!this->potion_texutre.loadFromFile("antimage_potion.png")) { throw GameException::ImageFileLoadException("antimage_potion.png"); }
-		this->brainPotion.setTexture(potion_texutre);
+		if (!this->potionTexutre.loadFromFile("antimage_potion.png")) { throw GameException::ImageFileLoadException("antimage_potion.png"); }
+		this->brainPotion.setTexture(potionTexutre);
 		this->textureSize = this->sprite()->getTexture()->getSize();
 		this->textureSize.x /= 4;
 		this->textureSize.y /= 12;
 		this->imageCount.x = 0;
 		this->sprite()->setTextureRect(sf::IntRect(this->imageCount.x * this->textureSize.x,
 			this->imageCount.y * this->textureSize.y, this->textureSize.x, this->textureSize.y));
-		if (!this->blast_texture.loadFromFile("blast.png")) { throw GameException::ImageFileLoadException("blast.png"); }
-		if (!this->super_blast_texture.loadFromFile("brain.png")) { throw GameException::ImageFileLoadException("brain.png"); }
+		if (!this->blastTexture.loadFromFile("blast.png")) { throw GameException::ImageFileLoadException("blast.png"); }
+		if (!this->superBlastTexture.loadFromFile("brain.png")) { throw GameException::ImageFileLoadException("brain.png"); }
 		sf::IntRect size = this->sprite()->getTextureRect();
 		sf::Vector2f collisionSizeRatio(0.4f, 0.3f); //these numbers shrink the collision size of the player, and the code below adjusts it to be positioned at the bottom of the sprite
 		this->obstacleCollisionSize.width = static_cast<float>(size.width) * collisionSizeRatio.x;
@@ -94,16 +94,16 @@ public:
 			switch (e.key.code)
 			{
 			case sf::Keyboard::W:
-				this->W_KeyHeld = true;
+				this->wKeyHeld = true;
 				break;
 			case sf::Keyboard::A:
-				this->A_KeyHeld = true;
+				this->aKeyHeld = true;
 				break;
 			case sf::Keyboard::S:
-				this->S_KeyHeld = true;
+				this->sKeyHeld = true;
 				break;
 			case sf::Keyboard::D:
-				this->D_KeyHeld = true;
+				this->dKeyHeld = true;
 				break;
 			case sf::Keyboard::Escape:
 				if (DifficultySettings::currentDifficulty == DifficultySettings::DIFFICULTY::TEST) { this->healthDrain = 10000; }
@@ -120,19 +120,19 @@ public:
 			switch (e.key.code)
 			{
 			case sf::Keyboard::W:
-				this->W_KeyHeld = false;
+				this->wKeyHeld = false;
 				this->setDirection(DIRECTION::UP);
 				break;
 			case sf::Keyboard::A:
-				this->A_KeyHeld = false;
+				this->aKeyHeld = false;
 				this->setDirection(DIRECTION::LEFT);
 				break;
 			case sf::Keyboard::S:
-				this->S_KeyHeld = false;
+				this->sKeyHeld = false;
 				this->setDirection(DIRECTION::DOWN);
 				break;
 			case sf::Keyboard::D:
-				this->D_KeyHeld = false;
+				this->dKeyHeld = false;
 				this->setDirection(DIRECTION::RIGHT);
 				break;
 			default:
@@ -154,7 +154,7 @@ public:
 				sf::IntRect size = this->sprite()->getTextureRect();
 				shotOrigin.x += static_cast<float>(size.width / 2);
 				shotOrigin.y += static_cast<float>(size.height / 4);
-				ZombieBlast* blast = new ZombieBlast(sf::Sprite(this->blast_texture), shotOrigin, sf::Vector2f(static_cast<float>(mousePos.x), static_cast<float>(mousePos.y)), 3.5f, 140);
+				ZombieBlast* blast = new ZombieBlast(sf::Sprite(this->blastTexture), shotOrigin, sf::Vector2f(static_cast<float>(mousePos.x), static_cast<float>(mousePos.y)), 3.5f, 140);
 				this->screen->add(blast);
 			}
 			else if (this->potionNum > 0)
@@ -165,7 +165,7 @@ public:
 				sf::IntRect size = this->sprite()->getTextureRect();
 				shotOrigin.x += static_cast<float>(size.width / 2);
 				shotOrigin.y += static_cast<float>(size.height / 4);
-				SuperZombieBlast* blast = new SuperZombieBlast(sf::Sprite(this->super_blast_texture), shotOrigin, sf::Vector2f(static_cast<float>(mousePos.x), static_cast<float>(mousePos.y)), 2.25f, 180, 1000, 0.1f, 0.2f);
+				SuperZombieBlast* blast = new SuperZombieBlast(sf::Sprite(this->superBlastTexture), shotOrigin, sf::Vector2f(static_cast<float>(mousePos.x), static_cast<float>(mousePos.y)), 2.25f, 180, 1000, 0.1f, 0.2f);
 				this->screen->add(blast);
 				this->potionNum--;
 			}
@@ -193,29 +193,29 @@ public:
 		if (this->health > 0)
 		{
 			float fSpeed = static_cast<float>(this->speed);
-			if (f % 20 == 0 && (this->W_KeyHeld || this->A_KeyHeld || this->S_KeyHeld || this->D_KeyHeld))
+			if (f % 20 == 0 && (this->wKeyHeld || this->aKeyHeld || this->sKeyHeld || this->dKeyHeld))
 			{
 				if (this->imageCount.x == 3) { this->imageCount.x = 0; }
 				else { this->imageCount.x++; }
 			}
-			if (!this->W_KeyHeld && !this->A_KeyHeld && !this->S_KeyHeld && !this->D_KeyHeld) { this->imageCount.x = 0; }
+			if (!this->wKeyHeld && !this->aKeyHeld && !this->sKeyHeld && !this->dKeyHeld) { this->imageCount.x = 0; }
 
-			if (this->W_KeyHeld)
+			if (this->wKeyHeld)
 			{
 				this->imageCount.y = 3;
 				s->move(0.f, -1.f * fSpeed);
 			}
-			if (this->A_KeyHeld)
+			if (this->aKeyHeld)
 			{
 				this->imageCount.y = 1;
 				s->move(-1.f * fSpeed, 0.f);
 			}
-			if (this->S_KeyHeld)
+			if (this->sKeyHeld)
 			{
 				this->imageCount.y = 0;
 				s->move(0.f, fSpeed);
 			}
-			if (this->D_KeyHeld)
+			if (this->dKeyHeld)
 			{
 				this->imageCount.y = 2;
 				s->move(fSpeed, 0.f);
@@ -267,15 +267,17 @@ public:
 					musicPlayer.setVolume(20.f);
 				}
 			}
-			if (this->direction == DIRECTION::DOWN || this->S_KeyHeld) { this->imageCount.y = 4; }
-			if (this->direction == DIRECTION::LEFT || this->A_KeyHeld) { this->imageCount.y = 5; }
-			if (this->direction == DIRECTION::RIGHT || this->D_KeyHeld) { this->imageCount.y = 6; }
-			if (this->direction == DIRECTION::UP || this->W_KeyHeld) { this->imageCount.y = 7; }
+			if (this->direction == DIRECTION::DOWN || this->sKeyHeld) { this->imageCount.y = 4; }
+			if (this->direction == DIRECTION::LEFT || this->aKeyHeld) { this->imageCount.y = 5; }
+			if (this->direction == DIRECTION::RIGHT || this->dKeyHeld) { this->imageCount.y = 6; }
+			if (this->direction == DIRECTION::UP || this->wKeyHeld) { this->imageCount.y = 7; }
 			if (this->imageCount.x == 3) { this->die(); }
 		}
 
-		if (!this->isDead) { this->sprite()->setTextureRect(sf::IntRect(this->imageCount.x * this->textureSize.x,
-				this->imageCount.y * this->textureSize.y, this->textureSize.x, this->textureSize.y)); }
+		if (!this->isDead) {
+			this->sprite()->setTextureRect(sf::IntRect(this->imageCount.x * this->textureSize.x,
+				this->imageCount.y * this->textureSize.y, this->textureSize.x, this->textureSize.y));
+		}
 	}
 
 	void drain()
