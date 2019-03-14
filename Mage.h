@@ -42,7 +42,7 @@ public:
 
 	void setCurrHealth(int health)
 	{
-		this->rectPtr()->setSize({37.f * health / this->maxHealth, 5.f});
+		this->rectPtr()->setSize({ 37.f * health / this->maxHealth, 5.f });
 	}
 };
 
@@ -50,17 +50,17 @@ class Mage : public GraphicalGameObject
 {
 private:
 	friend class RespawnManager<Mage>;
-	bool W_KeyHeld = false;
-	bool A_KeyHeld = false;
-	bool S_KeyHeld = false;
-	bool D_KeyHeld = false;
+	bool wKeyHeld = false;
+	bool aKeyHeld = false;
+	bool sKeyHeld = false;
+	bool dKeyHeld = false;
 	bool alive = true;
 	int deathCount = 0;
 	int health = 3 + DifficultySettings::Mage::mageHealthModifier;
 	std::unordered_set<GameObjectID> blastsHitBy;
 	bool isShooting = false;;
 	uint64_t internalClock = 0;
-	int bullet_cooldown = 0;
+	int bulletCooldown = 0;
 	sf::Vector2u textureSize;
 	sf::Vector2u imageCount;
 	sf::Vector2u currentImage;
@@ -83,25 +83,25 @@ public:
 		this->textureSize.y /= 12;
 		this->imageCount.x = 0;
 
-		this->W_KeyHeld = false;
-		this->A_KeyHeld = false;
-		this->S_KeyHeld = false;
-		this->D_KeyHeld = false;
+		this->wKeyHeld = false;
+		this->aKeyHeld = false;
+		this->sKeyHeld = false;
+		this->dKeyHeld = false;
 
 		srand(static_cast<unsigned int>(time(0) * this->getID()));
 		switch (rand() % 4)
 		{
 		case 0:
-			this->W_KeyHeld = true;
+			this->wKeyHeld = true;
 			break;
 		case 1:
-			this->A_KeyHeld = true;
+			this->aKeyHeld = true;
 			break;
 		case 2:
-			this->S_KeyHeld = true;
+			this->sKeyHeld = true;
 			break;
 		case 3:
-			this->D_KeyHeld = true;
+			this->dKeyHeld = true;
 			break;
 		default:
 			break;
@@ -143,25 +143,25 @@ public:
 				//float a = (playerPosition.x - myPosition.x);
 				//float b = (playerPosition.y - myPosition.y);
 
-				this->W_KeyHeld = false;
-				this->A_KeyHeld = false;
-				this->S_KeyHeld = false;
-				this->D_KeyHeld = false;
+				this->wKeyHeld = false;
+				this->aKeyHeld = false;
+				this->sKeyHeld = false;
+				this->dKeyHeld = false;
 
 				int choice = rand() % 2;
 				if (choice == 0)
 				{
-					if (xDirection == DIRECTION::RIGHT) { this->D_KeyHeld = true; }
-					else { this->A_KeyHeld = true; }
+					if (xDirection == DIRECTION::RIGHT) { this->dKeyHeld = true; }
+					else { this->aKeyHeld = true; }
 				}
 				else
 				{
-					if (yDirection == DIRECTION::DOWN) { this->S_KeyHeld = true; }
-					else { this->W_KeyHeld = true; }
+					if (yDirection == DIRECTION::DOWN) { this->sKeyHeld = true; }
+					else { this->wKeyHeld = true; }
 				}
 			}
 
-			if (this->W_KeyHeld)
+			if (this->wKeyHeld)
 			{
 				if (!this->isShooting) { this->imageCount.y = 3; }
 				this->spritePtr()->move(0, -0.5);
@@ -169,11 +169,11 @@ public:
 				{
 					this->imageCount.y = 7;
 					this->isShooting = true;
-					this->bullet_cooldown = 0;
+					this->bulletCooldown = 0;
 				}
 			}
 
-			if (this->A_KeyHeld)
+			if (this->aKeyHeld)
 			{
 				if (!this->isShooting) { this->imageCount.y = 1; }
 				this->spritePtr()->move(-0.5, 0);
@@ -181,11 +181,11 @@ public:
 				{
 					this->imageCount.y = 5;
 					this->isShooting = true;
-					this->bullet_cooldown = 0;
+					this->bulletCooldown = 0;
 				}
 			}
 
-			if (this->S_KeyHeld)
+			if (this->sKeyHeld)
 			{
 				if (!this->isShooting) { this->imageCount.y = 0; }
 				this->spritePtr()->move(0, 0.5);
@@ -193,11 +193,11 @@ public:
 				{
 					this->imageCount.y = 4;
 					this->isShooting = true;
-					this->bullet_cooldown = 0;
+					this->bulletCooldown = 0;
 				}
 			}
 
-			if (this->D_KeyHeld)
+			if (this->dKeyHeld)
 			{
 				if (!this->isShooting) { this->imageCount.y = 2; }
 				this->spritePtr()->move(0.5, 0);
@@ -205,7 +205,7 @@ public:
 				{
 					this->imageCount.y = 6;
 					this->isShooting = true;
-					this->bullet_cooldown = 0;
+					this->bulletCooldown = 0;
 				}
 			}
 
@@ -218,8 +218,8 @@ public:
 			}
 
 			// shooting delay
-			this->bullet_cooldown++;
-			if (this->bullet_cooldown == 50) { this->isShooting = false; }
+			this->bulletCooldown++;
+			if (this->bulletCooldown == 50) { this->isShooting = false; }
 
 			if (this->internalClock % 15 == 0)
 			{
@@ -229,10 +229,10 @@ public:
 		}
 		else
 		{
-			if (this->W_KeyHeld) { this->imageCount.y = 11; }
-			if (this->A_KeyHeld) { this->imageCount.y = 9; }
-			if (this->S_KeyHeld) { this->imageCount.y = 8; }
-			if (this->D_KeyHeld) { this->imageCount.y = 10; }
+			if (this->wKeyHeld) { this->imageCount.y = 11; }
+			if (this->aKeyHeld) { this->imageCount.y = 9; }
+			if (this->sKeyHeld) { this->imageCount.y = 8; }
+			if (this->dKeyHeld) { this->imageCount.y = 10; }
 			this->imageCount.x = this->deathCount;
 			if (this->internalClock % 30 == 0) { this->deathCount++; }
 			if (this->deathCount == 3) { this->screen->remove(this); }
