@@ -13,7 +13,7 @@ class ZombieBlast : public GraphicalGameObject
 {
 protected:
 	sf::Vector2f distance;
-	int blast_life;
+	int blastLife;
 	int damage = 1;
 	float growRate;
 	float growth = 1.f;
@@ -29,7 +29,7 @@ public:
 		this->spritePtr()->rotate(F(radians * (180 / 3.141592653589793) - 180.0));
 		this->spritePtr()->setPosition(pos.x + (this->distance.x * 15.f), pos.y + (this->distance.y * 15.f));
 		this->spritePtr()->setScale(startingSize, startingSize);
-		this->blast_life = duration;
+		this->blastLife = duration;
 		this->growRate = growRate;
 		this->damage = damage;
 	}
@@ -39,8 +39,8 @@ public:
 		this->spritePtr()->move(distance.x, distance.y);
 		this->growth += growRate / 60.0f;
 		this->spritePtr()->setScale(this->growth, this->growth);
-		this->blast_life--;
-		if (this->blast_life <= 0) { this->screen->remove(this); }
+		this->blastLife--;
+		if (this->blastLife <= 0) { this->screen->remove(this); }
 	}
 
 	int getDamage() const
@@ -60,11 +60,11 @@ private:
 	float rotationRate = -3.f;
 public:
 	SuperZombieBlast(sf::Sprite sprite, sf::Vector2f pos, sf::Vector2f clickPos, float speed = 1.f, int duration = 100, int damage = 1, float startingSize = 1.f, float growRate = 0.05f)
-		: ZombieBlast(sprite, pos, clickPos, speed, duration, damage, startingSize, growRate) 
-	{ 
-		this->spritePtr()->setColor(sf::Color(255, 255, 255, 150)); 
+		: ZombieBlast(sprite, pos, clickPos, speed, duration, damage, startingSize, growRate)
+	{
+		this->spritePtr()->setColor(sf::Color(255, 255, 255, 150));
 	}
-	
+
 	void EveryFrame(uint64_t f)
 	{
 		sf::Sprite* spr = this->spritePtr();
@@ -72,7 +72,7 @@ public:
 		this->growth += growRate / 60.f;
 		spr->setScale(this->growth, this->growth);
 		spr->rotate(this->rotationRate);
-		if (this->blast_life <= 20)
+		if (this->blastLife <= 20)
 		{
 			this->rotationRate -= 3.f;
 			spr->scale(1.02f, 1.02f);
@@ -80,8 +80,8 @@ public:
 			currentColor.a -= (currentColor.a > 13) ? 13 : currentColor.a;
 			spr->setColor(currentColor);
 		}
-		this->blast_life--;
-		if (this->blast_life <= 0) { this->screen->remove(this); }
+		this->blastLife--;
+		if (this->blastLife <= 0) { this->screen->remove(this); }
 	}
 };
 
