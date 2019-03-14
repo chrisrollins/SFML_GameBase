@@ -140,9 +140,8 @@ public:
 				sf::Vector2f myPosition = this->spritePtr()->getPosition();
 				DIRECTION xDirection = (playerPosition.x > myPosition.x) ? DIRECTION::RIGHT : DIRECTION::LEFT;
 				DIRECTION yDirection = (playerPosition.y > myPosition.y) ? DIRECTION::DOWN : DIRECTION::UP;
-				float a = (playerPosition.x - myPosition.x);
-				float b = (playerPosition.y - myPosition.y);
-				float distance = sqrt(a*a + b * b);
+				//float a = (playerPosition.x - myPosition.x);
+				//float b = (playerPosition.y - myPosition.y);
 
 				this->W_KeyHeld = false;
 				this->A_KeyHeld = false;
@@ -241,7 +240,7 @@ public:
 		this->spritePtr()->setTextureRect(sf::IntRect(this->imageCount.x * this->textureSize.x,
 			this->imageCount.y * this->textureSize.y, this->textureSize.x, this->textureSize.y));
 	}
-	
+
 	void Collision(GraphicalGameObject& other)
 	{
 		if (this->alive)

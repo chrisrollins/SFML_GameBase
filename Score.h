@@ -35,12 +35,12 @@ namespace Engine
 			}
 		}
 
-		int operator++()
+		void operator++()
 		{
 			*this += 1;
 		}
 
-		int operator--()
+		void operator--()
 		{
 			*this -= 1;
 		}

@@ -2,6 +2,7 @@
 #define SOUNDPLAYER_H
 
 #include "SFML/Audio.hpp"
+#include "FileLoadException.h"
 #include <list>
 #include <map>
 #include <memory>
