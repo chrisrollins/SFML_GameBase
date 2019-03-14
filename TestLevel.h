@@ -123,6 +123,8 @@ public:
 			oldScreen = levelScreen;
 		}
 
+		numMagesAlive = 0;
+
 		levelScreen->render();
 	}
 };
