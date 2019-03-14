@@ -113,7 +113,7 @@ public:
 			if (this->name.size() > 0) { this->name = this->name.substr(0, this->name.size() - 1); }
 
 			if (DifficultySettings::currentDifficulty != DifficultySettings::DIFFICULTY::TEST) { this->textPtr()->setString("Enter your name while you can:\n" + this->name); }
-			else { this->textPtr()->setString("Oops, you've entered a secret base\n created by your family, but you need \na password to enter:\n" + this->name); }
+			else { this->textPtr()->setString("Oops, you've entered a secret base\n created by your family, but the \nguardian requires a password:\n" + this->name); }
 		}
 		else if (key == static_cast<int>('\r') || key == static_cast<int>('\n'))
 		{
@@ -165,7 +165,6 @@ public:
 	TestModeButton() : GraphicalGameObject(sf::Sprite())
 	{
 		if (!this->guardianTexture.loadFromFile("guardian.png")) { throw GameException::ImageFileLoadException("guardian.png"); }
-		this->guardianTexture.setSmooth(true);
 		this->spritePtr()->setTexture(this->guardianTexture);
 		this->textureSize = this->spritePtr()->getTexture()->getSize();
 		this->textureSize.x /= 3;
@@ -246,7 +245,7 @@ public:
 	{
 		if (!this->easyButtonTexture.loadFromFile("menu_easy.png")) { throw GameException::ImageFileLoadException("menu_easy.png"); }
 		this->spritePtr()->setTexture(this->easyButtonTexture);
-		this->spritePtr()->setPosition(440.f, 170.f);
+		this->spritePtr()->setPosition(430.f, 190.f);
 	}
 
 	void MouseButtonReleased(sf::Event e)
@@ -271,7 +270,7 @@ public:
 	{
 		if (!this->normalButtonTexture.loadFromFile("menu_normal.png")) { throw GameException::ImageFileLoadException("menu_normal.png"); }
 		this->spritePtr()->setTexture(this->normalButtonTexture);
-		this->spritePtr()->setPosition(400.f, 260.f);
+		this->spritePtr()->setPosition(390.f, 265.f);
 	}
 
 	void MouseButtonReleased(sf::Event e)
@@ -296,7 +295,7 @@ public:
 	{
 		if (!this->hardButtonTexture.loadFromFile("menu_insane.png")) { throw GameException::ImageFileLoadException("menu_insane.png"); }
 		this->spritePtr()->setTexture(this->hardButtonTexture);
-		this->spritePtr()->setPosition(420.f, 360.f);
+		this->spritePtr()->setPosition(390.f, 360.f);
 	}
 
 	void MouseButtonReleased(sf::Event e)
@@ -321,7 +320,7 @@ public:
 	{
 		if (!this->tutorialButtonTexture.loadFromFile("menu_tutorial.png")) { throw GameException::ImageFileLoadException("menu_tutorial.png"); }
 		this->spritePtr()->setTexture(this->tutorialButtonTexture);
-		this->spritePtr()->setPosition(390.f, 450.f);
+		this->spritePtr()->setPosition(340.f, 450.f);
 	}
 
 	void MouseButtonReleased(sf::Event e)
@@ -345,7 +344,7 @@ public:
 	{
 		if (!this->scoreButtonTexture.loadFromFile("menu_score.png")) { throw GameException::ImageFileLoadException("menu_score.png"); }
 		this->spritePtr()->setTexture(this->scoreButtonTexture);
-		this->spritePtr()->setPosition(420.f, 540.f);
+		this->spritePtr()->setPosition(410.f, 540.f);
 	}
 
 	void MouseButtonReleased(sf::Event e)
@@ -369,7 +368,7 @@ public:
 	{
 		if (!this->quitButtonTexture.loadFromFile("menu_escape.png")) { throw GameException::ImageFileLoadException("menu_escape.png"); }
 		this->spritePtr()->setTexture(this->quitButtonTexture);
-		this->spritePtr()->setPosition(410.f, 630.f);
+		this->spritePtr()->setPosition(390.f, 630.f);
 	}
 
 	void MouseButtonReleased(sf::Event e)
