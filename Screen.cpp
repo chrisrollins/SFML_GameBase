@@ -2,10 +2,12 @@
 #include "Screen.h"
 #include "FileLoadException.h"
 
+using namespace Engine;
+
 static bool renderStarted = false;
 static int currentFPS;
 static sf::RenderWindow* windowPtr = nullptr;
-static std::queue<Engine::GameObject*> removeQueue;
+static std::queue<GameObject*> removeQueue;
 
 namespace Engine
 {
@@ -39,7 +41,7 @@ namespace Engine
 
 	void Screen::add(GameObject* gameObject)
 	{
-		GameObjectMap& map = (dynamic_cast<GraphicalGameObject*>(gameObject)) ? this->g_objects : this->objects;
+		GameObjectMap& map = (dynamic_cast<GraphicalGameObject*>(gameObject)) ? this->gObjects : this->objects;
 		map[gameObject->getID()] = gameObject;
 		gameObject->screen = this;
 		gameObject->AddedToScreen();
@@ -47,7 +49,7 @@ namespace Engine
 
 	void Screen::addUIObject(GameObject* uiObj)
 	{
-		this->ui_objects[uiObj->getID()] = uiObj;
+		this->uiObjects[uiObj->getID()] = uiObj;
 		uiObj->screen = this;
 		uiObj->AddedToScreen();
 	}
@@ -56,7 +58,7 @@ namespace Engine
 	{
 		if (this != currentScreen)
 		{
-			for (auto map : { &this->objects, &this->g_objects, &this->ui_objects })
+			for (auto map : { &this->objects, &this->gObjects, &this->uiObjects })
 			{
 				if (map->find(gameObject->getID()) != map->end())
 				{
@@ -200,7 +202,7 @@ namespace Engine
 				}
 			}
 		};
-		
+
 		while (window.isOpen() && !pendingSwitch)
 		{
 			try
@@ -208,7 +210,7 @@ namespace Engine
 				clock.restart();
 
 				//run the EveryFrame event on all objects
-				for (auto map : { &currentScreen->objects, &currentScreen->g_objects, &currentScreen->ui_objects })
+				for (auto map : { &currentScreen->objects, &currentScreen->gObjects, &currentScreen->uiObjects })
 				{
 					for (auto const& pair : *map)
 					{
@@ -232,7 +234,7 @@ namespace Engine
 						view = sf::View(visibleArea);
 					}
 					//handle events on each object
-					for (auto map : { &currentScreen->objects, &currentScreen->g_objects, &currentScreen->ui_objects })
+					for (auto map : { &currentScreen->objects, &currentScreen->gObjects, &currentScreen->uiObjects })
 					{
 						handleEvents(map, event);
 					}
@@ -242,18 +244,18 @@ namespace Engine
 
 				//draw the map
 
-				unsigned int MAP_WIDTH = 0;
-				unsigned int MAP_HEIGHT = 0;
+				unsigned int mapWidth = 0;
+				unsigned int mapHeight = 0;
 
 				if (currentScreen->map)
 				{
 					window.draw(*currentScreen->map);
-					MAP_WIDTH = currentScreen->map->width() * currentScreen->map->tileSize().x;
-					MAP_HEIGHT = currentScreen->map->height() * currentScreen->map->tileSize().y;
+					mapWidth = currentScreen->map->width() * currentScreen->map->tileSize().x;
+					mapHeight = currentScreen->map->height() * currentScreen->map->tileSize().y;
 				}
 
 				//draw the objects
-				for (auto const& pair : currentScreen->g_objects)
+				for (auto const& pair : currentScreen->gObjects)
 				{
 					GraphicalGameObject* obj = dynamic_cast<GraphicalGameObject*>(pair.second); //does not need to be checked, they are checked on insertion into the maps
 
@@ -264,12 +266,12 @@ namespace Engine
 						{
 							sf::Vector2u size(0, 0);
 							if (sf::Sprite* sprite = dynamic_cast<sf::Sprite*>(obj->getGraphic())) { size = sf::Vector2u(sprite->getTextureRect().width, sprite->getTextureRect().height); }
-							#define X (transformable->getPosition().x)
-							#define Y (transformable->getPosition().y)
+#define X (transformable->getPosition().x)
+#define Y (transformable->getPosition().y)
 							if (X < 0.f) { transformable->setPosition(0.f, Y); }
 							if (Y < 0.f) { transformable->setPosition(X, 0.f); }
-							if (Y + size.y > MAP_HEIGHT) { transformable->setPosition(X, static_cast<float>(MAP_HEIGHT - size.y)); }
-							if (X + size.x > MAP_WIDTH) { transformable->setPosition(static_cast<float>(MAP_WIDTH - size.x), Y); }
+							if (Y + size.y > mapHeight) { transformable->setPosition(X, static_cast<float>(mapHeight - size.y)); }
+							if (X + size.x > mapWidth) { transformable->setPosition(static_cast<float>(mapWidth - size.x), Y); }
 
 							sf::Vector2f offsets(0.f, 0.f);
 							if (obj->obstacleCollisionSize.width > 0.f && obj->obstacleCollisionSize.height > 0.f)
@@ -311,15 +313,15 @@ namespace Engine
 							} while (!obj->spawnCollisionsResolved);
 
 							obj->lastPos = { X , Y };
-							#undef X
-							#undef Y
+#undef X
+#undef Y
 						}
 					}
 					obj->draw(window);
 				}
 
 				//draw the UI objects
-				for (auto const& pair : currentScreen->ui_objects)
+				for (auto const& pair : currentScreen->uiObjects)
 				{
 					GraphicalGameObject* obj = dynamic_cast<GraphicalGameObject*>(pair.second);
 					sf::Transformable* transformable = dynamic_cast<sf::Transformable*>(obj->getGraphic());
@@ -332,13 +334,13 @@ namespace Engine
 				}
 
 				//trigger collision events
-				for (auto const& p1 : currentScreen->g_objects)
+				for (auto const& p1 : currentScreen->gObjects)
 				{
 					GraphicalGameObject* eventReciever = dynamic_cast<GraphicalGameObject*>(p1.second);
 					if (eventReciever->eventsDisabled) { continue; }
 					sf::Sprite* receiverSprite = dynamic_cast<sf::Sprite*>(eventReciever->getGraphic());
 					if (!receiverSprite) { continue; }
-					for (auto const& p2 : currentScreen->g_objects)
+					for (auto const& p2 : currentScreen->gObjects)
 					{
 						GraphicalGameObject* eventArg = dynamic_cast<GraphicalGameObject*>(p2.second);
 						if (eventArg == eventReciever || !eventArg->triggerCollisionEvents || !eventReciever->triggerCollisionEvents) { continue; }
@@ -361,8 +363,8 @@ namespace Engine
 						sf::Vector2f pos = graphicAsTransformable->getPosition();
 						float x = pos.x;
 						float y = pos.y;
-						float fWidth = static_cast<float>(MAP_WIDTH);
-						float fHeight = static_cast<float>(MAP_HEIGHT);
+						float fWidth = static_cast<float>(mapWidth);
+						float fHeight = static_cast<float>(mapHeight);
 						float halfWidth = static_cast<float>(windowWidth / 2);
 						float halfHeight = static_cast<float>(windowHeight / 2);
 						if (x > halfWidth && x < (fWidth - halfWidth)
@@ -406,7 +408,7 @@ namespace Engine
 							view.setCenter(halfWidth, y);
 						}
 						else if (x >= fWidth - halfWidth && x <= fWidth &&
-							y > halfHeight && y < MAP_HEIGHT - halfHeight)
+							y > halfHeight && y < mapHeight - halfHeight)
 						{
 							view.setCenter(fWidth - halfWidth, y);
 						}
@@ -420,7 +422,7 @@ namespace Engine
 				{
 					GameObject* toRemove = removeQueue.front();
 					removeQueue.pop();
-					for (auto map : { &currentScreen->objects, &currentScreen->g_objects, &currentScreen->ui_objects })
+					for (auto map : { &currentScreen->objects, &currentScreen->gObjects, &currentScreen->uiObjects })
 					{
 						if (map->find(toRemove->getID()) != map->end())
 						{
@@ -441,13 +443,13 @@ namespace Engine
 			}
 			catch (...)
 			{
-				#ifdef _DEBUG
-					std::cout << "DEBUG: Unknown error." << std::endl;
-				#endif
+#ifdef _DEBUG
+				std::cout << "DEBUG: Unknown error." << std::endl;
+#endif
 			}
 			frameCount++;
 			while (clock.getElapsedTime().asMicroseconds() < (1000000 / currentFPS)) {}
-		}		
+		}
 
 		if (pendingSwitch)
 		{

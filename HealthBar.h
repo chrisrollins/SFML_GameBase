@@ -24,7 +24,7 @@ public:
 		this->currPtr()->setOutlineColor({ 0, 0, 0, 100 });
 	}
 
-	void setCharacter(MainCharacter* mc) 
+	void setCharacter(MainCharacter* mc)
 	{
 		this->character = mc;
 		float fHealth = static_cast<float>(this->character->getHealth());
@@ -34,7 +34,7 @@ public:
 		this->currPtr()->setFillColor(sf::Color(sf::Color::Green));
 	}
 
-	void EveryFrame(uint64_t f) 
+	void EveryFrame(uint64_t f)
 	{
 		float fMaxHealth = static_cast<float>(this->character->getMaxHealth());
 		float fCurrHealth = static_cast<float>(this->character->getHealth());
@@ -43,7 +43,7 @@ public:
 		else { this->currPtr()->setSize({ fCurrHealth / 600.f, 10.f }); }
 
 		if (this->character->getHealth() > (this->character->getMaxHealth() / 2)) { this->currPtr()->setFillColor(sf::Color::Green); }
-		else if (this->character->getHealth() > (this->character->getMaxHealth() / 4)){ this->currPtr()->setFillColor(sf::Color::Yellow); }
+		else if (this->character->getHealth() > (this->character->getMaxHealth() / 4)) { this->currPtr()->setFillColor(sf::Color::Yellow); }
 		else
 		{
 			if (this->character->getHealth() > 0)
@@ -52,7 +52,7 @@ public:
 				{
 					this->isAlarming = true;
 					this->alarmClock.restart();
-					Engine::soundPlayer.play(SoundEffect::ID::Alarm, 20.f);
+					soundPlayer.play(SoundEffect::ID::Alarm, 20.f);
 				}
 				else if (this->alarmClock.getElapsedTime().asSeconds() > 3.5) { this->isAlarming = false; }
 			}

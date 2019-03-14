@@ -1,10 +1,9 @@
 #ifndef MUSICPLAYER_H
 #define MUSICPLAYER_H
 
-#include <map>
-#include <stdexcept>
 #include "SFML/Audio.hpp"
 #include "FileLoadException.h"
+#include <map>
 
 namespace Music
 {

@@ -20,7 +20,7 @@ private:
 	int life;
 	int hitsAgainstPlayer = 0;
 public:
-	MageBlast(const sf::Vector2f& pos, const sf::Vector2f& destination, double speed, int duration) : Engine::GraphicalGameObject(sf::Sprite())
+	MageBlast(const sf::Vector2f& pos, const sf::Vector2f& destination, double speed, int duration) : GraphicalGameObject(sf::Sprite())
 	{
 		this->ignoreObstacles = true;
 		this->blockingCollision = false;

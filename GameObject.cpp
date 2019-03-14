@@ -54,7 +54,7 @@ namespace Engine
 		win.draw(*this->graphic);
 	}
 
-	void GraphicalGameObject::Collision(GraphicalGameObject& otherObject) 
+	void GraphicalGameObject::Collision(GraphicalGameObject& otherObject)
 	{
 
 	}
@@ -69,7 +69,7 @@ namespace Engine
 		return this->graphic;
 	}
 
-	void GameObject::EveryFrame(uint64_t frameNumber) 
+	void GameObject::EveryFrame(uint64_t frameNumber)
 	{
 
 	}

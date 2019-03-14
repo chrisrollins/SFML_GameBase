@@ -3,6 +3,7 @@
 
 #include "Screen.h"
 #include "DifficultySettings.h"
+#include "FileLoadException.h"
 #include <iostream>
 #include <string>
 

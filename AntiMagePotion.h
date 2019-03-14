@@ -7,7 +7,9 @@
 #include <vector>
 #include <ctime>
 
-class AntiMagePotion : public Engine::GraphicalGameObject
+using namespace Engine;
+
+class AntiMagePotion : public GraphicalGameObject
 {
 private:
 	int wiggleDirection = 1;
@@ -15,7 +17,7 @@ private:
 	float wiggleMagnitude = 18.f;
 	float currentRotation = 0.f;
 public:
-	AntiMagePotion(sf::Sprite s) : Engine::GraphicalGameObject(s)
+	AntiMagePotion(sf::Sprite s) : GraphicalGameObject(s)
 	{
 		sf::IntRect size = this->spritePtr()->getTextureRect();
 		this->spritePtr()->setOrigin(static_cast<float>(size.width / 2), static_cast<float>(size.height / 2));

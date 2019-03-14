@@ -54,7 +54,7 @@ private:
 public:
 	SoundPlayer() :mSoundContainer(), mSounds()
 	{
-		#define LOAD(id, soundFile) if(!this->mSoundContainer.loadSoundEffect(id, soundFile)) { throw GameException::SoundFileLoadException(soundFile); }
+#define LOAD(id, soundFile) if(!this->mSoundContainer.loadSoundEffect(id, soundFile)) { throw GameException::SoundFileLoadException(soundFile); }
 		LOAD(SoundEffect::ID::ZombieEat1, "zombie_eat1.ogg");
 		LOAD(SoundEffect::ID::ZombieEat2, "zombie_eat2.ogg");
 		LOAD(SoundEffect::ID::ZombieEat3, "zombie_eat3.ogg");
@@ -70,7 +70,7 @@ public:
 		LOAD(SoundEffect::ID::Trap, "trap.ogg");
 		LOAD(SoundEffect::ID::Alarm, "alarm.ogg");
 		LOAD(SoundEffect::ID::MenuClick, "menu_buttonclick.ogg");
-		#undef LOAD
+#undef LOAD
 	}
 
 	void play(SoundEffect::ID effect, float volume)

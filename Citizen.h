@@ -7,16 +7,18 @@
 #include "DifficultySettings.h"
 #include "Score.h"
 
+using namespace Engine;
+
 template<typename T> class RespawnManager;
 
-class Citizen : public Engine::GraphicalGameObject
+class Citizen : public GraphicalGameObject
 {
 private:
 	friend class RespawnManager<Citizen>;
-	bool W_KeyHeld = false;
-	bool A_KeyHeld = false;
-	bool S_KeyHeld = false;
-	bool D_KeyHeld = false;
+	bool wKeyHeld = false;
+	bool aKeyHeld = false;
+	bool sKeyHeld = false;
+	bool dKeyHeld = false;
 	sf::Vector2u textureSize;
 	sf::Vector2u imageCount;
 	sf::Vector2u currentImage;
@@ -27,7 +29,7 @@ public:
 		this->respawnManager = respawnManager;
 	}
 
-	Citizen(sf::Sprite s) : Engine::GraphicalGameObject(s)
+	Citizen(sf::Sprite s) : GraphicalGameObject(s)
 	{
 		this->textureSize = this->spritePtr()->getTexture()->getSize();
 		this->textureSize.x /= 3;
@@ -36,28 +38,28 @@ public:
 		switch (rand() % 4)
 		{
 		case 0:
-			this->W_KeyHeld = true;
-			this->A_KeyHeld = false;
-			this->S_KeyHeld = false;
-			this->D_KeyHeld = false;
+			this->wKeyHeld = true;
+			this->aKeyHeld = false;
+			this->sKeyHeld = false;
+			this->dKeyHeld = false;
 			break;
 		case 1:
-			this->A_KeyHeld = true;
-			this->W_KeyHeld = false;
-			this->S_KeyHeld = false;
-			this->D_KeyHeld = false;
+			this->aKeyHeld = true;
+			this->wKeyHeld = false;
+			this->sKeyHeld = false;
+			this->dKeyHeld = false;
 			break;
 		case 2:
-			this->S_KeyHeld = true;
-			this->A_KeyHeld = false;
-			this->W_KeyHeld = false;
-			this->D_KeyHeld = false;
+			this->sKeyHeld = true;
+			this->aKeyHeld = false;
+			this->wKeyHeld = false;
+			this->dKeyHeld = false;
 			break;
 		case 3:
-			this->D_KeyHeld = true;
-			this->A_KeyHeld = false;
-			this->S_KeyHeld = false;
-			this->W_KeyHeld = false;
+			this->dKeyHeld = true;
+			this->aKeyHeld = false;
+			this->sKeyHeld = false;
+			this->wKeyHeld = false;
 			break;
 		default:
 			break;
@@ -71,50 +73,50 @@ public:
 			switch (rand() % 4)
 			{
 			case 0:
-				this->W_KeyHeld = true;
-				this->A_KeyHeld = false;
-				this->S_KeyHeld = false;
-				this->D_KeyHeld = false;
+				this->wKeyHeld = true;
+				this->aKeyHeld = false;
+				this->sKeyHeld = false;
+				this->dKeyHeld = false;
 				break;
 			case 1:
-				this->A_KeyHeld = true;
-				this->W_KeyHeld = false;
-				this->S_KeyHeld = false;
-				this->D_KeyHeld = false;
+				this->aKeyHeld = true;
+				this->wKeyHeld = false;
+				this->sKeyHeld = false;
+				this->dKeyHeld = false;
 				break;
 			case 2:
-				this->S_KeyHeld = true;
-				this->A_KeyHeld = false;
-				this->W_KeyHeld = false;
-				this->D_KeyHeld = false;
+				this->sKeyHeld = true;
+				this->aKeyHeld = false;
+				this->wKeyHeld = false;
+				this->dKeyHeld = false;
 				break;
 			case 3:
-				this->D_KeyHeld = true;
-				this->A_KeyHeld = false;
-				this->S_KeyHeld = false;
-				this->W_KeyHeld = false;
+				this->dKeyHeld = true;
+				this->aKeyHeld = false;
+				this->sKeyHeld = false;
+				this->wKeyHeld = false;
 				break;
 			default:
 				break;
 			}
 		}
 
-		if (this->W_KeyHeld)
+		if (this->wKeyHeld)
 		{
 			this->imageCount.y = 3;
 			this->spritePtr()->move(0, -0.5);
 		}
-		if (this->A_KeyHeld)
+		if (this->aKeyHeld)
 		{
 			this->imageCount.y = 1;
 			this->spritePtr()->move(-0.5, 0);
 		}
-		if (this->S_KeyHeld)
+		if (this->sKeyHeld)
 		{
 			this->imageCount.y = 0;
 			this->spritePtr()->move(0, 0.5);
 		}
-		if (this->D_KeyHeld)
+		if (this->dKeyHeld)
 		{
 			this->imageCount.y = 2;
 			this->spritePtr()->move(0.5, 0);
@@ -130,11 +132,11 @@ public:
 			this->imageCount.y * this->textureSize.y, this->textureSize.x, this->textureSize.y));
 	}
 
-	void Collision(Engine::GraphicalGameObject& other)
+	void Collision(GraphicalGameObject& other)
 	{
 		if (dynamic_cast<ZombieBlast*>(&other))
 		{
-			(*Engine::scorePtr) += DifficultySettings::Score::applyMultipliers(1);
+			(*scorePtr) += DifficultySettings::Score::applyMultipliers(1);
 			this->die();
 		}
 	}

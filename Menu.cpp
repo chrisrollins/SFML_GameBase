@@ -1,6 +1,7 @@
 #include "Menu.h"
 #include "ScoreBoard.h"
 #include "Tutorial.h"
+#include "FileLoadException.h"
 
 class PlayerNameEntry : public GraphicalGameObject
 {

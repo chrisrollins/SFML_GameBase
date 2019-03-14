@@ -49,12 +49,12 @@ public:
 		if (e.mouseButton.button != sf::Mouse::Button::Left) { return; }
 		sf::Vector2i mouse = this->screen->getMousePosition();
 		if (this->showStory && this->xButton.getGlobalBounds().contains(static_cast<float>(mouse.x), static_cast<float>(mouse.y))) { this->screen->remove(this); }
-		else if (!this->showStory && this->xButton.getGlobalBounds().contains(static_cast<float>(mouse.x), static_cast<float>(mouse.y))) 
-		{ 
-			this->showStory = true; 
+		else if (!this->showStory && this->xButton.getGlobalBounds().contains(static_cast<float>(mouse.x), static_cast<float>(mouse.y)))
+		{
+			this->showStory = true;
 			this->resetClock = true;
 		}
-		else if (this->showStory && this->bookButton.getGlobalBounds().contains(static_cast<float>(mouse.x), static_cast<float>(mouse.y))) { this->showStory = false;  }
+		else if (this->showStory && this->bookButton.getGlobalBounds().contains(static_cast<float>(mouse.x), static_cast<float>(mouse.y))) { this->showStory = false; }
 	}
 
 	void EveryFrame(uint64_t f)
