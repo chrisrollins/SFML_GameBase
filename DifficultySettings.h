@@ -90,11 +90,14 @@ namespace DifficultySettings
 			Map::picture = "tileset.png";
 			Map::fileName = "map_easy.txt";
 			Player::missingHealthHealBonus = 0.6f;
-			Player::healthDrainModifier = -1000;
-			Player::maxHealthModifier = 100000;
+			Player::healthDrainModifier = -100000;
+			Player::maxHealthModifier = 2147483647; //INT_MAX
 			Player::maxPotionNumModifier = 9994;
 			Player::eatDrainFreezeDuration = 12;
 			Player::potionMakingCitizenRequired = 1;
+			Mage::attackDamageModifier = -1000;
+			Mage::touchDamageModifier = -1000;
+			Mage::healthDrainModifier = -1000;
 			Score::baseMultiplier = 0.f;
 			Score::cumulativeBonusMultiplier = 0.0f;
 			Score::cumulativeBonusMultiplierMax = 0.0f;
