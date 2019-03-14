@@ -2,6 +2,7 @@
 #define TILEMAP_H
 
 #include "SFML/Graphics.hpp"
+#include "FileLoadException.h"
 #include <iostream>
 #include <fstream>
 #include <cstdlib>
@@ -19,33 +20,33 @@ namespace Engine
 		unsigned int numPerLine;
 		unsigned int numPerColumn;
 		int* tiles;
-		sf::VertexArray m_vertices;
-		sf::Texture m_tileset;
+		sf::VertexArray mVertices;
+		sf::Texture mTileset;
 		virtual void draw(sf::RenderTarget& target, sf::RenderStates states) const
 		{
 			// apply the transform
 			states.transform *= getTransform();
 
 			// apply the tileset texture
-			states.texture = &m_tileset;
+			states.texture = &mTileset;
 
 			// draw the vertex array
-			target.draw(m_vertices, states);
+			target.draw(mVertices, states);
 		}
 	public:
 
 		bool load(const std::string& tileset, const std::string& mapTable)
 		{
 			// load the tileset texture
-			if (!this->m_tileset.loadFromFile(tileset)) { return false; }
+			if (!this->mTileset.loadFromFile(tileset)) { return false; }
 
 			int * tileTable;
 			tileTable = readFromFile(mapTable);
 
 			this->tiles = tileTable;
 			// resize the vertex array to fit the level size
-			m_vertices.setPrimitiveType(sf::Quads);
-			m_vertices.resize(numPerLine * numPerColumn * 4);
+			mVertices.setPrimitiveType(sf::Quads);
+			mVertices.resize(numPerLine * numPerColumn * 4);
 
 			// populate the vertex array, with one quad per tile
 			for (unsigned int i = 0; i < numPerLine; ++i)
@@ -56,11 +57,11 @@ namespace Engine
 					int tileNumber = tiles[i + j * numPerLine];
 
 					// find its position in the tileset texture
-					int tu = tileNumber % (m_tileset.getSize().x / this->tileStdSize.x);
-					int tv = tileNumber / (m_tileset.getSize().x / this->tileStdSize.x);
+					int tu = tileNumber % (mTileset.getSize().x / this->tileStdSize.x);
+					int tv = tileNumber / (mTileset.getSize().x / this->tileStdSize.x);
 
 					// get a pointer to the current tile's quad
-					sf::Vertex* quad = &m_vertices[(i + j * numPerLine) * 4];
+					sf::Vertex* quad = &mVertices[(i + j * numPerLine) * 4];
 
 					// define its 4 corners
 
@@ -171,17 +172,14 @@ namespace Engine
 
 		int getTileAt(int i, int j) const
 		{
-			return tiles[i + j * this->width()];
+			return this->tiles[i + j * this->width()];
 		}
 
 		int* readFromFile(std::string mapTable)
 		{
 			std::ifstream fin(mapTable.c_str());
+			if (!fin) { throw GameException::DataFileLoadException(mapTable); }
 
-			if (!fin) {
-				std::cout << "Unable to open input file " << mapTable << std::endl;
-				exit(1);
-			}
 			//read width and size from the file
 			fin >> this->numPerLine;
 			fin >> this->numPerColumn;
