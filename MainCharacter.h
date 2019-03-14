@@ -393,7 +393,7 @@ public:
 				float repeatDamageDampening = (1.f + 0.01f*(static_cast<float>(blast->getHits())));
 				if (repeatDamageDampening < 0.5f) { repeatDamageDampening = 0.5f; }
 				int damage = static_cast<int>(static_cast<float>(800 + DifficultySettings::Mage::attackDamageModifier) / repeatDamageDampening);
-				if (damage < 15) { damage = 15; }
+				if (damage < 15 && DifficultySettings::currentDifficulty != DifficultySettings::DIFFICULTY::TEST) { damage = 15; }
 				this->takeDamage(damage);
 				blast->hitPlayer();
 			}

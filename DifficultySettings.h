@@ -91,7 +91,7 @@ namespace DifficultySettings
 			Map::fileName = "map_easy.txt";
 			Player::missingHealthHealBonus = 0.6f;
 			Player::healthDrainModifier = -100000;
-			Player::maxHealthModifier = 2147483647; //INT_MAX
+			Player::maxHealthModifier = 100000;
 			Player::maxPotionNumModifier = 9994;
 			Player::eatDrainFreezeDuration = 12;
 			Player::potionMakingCitizenRequired = 1;
