@@ -102,7 +102,11 @@ public:
 				this->dKeyHeld = true;
 				break;
 			case sf::Keyboard::Escape:
-				if (DifficultySettings::currentDifficulty == DifficultySettings::DIFFICULTY::TEST) { this->healthDrain = 10000; }
+				if (DifficultySettings::currentDifficulty == DifficultySettings::DIFFICULTY::TEST)
+				{
+					this->healthDrain = 10000;
+					DifficultySettings::Mage::healthDrainModifier = 0;
+				}
 			default:
 				break;
 			}
