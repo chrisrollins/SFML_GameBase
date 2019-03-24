@@ -11,7 +11,7 @@ int main(int argc, char** argv)
 	Screen::windowHeight = 768;
 	Screen::windowTitle = "Cursed Zombie";
 
-	Menu* menu = new Menu();
+	Menu* menu = new Menu(true);
 	menu->start();
 
 	return 0;

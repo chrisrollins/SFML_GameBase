@@ -18,7 +18,7 @@ namespace Engine
 		Screen menuScreen;
 		TestLevel testLevel;
 	public:
-		Menu();
+		Menu(bool showLoadingBar = false);
 		~Menu();
 		void start();
 		void startTestLevel(std::string playerName);

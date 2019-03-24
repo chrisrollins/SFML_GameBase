@@ -3,6 +3,7 @@
 #include "Tutorial.h"
 #include "FileLoadException.h"
 #include <functional>
+#include <cstdint>
 
 class PlayerNameEntry : public GraphicalGameObject
 {
@@ -332,12 +333,12 @@ public:
 class Loader : public GraphicalGameObject
 {
 public:
-	Loader(std::vector<function<void()>> loadingActions) : GraphicalGameObject(sf::RectangleShape())
+	Loader(bool show, std::vector<function<void()>> loadingActions) : GraphicalGameObject(sf::RectangleShape())
 	{
 		sf::RectangleShape* rect = this->rectPtr();
 		rect->setPosition(static_cast<float>(Screen::windowWidth) * 0.05f, static_cast<float>(Screen::windowHeight) * 0.85f);
 		rect->setSize({ 0.f , 30.f });
-		rect->setFillColor({ 100, 200, 100, 255 });
+		rect->setFillColor({ 100, 200, 100, (show ? static_cast<uint8_t>(255) : static_cast<uint8_t>(0)) });
 		size_t numActions = loadingActions.size();
 		this->barIncrement = (static_cast<float>(Screen::windowWidth) * 0.9f) / static_cast<float>(numActions);
 		this->loadingActions = loadingActions;
@@ -377,10 +378,10 @@ private:
 
 namespace Engine
 {
-	Menu::Menu()
+	Menu::Menu(bool showLoadingBar)
 	{
 		currentMenu = this;
-		Loader* loader = new Loader({
+		Loader* loader = new Loader(showLoadingBar, {
 			[]() { musicPlayer.play(Music::ID::Menu); },
 			[]() { soundPlayer.preloadSounds(); },
 			[&]() { this->menuObjects.push_back(new MenuBackground()); },
