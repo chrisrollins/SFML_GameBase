@@ -11,13 +11,9 @@ using namespace Engine;
 class Tutorial : public GraphicalGameObject
 {
 private:
-	sf::Texture storyTexture;
 	sf::Sprite story;
-	sf::Texture tutorialTexture;
 	sf::Sprite tutorial;
-	sf::Texture bookButtonTexture;
 	sf::Sprite bookButton;
-	sf::Texture xButtonTexture;
 	sf::Sprite xButton;
 	sf::Color currColor;
 	int internalClock = 0;
@@ -26,15 +22,15 @@ private:
 public:
 	Tutorial() : GraphicalGameObject(sf::Sprite())
 	{
-		if (!this->storyTexture.loadFromFile("story.png")) { throw GameException::ImageFileLoadException("story.png"); }
-		this->story.setTexture(storyTexture);
-		if (!this->tutorialTexture.loadFromFile("tutorial.png")) { throw GameException::ImageFileLoadException("tutorial.png"); }
-		this->tutorial.setTexture(tutorialTexture);
-		if (!this->bookButtonTexture.loadFromFile("book_button.png")) { throw GameException::ImageFileLoadException("book_button.png"); }
-		this->bookButton.setTexture(bookButtonTexture);
+		sf::Texture* storyTexture = ResourceManager<sf::Texture>::GetResource("story.png");
+		sf::Texture* tutorialTexture = ResourceManager<sf::Texture>::GetResource("tutorial.png");
+		sf::Texture* bookButtonTexture = ResourceManager<sf::Texture>::GetResource("book_button.png");
+		sf::Texture* xButtonTexture = ResourceManager<sf::Texture>::GetResource("x_button.png");
+		this->story.setTexture(*storyTexture);
+		this->tutorial.setTexture(*tutorialTexture);
+		this->bookButton.setTexture(*bookButtonTexture);
 		this->bookButton.setPosition(Screen::windowWidth - 280.f, Screen::windowHeight - 260.f);
-		if (!this->xButtonTexture.loadFromFile("x_button.png")) { throw GameException::ImageFileLoadException("x_button.png"); }
-		this->xButton.setTexture(this->xButtonTexture);
+		this->xButton.setTexture(*xButtonTexture);
 		this->xButton.setPosition(Screen::windowWidth - 55.f, 15.f);
 		for (auto obj : Menu::getCurrentMenu()->getMenuObjects()) { if (obj != this) { obj->disableEvents(); } }
 	}

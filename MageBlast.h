@@ -16,7 +16,6 @@ class MageBlast : public GraphicalGameObject
 {
 private:
 	sf::Vector2f movePerFrame;
-	sf::Texture texture;
 	int life;
 	int hitsAgainstPlayer = 0;
 public:
@@ -24,10 +23,10 @@ public:
 	{
 		this->ignoreObstacles = true;
 		this->blockingCollision = false;
-		if (!this->texture.loadFromFile("mageblast.png")) { throw GameException::ImageFileLoadException("mageblast.png"); }
-		this->spritePtr()->setTexture(this->texture);
+		sf::Texture* blastTexture = ResourceManager<sf::Texture>::GetResource("mageblast.png");
+		this->spritePtr()->setTexture(*blastTexture);
 		this->spritePtr()->setPosition(pos);
-		sf::Vector2u size = this->texture.getSize();
+		sf::Vector2u size = this->spritePtr()->getTexture()->getSize();
 		this->spritePtr()->setOrigin(static_cast<float>(size.x) / 2.f, static_cast<float>(size.y) / 2.f);
 		double radians = atan2(static_cast<double>(destination.y - pos.y), static_cast<double>(destination.x - pos.x));
 		this->movePerFrame = { static_cast<float>(speed * cos(radians)), static_cast<float>(speed * sin(radians)) };

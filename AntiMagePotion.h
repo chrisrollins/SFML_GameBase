@@ -4,6 +4,7 @@
 #include "Screen.h"
 #include "DifficultySettings.h"
 #include "Score.h"
+#include "ResourceManager.h"
 #include <vector>
 #include <ctime>
 
@@ -22,12 +23,8 @@ private:
 public:
 	AntiMagePotion() : GraphicalGameObject(sf::Sprite())
 	{
-		static sf::Texture potionTexture;
-		if (potionTexture.getNativeHandle() == 0)
-		{
-			if (!potionTexture.loadFromFile("animated_potion.png")) { throw GameException::ImageFileLoadException("animated_potion.png"); }
-		}
-		this->spritePtr()->setTexture(potionTexture);
+		sf::Texture* texturePtr = ResourceManager<sf::Texture>::GetResource("animated_potion.png");
+		this->spritePtr()->setTexture(*texturePtr);
 		this->textureSize = this->spritePtr()->getTexture()->getSize();
 		this->textureSize.x /= 8U;
 		this->imageCount.x = 0U;

@@ -4,6 +4,10 @@
 #include "SFML/Audio.hpp"
 #include "FileLoadException.h"
 #include <map>
+#include <string>
+
+using std::map;
+using std::string;
 
 namespace Music
 {
@@ -17,14 +21,24 @@ namespace Music
 	};
 }
 
+class MusicWrapper
+{
+public:
+	sf::Music music;
+	bool loadFromFile(string filename)
+	{
+		return music.openFromFile(filename);
+	}
+};
+
 class MusicPlayer : private sf::NonCopyable
 {
 private:
-	sf::Music* mMusic = nullptr;
+	sf::Music* currentMusic = nullptr;
 	std::map<Music::ID, std::string> mFilenames;
 	float mVolume;
 public:
-	MusicPlayer() : mMusic(), mFilenames(), mVolume(100.f)
+	MusicPlayer() : currentMusic(), mFilenames(), mVolume(100.f)
 	{
 		this->mFilenames[Music::ID::Menu] = "theme_menu.ogg";
 		this->mFilenames[Music::ID::TestMode] = "theme_test.ogg";
@@ -34,35 +48,31 @@ public:
 		this->mFilenames[Music::ID::GameOver] = "theme_gameover.ogg";
 	}
 
-	~MusicPlayer()
-	{
-		delete this->mMusic;
-	}
-
 	void play(Music::ID theme)
 	{
-		if (!this->mMusic) { this->mMusic = new sf::Music(); }
+		this->stop();
 		std::string filename = this->mFilenames[theme];
-		if (!this->mMusic->openFromFile(filename)) { throw GameException::SoundFileLoadException(filename); }
-		this->mMusic->setVolume(mVolume);
-		this->mMusic->setLoop(true);
-		this->mMusic->play();
+		MusicWrapper* wrapper = ResourceManager<MusicWrapper>::GetResource(filename);
+		this->currentMusic = &wrapper->music;
+		wrapper->music.setVolume(mVolume);
+		wrapper->music.setLoop(true);
+		wrapper->music.play();
 	}
 
 	void stop()
 	{
-		this->mMusic->stop();
+		if (this->currentMusic) { this->currentMusic->stop(); }
 	}
 
 	void setPaused(bool paused)
 	{
-		if (paused) { this->mMusic->pause(); }
-		else { this->mMusic->play(); }
+		if (paused) { this->currentMusic->pause(); }
+		else { this->currentMusic->play(); }
 	}
 
 	void setVolume(float volume)
 	{
-		this->mMusic->setVolume(volume);
+		this->currentMusic->setVolume(volume);
 	}
 };
 

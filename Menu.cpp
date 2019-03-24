@@ -2,13 +2,12 @@
 #include "ScoreBoard.h"
 #include "Tutorial.h"
 #include "FileLoadException.h"
+#include <functional>
 
 class PlayerNameEntry : public GraphicalGameObject
 {
 private:
 	std::string name;
-	sf::Font font;
-	sf::Texture texture;
 	sf::Sprite background;
 	sf::Clock clock;
 	bool ready = false;
@@ -17,8 +16,8 @@ private:
 public:
 	PlayerNameEntry() : GraphicalGameObject(sf::Text())
 	{
-		if (!this->font.loadFromFile("Lycanthrope.ttf")) { throw GameException::FontFileLoadException("Lycanthrope.ttf"); }
-		this->textPtr()->setFont(this->font);
+		sf::Font* fontPtr = ResourceManager<sf::Font>::GetResource("Lycanthrope.ttf");
+		this->textPtr()->setFont(*fontPtr);
 		this->textPtr()->setStyle(sf::Text::Bold);
 		this->textPtr()->setFillColor({ 179, 45, 0 });
 		this->textPtr()->setCharacterSize(50U);
@@ -33,8 +32,8 @@ public:
 			this->textPtr()->setString("Oops, you've entered a secret base\n created by your family, but the \nguardian requires a password:\n");
 		}
 		this->background.setPosition(600.f, 400.f);
-		if (!this->texture.loadFromFile("bloodyhands.png")) { throw GameException::ImageFileLoadException("bloodyhands.png"); }
-		this->background.setTexture(texture);
+		sf::Texture* texturePtr = ResourceManager<sf::Texture>::GetResource("bloodyhands.png");
+		this->background.setTexture(*texturePtr);
 		for (auto obj : Menu::getCurrentMenu()->getMenuObjects()) { if (obj != this) { obj->disableEvents(); } }
 	}
 
@@ -149,7 +148,32 @@ public:
 	}
 };
 
-class TestModeButton : public GraphicalGameObject
+class MenuButton : public GraphicalGameObject
+{
+private:
+	sf::Sprite* spritePtr() { return dynamic_cast<sf::Sprite*>(this->getGraphic()); }
+	std::function<void()> clickFunction;
+public:
+	MenuButton(string imageFile, sf::Vector2f position, std::function<void()> clickFunction) : GraphicalGameObject(sf::Sprite())
+	{
+		sf::Texture* texturePtr = ResourceManager<sf::Texture>::GetResource(imageFile);
+		this->spritePtr()->setTexture(*texturePtr);
+		this->spritePtr()->setPosition(position);
+		this->clickFunction = clickFunction;
+	}
+
+	void MouseButtonReleased(sf::Event e)
+	{
+		if (e.mouseButton.button == sf::Mouse::Button::Left
+			&& this->spritePtr()->getGlobalBounds().contains(static_cast<float>(e.mouseButton.x), static_cast<float>(e.mouseButton.y)))
+		{
+			soundPlayer.play(SoundEffect::ID::MenuClick, 20.f);
+			this->clickFunction();
+		}
+	}
+};
+
+class TestModeButton : public MenuButton
 {
 private:
 	sf::Vector2u textureSize;
@@ -159,17 +183,18 @@ private:
 	bool enabled = true;
 	bool enterPressed = false;
 	sf::Color color;
-	sf::Texture guardianTexture;
 	sf::Sprite* spritePtr() { return dynamic_cast<sf::Sprite*>(this->getGraphic()); }
 public:
-	TestModeButton() : GraphicalGameObject(sf::Sprite())
+	TestModeButton() : MenuButton("guardian.png", { 320.f, 160.f }, [&]()
 	{
-		if (!this->guardianTexture.loadFromFile("guardian.png")) { throw GameException::ImageFileLoadException("guardian.png"); }
-		this->spritePtr()->setTexture(this->guardianTexture);
+		if (!this->enabled || !this->activated) { return; }
+		DifficultySettings::setDifficulty(DifficultySettings::DIFFICULTY::TEST);
+		this->screen->addUIObject(new PlayerNameEntry());		
+	})
+	{
 		this->textureSize = this->spritePtr()->getTexture()->getSize();
 		this->textureSize.x /= 3;
 		this->imageCount.x = 0;
-		this->spritePtr()->setPosition(320.f, 160.f);
 		this->color = this->spritePtr()->getColor();
 		this->spritePtr()->setColor({ 0, 0, 0, 0 });
 	}
@@ -225,162 +250,129 @@ public:
 class MenuBackground : public GraphicalGameObject
 {
 private:
-	sf::Texture backgroundTexture;
 	sf::Sprite* spritePtr() { return dynamic_cast<sf::Sprite*>(this->getGraphic()); }
 public:
 	MenuBackground() : GraphicalGameObject(sf::Sprite())
 	{
-		if (!this->backgroundTexture.loadFromFile("menu_background.png")) { throw GameException::ImageFileLoadException("menu_background.png"); }
-		this->spritePtr()->setTexture(this->backgroundTexture);
+		sf::Texture* texturePtr = ResourceManager<sf::Texture>::GetResource("menu_background.png");
+		this->spritePtr()->setTexture(*texturePtr);
+		this->spritePtr()->setColor({ 255, 255, 255, 0 });
+	}
+
+	void AddedToScreen()
+	{
+		this->screen->schedule([&]() {
+			sf::Color color = this->spritePtr()->getColor();
+			color.a++;
+			this->spritePtr()->setColor(color);
+		}, TimeUnit::Frames(1), 254);
 	}
 };
 
-class EasyLevelButton : public GraphicalGameObject
+class EasyLevelButton : public MenuButton
 {
-private:
-	sf::Texture easyButtonTexture;
-	sf::Sprite* spritePtr() { return dynamic_cast<sf::Sprite*>(this->getGraphic()); }
 public:
-	EasyLevelButton() : GraphicalGameObject(sf::Sprite())
+	EasyLevelButton() : MenuButton("menu_easy.png", { 430.f, 190.f }, [&]()
 	{
-		if (!this->easyButtonTexture.loadFromFile("menu_easy.png")) { throw GameException::ImageFileLoadException("menu_easy.png"); }
-		this->spritePtr()->setTexture(this->easyButtonTexture);
-		this->spritePtr()->setPosition(430.f, 190.f);
-	}
-
-	void MouseButtonReleased(sf::Event e)
-	{
-		if (e.mouseButton.button == sf::Mouse::Button::Left
-			&& this->spritePtr()->getGlobalBounds().contains(static_cast<float>(e.mouseButton.x), static_cast<float>(e.mouseButton.y)))
-		{
-			DifficultySettings::setDifficulty(DifficultySettings::DIFFICULTY::EASY);
-			soundPlayer.play(SoundEffect::ID::MenuClick, 20.f);
-			this->screen->addUIObject(new PlayerNameEntry());
-		}
-	}
+		DifficultySettings::setDifficulty(DifficultySettings::DIFFICULTY::EASY);
+		this->screen->addUIObject(new PlayerNameEntry());
+	}) {}
 };
 
-class NormalLevelButton : public GraphicalGameObject
+class NormalLevelButton : public MenuButton
 {
-private:
-	sf::Texture normalButtonTexture;
-	sf::Sprite* spritePtr() { return dynamic_cast<sf::Sprite*>(this->getGraphic()); }
 public:
-	NormalLevelButton() : GraphicalGameObject(sf::Sprite())
+	NormalLevelButton() : MenuButton("menu_normal.png", { 390.f, 265.f }, [&]()
 	{
-		if (!this->normalButtonTexture.loadFromFile("menu_normal.png")) { throw GameException::ImageFileLoadException("menu_normal.png"); }
-		this->spritePtr()->setTexture(this->normalButtonTexture);
-		this->spritePtr()->setPosition(390.f, 265.f);
-	}
-
-	void MouseButtonReleased(sf::Event e)
-	{
-		if (e.mouseButton.button == sf::Mouse::Button::Left
-			&& this->spritePtr()->getGlobalBounds().contains(static_cast<float>(e.mouseButton.x), static_cast<float>(e.mouseButton.y)))
-		{
-			DifficultySettings::setDifficulty(DifficultySettings::DIFFICULTY::NORMAL);
-			soundPlayer.play(SoundEffect::ID::MenuClick, 20.f);
-			this->screen->addUIObject(new PlayerNameEntry());
-		}
-	}
+		DifficultySettings::setDifficulty(DifficultySettings::DIFFICULTY::NORMAL);
+		this->screen->addUIObject(new PlayerNameEntry());
+	}) {}
 };
 
-class HardLevelButton : public GraphicalGameObject
+class HardLevelButton : public MenuButton
 {
-private:
-	sf::Texture hardButtonTexture;
-	sf::Sprite* spritePtr() { return dynamic_cast<sf::Sprite*>(this->getGraphic()); }
 public:
-	HardLevelButton() : GraphicalGameObject(sf::Sprite())
+	HardLevelButton() : MenuButton("menu_insane.png", { 390.f, 360.f }, [&]()
 	{
-		if (!this->hardButtonTexture.loadFromFile("menu_insane.png")) { throw GameException::ImageFileLoadException("menu_insane.png"); }
-		this->spritePtr()->setTexture(this->hardButtonTexture);
-		this->spritePtr()->setPosition(390.f, 360.f);
-	}
-
-	void MouseButtonReleased(sf::Event e)
-	{
-		if (e.mouseButton.button == sf::Mouse::Button::Left
-			&& this->spritePtr()->getGlobalBounds().contains(static_cast<float>(e.mouseButton.x), static_cast<float>(e.mouseButton.y)))
-		{
-			DifficultySettings::setDifficulty(DifficultySettings::DIFFICULTY::HARD);
-			soundPlayer.play(SoundEffect::ID::MenuClick, 20.f);
-			this->screen->addUIObject(new PlayerNameEntry());
-		}
-	}
+		DifficultySettings::setDifficulty(DifficultySettings::DIFFICULTY::HARD);
+		this->screen->addUIObject(new PlayerNameEntry());
+	}) {}
 };
 
-class TutorialButton : public GraphicalGameObject
+class TutorialButton : public MenuButton
 {
-private:
-	sf::Texture tutorialButtonTexture;
-	sf::Sprite* spritePtr() { return dynamic_cast<sf::Sprite*>(this->getGraphic()); }
 public:
-	TutorialButton() : GraphicalGameObject(sf::Sprite())
+	TutorialButton() : MenuButton("menu_tutorial.png", { 340.f, 450.f }, [&]()
 	{
-		if (!this->tutorialButtonTexture.loadFromFile("menu_tutorial.png")) { throw GameException::ImageFileLoadException("menu_tutorial.png"); }
-		this->spritePtr()->setTexture(this->tutorialButtonTexture);
-		this->spritePtr()->setPosition(340.f, 450.f);
-	}
-
-	void MouseButtonReleased(sf::Event e)
-	{
-		if (e.mouseButton.button == sf::Mouse::Button::Left
-			&& this->spritePtr()->getGlobalBounds().contains(static_cast<float>(e.mouseButton.x), static_cast<float>(e.mouseButton.y)))
-		{
-			Tutorial* tutorial = new Tutorial();
-			this->screen->addUIObject(tutorial);
-		}
-	}
+		Tutorial* tutorial = new Tutorial();
+		this->screen->addUIObject(tutorial);
+	}) {}
 };
 
-class ScoreboardButton : public GraphicalGameObject
+class ScoreboardButton : public MenuButton
 {
-private:
-	sf::Texture scoreButtonTexture;
-	sf::Sprite* spritePtr() { return dynamic_cast<sf::Sprite*>(this->getGraphic()); }
 public:
-	ScoreboardButton() : GraphicalGameObject(sf::Sprite())
+	ScoreboardButton() : MenuButton("menu_score.png", { 410.f, 540.f }, [&]()
 	{
-		if (!this->scoreButtonTexture.loadFromFile("menu_score.png")) { throw GameException::ImageFileLoadException("menu_score.png"); }
-		this->spritePtr()->setTexture(this->scoreButtonTexture);
-		this->spritePtr()->setPosition(410.f, 540.f);
-	}
-
-	void MouseButtonReleased(sf::Event e)
-	{
-		if (e.mouseButton.button == sf::Mouse::Button::Left
-			&& this->spritePtr()->getGlobalBounds().contains(static_cast<float>(e.mouseButton.x), static_cast<float>(e.mouseButton.y)))
-		{
-			ScoreBoard* scoreBoard = new ScoreBoard();
-			this->screen->addUIObject(scoreBoard);
-		}
-	}
+		ScoreBoard* scoreBoard = new ScoreBoard();
+		this->screen->addUIObject(scoreBoard);
+	}) {}
 };
 
-class QuitButton : public GraphicalGameObject
+class QuitButton : public MenuButton
 {
-private:
-	sf::Texture quitButtonTexture;
-	sf::Sprite* spritePtr() { return dynamic_cast<sf::Sprite*>(this->getGraphic()); }
 public:
-	QuitButton() : GraphicalGameObject(sf::Sprite())
+	QuitButton() : MenuButton("menu_escape.png", { 390.f, 630.f }, [&]()
 	{
-		if (!this->quitButtonTexture.loadFromFile("menu_escape.png")) { throw GameException::ImageFileLoadException("menu_escape.png"); }
-		this->spritePtr()->setTexture(this->quitButtonTexture);
-		this->spritePtr()->setPosition(390.f, 630.f);
+		musicPlayer.stop();
+		this->screen->close();
+	}) {}
+};
+
+class Loader : public GraphicalGameObject
+{
+public:
+	Loader(std::vector<function<void()>> loadingActions) : GraphicalGameObject(sf::RectangleShape())
+	{
+		sf::RectangleShape* rect = this->rectPtr();
+		rect->setPosition(static_cast<float>(Screen::windowWidth) * 0.05f, static_cast<float>(Screen::windowHeight) * 0.85f);
+		rect->setSize({ 0.f , 30.f });
+		rect->setFillColor({ 100, 200, 100, 255 });
+		size_t numActions = loadingActions.size();
+		this->barIncrement = (static_cast<float>(Screen::windowWidth) * 0.9f) / static_cast<float>(numActions);
+		this->loadingActions = loadingActions;
+		this->finishedLoading = false;
+	}
+	
+	void draw(sf::RenderWindow& win)
+	{
+		if (!this->finishedLoading)
+		{
+			for (auto action : this->loadingActions)
+			{
+				action();
+				sf::Vector2f size = this->rectPtr()->getSize();
+				size.x += this->barIncrement;
+				this->rectPtr()->setSize(size);
+				win.clear();
+				win.draw(*this->graphic);
+				win.display();
+			}
+			this->finishedLoading = true;
+			this->screen->schedule([&]() {
+				sf::Color color = this->rectPtr()->getFillColor();
+				color.a -= (color.a > 8) ? 8 : color.a;;
+				this->rectPtr()->setFillColor(color);
+			}, TimeUnit::Frames(1), 31);
+		}
+		else { win.draw(*this->graphic); }
 	}
 
-	void MouseButtonReleased(sf::Event e)
-	{
-		if (e.mouseButton.button == sf::Mouse::Button::Left
-			&& this->spritePtr()->getGlobalBounds().contains(static_cast<float>(e.mouseButton.x), static_cast<float>(e.mouseButton.y)))
-		{
-			soundPlayer.play(SoundEffect::ID::MenuClick, 20.f);
-			musicPlayer.stop();
-			this->screen->close();
-		}
-	}
+private:
+	std::vector<function<void()>> loadingActions;
+	sf::RectangleShape* rectPtr() { return dynamic_cast<sf::RectangleShape*>(this->graphic); }
+	float barIncrement;
+	bool finishedLoading;
 };
 
 namespace Engine
@@ -388,16 +380,20 @@ namespace Engine
 	Menu::Menu()
 	{
 		currentMenu = this;
-		this->menuObjects = {
-			new MenuBackground(),
-			new EasyLevelButton(),
-			new NormalLevelButton(),
-			new HardLevelButton(),
-			new TutorialButton(),
-			new ScoreboardButton(),
-			new QuitButton(),
-			new TestModeButton(),
-		};
+		Loader* loader = new Loader({
+			[]() { musicPlayer.play(Music::ID::Menu); },
+			[]() { soundPlayer.preloadSounds(); },
+			[&]() { this->menuObjects.push_back(new MenuBackground()); },
+			[&]() { this->menuObjects.push_back(new EasyLevelButton()); },
+			[&]() { this->menuObjects.push_back(new NormalLevelButton()); },
+			[&]() { this->menuObjects.push_back(new HardLevelButton()); },
+			[&]() { this->menuObjects.push_back(new TutorialButton()); },
+			[&]() { this->menuObjects.push_back(new ScoreboardButton()); },
+			[&]() { this->menuObjects.push_back(new QuitButton()); },
+			[&]() { this->menuObjects.push_back(new TestModeButton()); },
+			[&]() {	for (auto obj : this->menuObjects) { this->menuScreen.addUIObject(obj); } }
+		});
+		this->menuScreen.addUIObject(loader);
 	}
 
 	Menu::~Menu()
@@ -411,8 +407,6 @@ namespace Engine
 
 	void Menu::start()
 	{
-		musicPlayer.play(Music::ID::Menu);
-		for (auto obj : this->menuObjects) { this->menuScreen.addUIObject(obj); }
 		this->menuScreen.render();
 	}
 

@@ -2,9 +2,12 @@
 #define ZOMBIEBLAST_H
 
 #include "Screen.h"
+#include "ResourceManager.h"
 #include <cmath>
+#include <string>
 
 using namespace Engine;
+using std::string;
 
 #define F(n) static_cast<float>(n)
 #define D(n) static_cast<double>(n)
@@ -18,13 +21,15 @@ protected:
 	float growRate;
 	float growth = 1.f;
 public:
-	ZombieBlast(sf::Sprite sprite, sf::Vector2f pos, sf::Vector2f clickPos, float speed = 1.f, int duration = 100, int damage = 1, float startingSize = 1.f, float growRate = 0.05f) : GraphicalGameObject(sprite)
+	ZombieBlast(string imageFile, sf::Vector2f pos, sf::Vector2f clickPos, float speed = 1.f, int duration = 100, int damage = 1, float startingSize = 1.f, float growRate = 0.05f) : GraphicalGameObject(sf::Sprite())
 	{
+		sf::Texture* texturePtr = ResourceManager<sf::Texture>::GetResource(imageFile);
+		this->spritePtr()->setTexture(*texturePtr);
 		this->ignoreObstacles = true;
 		this->blockingCollision = false;
 		double radians = atan2(D(clickPos.y - pos.y), D(clickPos.x - pos.x));
 		this->distance = sf::Vector2f(F(cos(radians)) * speed, F(sin(radians)) * speed);
-		sf::Vector2u size = sprite.getTexture()->getSize();
+		sf::Vector2u size = this->spritePtr()->getTexture()->getSize();
 		this->spritePtr()->setOrigin(static_cast<float>(size.x) / 2.f, static_cast<float>(size.y) / 2.f);
 		this->spritePtr()->rotate(F(radians * (180 / 3.141592653589793) - 180.0));
 		this->spritePtr()->setPosition(pos.x + (this->distance.x * 15.f), pos.y + (this->distance.y * 15.f));
@@ -59,8 +64,8 @@ class SuperZombieBlast : public ZombieBlast
 private:
 	float rotationRate = -3.f;
 public:
-	SuperZombieBlast(sf::Sprite sprite, sf::Vector2f pos, sf::Vector2f clickPos, float speed = 1.f, int duration = 100, int damage = 1, float startingSize = 1.f, float growRate = 0.05f)
-		: ZombieBlast(sprite, pos, clickPos, speed, duration, damage, startingSize, growRate)
+	SuperZombieBlast(string imageFile, sf::Vector2f pos, sf::Vector2f clickPos, float speed = 1.f, int duration = 100, int damage = 1, float startingSize = 1.f, float growRate = 0.05f)
+		: ZombieBlast(imageFile, pos, clickPos, speed, duration, damage, startingSize, growRate)
 	{
 		this->spritePtr()->setColor(sf::Color(255, 255, 255, 150));
 	}

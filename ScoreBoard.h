@@ -141,19 +141,13 @@ namespace Engine
 		ScoreList easyScores;
 		ScoreList normalScores;
 		ScoreList hardScores;
-		sf::Font font;
 		sf::Text easyColumn;
 		sf::Text normalColumn;
 		sf::Text hardColumn;
-		sf::Texture xButtonTexture;
 		sf::Sprite xButton;
-		sf::Texture ezButtonTexture;
 		sf::Sprite ezButton;
-		sf::Texture normalButtonTexture;
 		sf::Sprite normalButton;
-		sf::Texture insaneButtonTexture;
 		sf::Sprite insaneButton;
-		sf::Texture backgroundTexture;
 		sf::Sprite background;
 		sf::Sprite* backgroundPtr() { return dynamic_cast<sf::Sprite*>(this->graphic); }
 		bool showEasy = false;
@@ -179,24 +173,24 @@ namespace Engine
 	public:
 		ScoreBoard() : GraphicalGameObject(sf::RectangleShape()), easyFileName("easyScores.dat"), normalFileName("normalScores.dat"), hardFileName("hardScores.dat")
 		{
-			if (!this->xButtonTexture.loadFromFile("x_button.png")) { throw GameException::ImageFileLoadException("x_button.png"); }
-			this->xButton.setTexture(this->xButtonTexture);
-			if (!this->backgroundTexture.loadFromFile("scoreboard.png")) { throw GameException::ImageFileLoadException("scoreboard.png"); }
-			this->background.setTexture(this->backgroundTexture);
-			if (!this->ezButtonTexture.loadFromFile("easy_button.png")) { throw GameException::ImageFileLoadException("easy_button.png"); }
-			this->ezButton.setTexture(this->ezButtonTexture);
-			if (!this->normalButtonTexture.loadFromFile("normal_button.png")) { throw GameException::ImageFileLoadException("normal_button.png"); };
-			this->normalButton.setTexture(this->normalButtonTexture);
-			if (!this->insaneButtonTexture.loadFromFile("insane_button.png")) { throw GameException::ImageFileLoadException("insane_button.png"); };
-			this->insaneButton.setTexture(insaneButtonTexture);
+			sf::Texture* xButtonTexture = ResourceManager<sf::Texture>::GetResource("x_button.png");
+			sf::Texture* backgroundTexture = ResourceManager<sf::Texture>::GetResource("scoreboard.png");
+			sf::Texture* ezButtonTexture = ResourceManager<sf::Texture>::GetResource("easy_button.png");
+			sf::Texture* normalButtonTexture = ResourceManager<sf::Texture>::GetResource("normal_button.png");
+			sf::Texture* insaneButtonTexture = ResourceManager<sf::Texture>::GetResource("insane_button.png");
+			sf::Font* fontPtr = ResourceManager<sf::Font>::GetResource("harting.ttf");
+			this->xButton.setTexture(*xButtonTexture);
+			this->background.setTexture(*backgroundTexture);
+			this->ezButton.setTexture(*ezButtonTexture);
+			this->normalButton.setTexture(*normalButtonTexture);
+			this->insaneButton.setTexture(*insaneButtonTexture);
 			this->easyScores.loadFromDataFile(this->easyFileName);
 			this->normalScores.loadFromDataFile(this->normalFileName);
 			this->hardScores.loadFromDataFile(this->hardFileName);
-			if (!this->font.loadFromFile("harting.ttf")) { throw GameException::FontFileLoadException("harting.ttf"); }
 			for (auto txt : { &this->easyColumn, &this->normalColumn, &this->hardColumn })
 			{
 				txt->setFillColor({ 179, 45, 0, 255 });
-				txt->setFont(this->font);
+				txt->setFont(*fontPtr);
 				txt->setStyle(sf::Text::Bold);
 				txt->setCharacterSize(30);
 				txt->setLineSpacing(1.5f);

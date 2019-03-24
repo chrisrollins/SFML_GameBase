@@ -3,6 +3,7 @@
 
 #include "MainCharacter.h"
 #include "FileLoadException.h"
+#include "ResourceManager.h"
 #include <string>
 #include <sstream>
 #include <iomanip>
@@ -14,14 +15,13 @@ class TimerUI : public GraphicalGameObject
 private:
 	sf::Text* text() { return dynamic_cast<sf::Text*>(this->getGraphic()); }
 	MainCharacter* character = nullptr;
-	sf::Font font;
 	int minute;
 	int second;
 public:
 	TimerUI(sf::Text t) : GraphicalGameObject(t)
 	{
-		if (!font.loadFromFile("zombie.ttf")) { throw GameException::FontFileLoadException("zombie.ttf"); }
-		this->text()->setFont(font);
+		sf::Font* fontPtr = ResourceManager<sf::Font>::GetResource("zombie.ttf");
+		this->text()->setFont(*fontPtr);
 		this->text()->setStyle(sf::Text::Bold);
 		this->text()->setOutlineColor(sf::Color(179, 45, 0));
 		this->text()->setOutlineThickness(2.f);

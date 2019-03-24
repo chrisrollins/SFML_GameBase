@@ -24,8 +24,6 @@ class MainCharacter : public GraphicalGameObject
 	bool dKeyHeld = false;
 	DIRECTION direction = DIRECTION::DOWN;
 	AntiMagePotion* potionPtr = nullptr;
-	sf::Texture blastTexture;
-	sf::Texture superBlastTexture;
 	sf::Vector2u textureSize;
 	sf::Vector2u imageCount;
 	sf::Vector2u currentImage;
@@ -42,8 +40,8 @@ class MainCharacter : public GraphicalGameObject
 	int maxPotionNum = 6;
 	int health = 30 * 60 * 100;
 	int maxHealth = 30 * 60 * 100;
-	int healthDrain = 20;
-	int additionalDrainPerMage = 2;
+	int healthDrain = 15;
+	int additionalDrainPerMage = 1;
 	int numCitizenEated = 0;
 	int eatHeal = 7000;
 	int eatDrainFreezeCountdown = 0;
@@ -57,8 +55,10 @@ class MainCharacter : public GraphicalGameObject
 	std::vector<sf::Vector2f> spawnPositions;
 	std::string name;
 public:
-	MainCharacter(sf::Sprite s, std::string name) : GraphicalGameObject(s)
+	MainCharacter(std::string name) : GraphicalGameObject(sf::Sprite())
 	{
+		sf::Texture* texturePtr = ResourceManager<sf::Texture>::GetResource("zombie.png");
+		this->sprite()->setTexture(*texturePtr);
 		this->name = name;
 		this->textureSize = this->sprite()->getTexture()->getSize();
 		this->textureSize.x /= 4;
@@ -66,8 +66,6 @@ public:
 		this->imageCount.x = 0;
 		this->sprite()->setTextureRect(sf::IntRect(this->imageCount.x * this->textureSize.x,
 			this->imageCount.y * this->textureSize.y, this->textureSize.x, this->textureSize.y));
-		if (!this->blastTexture.loadFromFile("blast.png")) { throw GameException::ImageFileLoadException("blast.png"); }
-		if (!this->superBlastTexture.loadFromFile("brain.png")) { throw GameException::ImageFileLoadException("brain.png"); }
 		sf::IntRect size = this->sprite()->getTextureRect();
 		sf::Vector2f collisionSizeRatio(0.4f, 0.3f); //these numbers shrink the collision size of the player, and the code below adjusts it to be positioned at the bottom of the sprite
 		this->obstacleCollisionSize.width = static_cast<float>(size.width) * collisionSizeRatio.x;
@@ -154,7 +152,7 @@ public:
 				sf::IntRect size = this->sprite()->getTextureRect();
 				shotOrigin.x += static_cast<float>(size.width / 2);
 				shotOrigin.y += static_cast<float>(size.height / 4);
-				ZombieBlast* blast = new ZombieBlast(sf::Sprite(this->blastTexture), shotOrigin, sf::Vector2f(static_cast<float>(mousePos.x), static_cast<float>(mousePos.y)), 3.5f, 140);
+				ZombieBlast* blast = new ZombieBlast("blast.png", shotOrigin, sf::Vector2f(static_cast<float>(mousePos.x), static_cast<float>(mousePos.y)), 3.5f, 140);
 				this->screen->add(blast);
 			}
 			else if (this->potionNum > 0)
@@ -165,7 +163,7 @@ public:
 				sf::IntRect size = this->sprite()->getTextureRect();
 				shotOrigin.x += static_cast<float>(size.width / 2);
 				shotOrigin.y += static_cast<float>(size.height / 4);
-				SuperZombieBlast* blast = new SuperZombieBlast(sf::Sprite(this->superBlastTexture), shotOrigin, sf::Vector2f(static_cast<float>(mousePos.x), static_cast<float>(mousePos.y)), 2.25f, 180, 1000, 0.1f, 0.2f);
+				SuperZombieBlast* blast = new SuperZombieBlast("brain.png", shotOrigin, sf::Vector2f(static_cast<float>(mousePos.x), static_cast<float>(mousePos.y)), 2.25f, 180, 1000, 0.1f, 0.2f);
 				this->screen->add(blast);
 				this->potionNum--;
 			}
@@ -287,8 +285,10 @@ public:
 			this->eatDrainFreezeCountdown--;
 			return;
 		}
-		float highHealthDrainPenalty = DifficultySettings::Player::highHealthDrainPenalty;
-		float drainPenalty = 1.0f + (highHealthDrainPenalty * (static_cast<float>(this->health) / static_cast<float>(this->maxHealth)));
+
+		float time = this->aliveClock.getElapsedTime().asSeconds();
+		float highHealthDrainPenalty = DifficultySettings::Player::highHealthDrainPenalty + (time * (0.02f + DifficultySettings::Player::highHealthDrainPenalty * 0.01f));
+		float drainPenalty = 1.f + (highHealthDrainPenalty * (static_cast<float>(this->health) / static_cast<float>(this->maxHealth)));		
 		int baseDrain = static_cast<int>(static_cast<float>(this->healthDrain) * drainPenalty);
 		int mageDrain = numMagesAlive * (this->additionalDrainPerMage + DifficultySettings::Mage::healthDrainModifier);
 		int totalDrain = baseDrain + mageDrain;
@@ -384,7 +384,8 @@ public:
 
 	void Collision(GraphicalGameObject& other)
 	{
-		if (this->health > 0) {
+		if (this->health > 0)
+		{
 			if (MageBlast* blast = dynamic_cast<MageBlast*>(&other))
 			{
 				if (!this->isHurt)
@@ -396,8 +397,10 @@ public:
 				else if (this->hurtClock.getElapsedTime().asSeconds() > 0.5) { this->isHurt = false; }
 				float repeatDamageDampening = (1.f + 0.01f*(static_cast<float>(blast->getHits())));
 				if (repeatDamageDampening < 0.5f) { repeatDamageDampening = 0.5f; }
-				int damage = static_cast<int>(static_cast<float>(800 + DifficultySettings::Mage::attackDamageModifier) / repeatDamageDampening);
-				if (damage < 15 && DifficultySettings::currentDifficulty != DifficultySettings::DIFFICULTY::TEST) { damage = 15; }
+				int baseDmg = 250;
+				int damage = static_cast<int>(static_cast<float>(250 + DifficultySettings::Mage::attackDamageModifier) / repeatDamageDampening);
+				int minDmg = 18;
+				if (damage < minDmg && DifficultySettings::currentDifficulty != DifficultySettings::DIFFICULTY::TEST) { damage = minDmg; }
 				this->takeDamage(damage);
 				blast->hitPlayer();
 			}
@@ -411,7 +414,7 @@ public:
 				}
 				else if (this->hurtClock.getElapsedTime().asSeconds() > 0.5) { this->isHurt = false; }
 				if (!mage->isAlive()) { return; }
-				this->takeDamage(500 + DifficultySettings::Mage::touchDamageModifier);
+				this->takeDamage(100 + DifficultySettings::Mage::touchDamageModifier);
 				this->speed = 1;
 			}
 			else if (Citizen* citizen = dynamic_cast<Citizen*>(&other))

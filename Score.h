@@ -4,6 +4,7 @@
 #include "Screen.h"
 #include "DifficultySettings.h"
 #include "FileLoadException.h"
+#include "ResourceManager.h"
 #include <iostream>
 #include <string>
 
@@ -14,26 +15,19 @@ namespace Engine
 	private:
 		bool frozen;
 		int number = 0;
-		sf::Font font;
 		sf::Text* text() { return dynamic_cast<sf::Text*>(this->getGraphic()); }
 	public:
 		Score(sf::Text t) : GraphicalGameObject(t)
 		{
-			if (this->font.loadFromFile("zombie.ttf"))
-			{
-				this->text()->setFont(font);
-				this->text()->setStyle(sf::Text::Bold);
-				this->text()->setOutlineColor({ 179, 45, 0 });
-				this->text()->setOutlineThickness(2.f);
-				this->text()->setFillColor(sf::Color::Black);
-				this->text()->setPosition(830.f, 10.f);
-				this->text()->setLetterSpacing(3.f);
-				this->text()->setString("Score: 0");
-			}
-			else
-			{
-				throw GameException::FontFileLoadException("zombie.ttf");
-			}
+			sf::Font* fontPtr = ResourceManager<sf::Font>::GetResource("zombie.ttf");
+			this->text()->setFont(*fontPtr);
+			this->text()->setStyle(sf::Text::Bold);
+			this->text()->setOutlineColor({ 179, 45, 0 });
+			this->text()->setOutlineThickness(2.f);
+			this->text()->setFillColor(sf::Color::Black);
+			this->text()->setPosition(830.f, 10.f);
+			this->text()->setLetterSpacing(3.f);
+			this->text()->setString("Score: 0");			
 		}
 
 		void operator++()

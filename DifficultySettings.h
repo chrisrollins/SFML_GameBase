@@ -16,39 +16,39 @@ namespace DifficultySettings
 	// example: Player::maxHealthModifier increases (if positive) or decreases (if negative) the player's max health
 	namespace Player
 	{
-		static int maxHealthModifier;
-		static int eatHealModifier;
-		static int eatDrainFreezeDuration;
-		static float missingHealthHealBonus;
-		static int healthDrainModifier;
-		static float highHealthDrainPenalty;
-		static int attackHealthCostModifier;
-		static int maxPotionNumModifier;
-		static int potionMakingCitizenRequired;
+		static int maxHealthModifier; //adds to the player's maximum health
+		static int eatHealModifier; //adds to the health gained by eating a citizen
+		static int eatDrainFreezeDuration; //all passive health drain is stopped for this many frames when eating a citizen
+		static float missingHealthHealBonus; //healing is increased based on how much health the player is missing
+		static int healthDrainModifier; //adds a flat amount to the passive health drain
+		static float highHealthDrainPenalty; //modifies passive health drain based on how high the player's health is
+		static int attackHealthCostModifier; //adds to health cost of firing a regular attack
+		static int maxPotionNumModifier; //adds to the maximum number of potions
+		static int potionMakingCitizenRequired; //determines how many citizens must be eating to spawn a potion
 	}
 
 	namespace Mage
 	{
-		static int attackDamageModifier;
-		static int touchDamageModifier;
-		static int movementSpeedModifier;
-		static int healthDrainModifier;
-		static int mageHealthModifier;
-		static float blastSpeedModifier;
+		static int attackDamageModifier; //adds to the damage per frame of the mage's attack
+		static int touchDamageModifier; //adds to the damage per frame of the mage's melee damage
+		static int movementSpeedModifier; //unimplemented
+		static int healthDrainModifier; //adds to the passive health drain per mage alive
+		static int mageHealthModifier; //adds to the mage's health
+		static float blastSpeedModifier; //multiplies the speed of mage attacks
 	}
 
 	namespace Citizen
 	{
-		static int movementSpeedModifier;
+		static int movementSpeedModifier; //unimplemented
 	}
 
 	namespace Score
 	{
-		static float multiplierPerSecond;
-		static float baseMultiplier;
-		static float cumulativeBonusMultiplier;
-		static float cumulativeBonusMultiplierCurrent;
-		static float cumulativeBonusMultiplierMax;
+		static float multiplierPerSecond; //a score multiplier which passively increases over time
+		static float baseMultiplier; //base score multiplier
+		static float cumulativeBonusMultiplier; //score multiplier gained per mage killed
+		static float cumulativeBonusMultiplierCurrent; //do not set in difficulty settings. this is always 1.0 when the game starts. (tracks the multiplier)
+		static float cumulativeBonusMultiplierMax; //the maximum score multiplier that can be gained by killing mages
 		inline int applyMultipliers(int baseIncrease)
 		{
 			int result = baseIncrease * static_cast<int>(cumulativeBonusMultiplierCurrent * baseMultiplier);
@@ -106,10 +106,10 @@ namespace DifficultySettings
 		case DIFFICULTY::EASY:
 			Map::picture = "tileset.png";
 			Map::fileName = "map_easy.txt";
-			Player::missingHealthHealBonus = 0.5f;
-			Player::highHealthDrainPenalty = 0.4f;
-			Player::eatDrainFreezeDuration = 12;
-			Player::potionMakingCitizenRequired = 4;
+			Player::missingHealthHealBonus = 0.7f;
+			Player::highHealthDrainPenalty = 0.8f;
+			Player::eatDrainFreezeDuration = 15;
+			Player::potionMakingCitizenRequired = 3;
 			Score::baseMultiplier = 1.0f;
 			Score::cumulativeBonusMultiplier = 0.02f;
 			Score::cumulativeBonusMultiplierMax = 1.10f;
@@ -120,13 +120,13 @@ namespace DifficultySettings
 			Map::fileName = "map_normal.txt";
 			Player::missingHealthHealBonus = 0.3f;
 			Player::healthDrainModifier = 1;
-			Player::highHealthDrainPenalty = 0.7f;
+			Player::highHealthDrainPenalty = 1.1f;
 			Player::eatDrainFreezeDuration = 11;
 			Player::maxHealthModifier = -4500;
 			Player::attackHealthCostModifier = 150;
-			Player::potionMakingCitizenRequired = 5;
+			Player::potionMakingCitizenRequired = 4;
 			Player::maxPotionNumModifier = -1;
-			Mage::attackDamageModifier = 50;
+			Mage::attackDamageModifier = 100;
 			Mage::blastSpeedModifier = 0.8f;
 			Mage::touchDamageModifier = 10;
 			Mage::movementSpeedModifier = 1;
@@ -141,19 +141,19 @@ namespace DifficultySettings
 		case DIFFICULTY::HARD:
 			Map::picture = "tileset.png";
 			Map::fileName = "map_insane.txt";
-			Player::missingHealthHealBonus = 0.20f;
+			Player::missingHealthHealBonus = 0.15f;
 			Player::healthDrainModifier = 1;
-			Player::highHealthDrainPenalty = 3.0f;
+			Player::highHealthDrainPenalty = 4.5f;
 			Player::eatDrainFreezeDuration = 10;
 			Player::maxHealthModifier = -6000;
-			Player::attackHealthCostModifier = 390;
-			Player::potionMakingCitizenRequired = 6;
+			Player::attackHealthCostModifier = 350;
+			Player::potionMakingCitizenRequired = 5;
 			Player::maxPotionNumModifier = -2;
-			Mage::attackDamageModifier = 150;
-			Mage::blastSpeedModifier = 1.5f;
-			Mage::touchDamageModifier = 40;
+			Mage::attackDamageModifier = 250;
+			Mage::blastSpeedModifier = 1.6f;
+			Mage::touchDamageModifier = 50;
 			Mage::movementSpeedModifier = 2;
-			Mage::healthDrainModifier = 2;
+			Mage::healthDrainModifier = 1;
 			Mage::mageHealthModifier = 7;
 			Citizen::movementSpeedModifier = 1;
 			Score::baseMultiplier = 2.5f;

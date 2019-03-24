@@ -1,13 +1,14 @@
 #include "SFML/Graphics.hpp"
 #include "Screen.h"
 #include "FileLoadException.h"
+#include <utility>
 
 using namespace Engine;
 
 static bool renderStarted = false;
 static int currentFPS;
 static sf::RenderWindow* windowPtr = nullptr;
-static std::queue<GameObject*> removeQueue;
+static std::queue<std::pair<GameObject*, bool>> removeQueue;
 
 namespace Engine
 {
@@ -41,6 +42,7 @@ namespace Engine
 
 	void Screen::add(GameObject* gameObject)
 	{
+		if (gameObject == nullptr) { return; }
 		GameObjectMap& map = (dynamic_cast<GraphicalGameObject*>(gameObject)) ? this->gObjects : this->objects;
 		map[gameObject->getID()] = gameObject;
 		gameObject->screen = this;
@@ -49,12 +51,13 @@ namespace Engine
 
 	void Screen::addUIObject(GameObject* uiObj)
 	{
+		if (uiObj == nullptr) { return; }
 		this->uiObjects[uiObj->getID()] = uiObj;
 		uiObj->screen = this;
 		uiObj->AddedToScreen();
 	}
 
-	void Screen::remove(GameObject* gameObject)
+	void Screen::remove(GameObject* gameObject, bool autoDelete)
 	{
 		if (this != currentScreen)
 		{
@@ -64,14 +67,14 @@ namespace Engine
 				{
 					GameObjectID id = gameObject->getID();
 					map->erase(id);
-					delete gameObject;
+					if (autoDelete) { delete gameObject; }
 					break;
 				}
 			}
 		}
 		else
 		{
-			removeQueue.push(gameObject);
+			removeQueue.push({ gameObject, autoDelete});
 		}
 	}
 
@@ -420,7 +423,9 @@ namespace Engine
 				//remove objects that are pending to be removed
 				while (!removeQueue.empty())
 				{
-					GameObject* toRemove = removeQueue.front();
+					std::pair<GameObject*, bool> pRemove = removeQueue.front();
+					GameObject* toRemove = pRemove.first;
+					bool autoDelete = pRemove.second;
 					removeQueue.pop();
 					for (auto map : { &currentScreen->objects, &currentScreen->gObjects, &currentScreen->uiObjects })
 					{
@@ -429,7 +434,7 @@ namespace Engine
 							GameObjectID id = toRemove->getID();
 							toRemove->RemovedFromScreen();
 							map->erase(id);
-							delete toRemove;
+							if (autoDelete) { delete toRemove; }
 							break;
 						}
 					}
@@ -460,5 +465,36 @@ namespace Engine
 
 	Screen::~Screen()
 	{
+	}
+	
+	class Scheduler : public GameObject
+	{
+	private:
+		uint64_t delay;
+		uint64_t countdown;
+		uint16_t repeatsRemaining;
+		bool infinite;
+		function<void()> func;
+	public:
+		Scheduler( function<void()> func, uint64_t delay, uint16_t repeatCount) : delay(delay), countdown(delay), repeatsRemaining(repeatCount), infinite(repeatCount == 0), func(func) {}
+		void EveryFrame(uint64_t f)
+		{
+			if (this->countdown == 0)
+			{
+				func();
+				if (repeatsRemaining > 0)
+				{
+					repeatsRemaining--;
+					this->countdown = this->delay;
+				}
+				else if(!this->infinite) { this->screen->remove(this); }				
+			}
+			else { this->countdown--; }
+		}
+	};
+
+	void Screen::schedule(function<void()> func, TimeUnit::Time delay, uint16_t repeatCount)
+	{
+		this->add(new Scheduler(func, delay, repeatCount));
 	}
 }

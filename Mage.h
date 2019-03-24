@@ -140,8 +140,6 @@ public:
 				sf::Vector2f myPosition = this->spritePtr()->getPosition();
 				DIRECTION xDirection = (playerPosition.x > myPosition.x) ? DIRECTION::RIGHT : DIRECTION::LEFT;
 				DIRECTION yDirection = (playerPosition.y > myPosition.y) ? DIRECTION::DOWN : DIRECTION::UP;
-				//float a = (playerPosition.x - myPosition.x);
-				//float b = (playerPosition.y - myPosition.y);
 
 				this->wKeyHeld = false;
 				this->aKeyHeld = false;

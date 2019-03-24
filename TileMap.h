@@ -3,6 +3,7 @@
 
 #include "SFML/Graphics.hpp"
 #include "FileLoadException.h"
+#include "ResourceManager.h"
 #include <iostream>
 #include <fstream>
 #include <cstdlib>
@@ -21,14 +22,14 @@ namespace Engine
 		unsigned int numPerColumn;
 		int* tiles;
 		sf::VertexArray mVertices;
-		sf::Texture mTileset;
+		sf::Texture* mTileset;
 		virtual void draw(sf::RenderTarget& target, sf::RenderStates states) const
 		{
 			// apply the transform
 			states.transform *= getTransform();
 
 			// apply the tileset texture
-			states.texture = &mTileset;
+			states.texture = mTileset;
 
 			// draw the vertex array
 			target.draw(mVertices, states);
@@ -38,7 +39,7 @@ namespace Engine
 		bool load(const std::string& tileset, const std::string& mapTable)
 		{
 			// load the tileset texture
-			if (!this->mTileset.loadFromFile(tileset)) { return false; }
+			this->mTileset = ResourceManager<sf::Texture>::GetResource(tileset);
 
 			int * tileTable;
 			tileTable = readFromFile(mapTable);
@@ -57,8 +58,8 @@ namespace Engine
 					int tileNumber = tiles[i + j * numPerLine];
 
 					// find its position in the tileset texture
-					int tu = tileNumber % (mTileset.getSize().x / this->tileStdSize.x);
-					int tv = tileNumber / (mTileset.getSize().x / this->tileStdSize.x);
+					int tu = tileNumber % (mTileset->getSize().x / this->tileStdSize.x);
+					int tv = tileNumber / (mTileset->getSize().x / this->tileStdSize.x);
 
 					// get a pointer to the current tile's quad
 					sf::Vertex* quad = &mVertices[(i + j * numPerLine) * 4];

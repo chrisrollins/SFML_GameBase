@@ -3,13 +3,19 @@
 
 #include "SFML/Audio.hpp"
 #include "FileLoadException.h"
+#include "Screen.h"
 #include <list>
 #include <map>
-#include <memory>
+#include <thread>
+
+using std::map;
+using std::list;
+using std::string;
 
 namespace SoundEffect
 {
-	enum class ID {
+	enum class ID
+	{	
 		ZombieEat1,
 		ZombieEat2,
 		ZombieEat3,
@@ -28,54 +34,44 @@ namespace SoundEffect
 	};
 }
 
-class SoundHolder
-{
-private:
-	std::map<SoundEffect::ID, sf::SoundBuffer> mSoundMap;
-public:
-	bool loadSoundEffect(SoundEffect::ID id, const std::string& filename)
-	{
-		this->mSoundMap.emplace(id, sf::SoundBuffer());
-		return this->mSoundMap[id].loadFromFile(filename);
-	}
-
-	sf::SoundBuffer& getSoundBuffer(SoundEffect::ID id)
-	{
-		auto found = this->mSoundMap.find(id);
-		return found->second;
-	}
-};
-
 class SoundPlayer : private sf::NonCopyable
 {
 private:
-	SoundHolder mSoundContainer;
-	std::list<sf::Sound> mSounds;
+	map<SoundEffect::ID, string> resourceMap;
+	list<sf::Sound> mSounds;
 public:
-	SoundPlayer() :mSoundContainer(), mSounds()
+	SoundPlayer()
 	{
-#define LOAD(id, soundFile) if(!this->mSoundContainer.loadSoundEffect(id, soundFile)) { throw GameException::SoundFileLoadException(soundFile); }
-		LOAD(SoundEffect::ID::ZombieEat1, "zombie_eat1.ogg");
-		LOAD(SoundEffect::ID::ZombieEat2, "zombie_eat2.ogg");
-		LOAD(SoundEffect::ID::ZombieEat3, "zombie_eat3.ogg");
-		LOAD(SoundEffect::ID::ZombieBurp1, "zombie_burp1.ogg");
-		LOAD(SoundEffect::ID::ZombieBurp2, "zombie_burp2.ogg");
-		LOAD(SoundEffect::ID::ZombieBurp3, "zombie_burp3.ogg");
-		LOAD(SoundEffect::ID::ZombieBurp4, "zombie_burp4.ogg");
-		LOAD(SoundEffect::ID::ZombieAttack, "zombie_attack.ogg");
-		LOAD(SoundEffect::ID::ZombieGroan, "zombie_hurt.ogg");
-		LOAD(SoundEffect::ID::ZombieDeath, "zombie_death.ogg");
-		LOAD(SoundEffect::ID::MageDeath, "mage_death.ogg");
-		LOAD(SoundEffect::ID::Potion, "potion.ogg");
-		LOAD(SoundEffect::ID::Trap, "trap.ogg");
-		LOAD(SoundEffect::ID::Alarm, "alarm.ogg");
-		LOAD(SoundEffect::ID::MenuClick, "menu_buttonclick.ogg");
-#undef LOAD
+		this->resourceMap[SoundEffect::ID::ZombieEat1] = "zombie_eat1.ogg";
+		this->resourceMap[SoundEffect::ID::ZombieEat2] = "zombie_eat2.ogg";
+		this->resourceMap[SoundEffect::ID::ZombieEat3] = "zombie_eat3.ogg";
+		this->resourceMap[SoundEffect::ID::ZombieBurp1] = "zombie_burp1.ogg";
+		this->resourceMap[SoundEffect::ID::ZombieBurp2] = "zombie_burp2.ogg";
+		this->resourceMap[SoundEffect::ID::ZombieBurp3] = "zombie_burp3.ogg";
+		this->resourceMap[SoundEffect::ID::ZombieBurp4] = "zombie_burp4.ogg";
+		this->resourceMap[SoundEffect::ID::ZombieAttack] = "zombie_attack.ogg";
+		this->resourceMap[SoundEffect::ID::ZombieGroan] = "zombie_hurt.ogg";
+		this->resourceMap[SoundEffect::ID::ZombieDeath] = "zombie_death.ogg";
+		this->resourceMap[SoundEffect::ID::MageDeath] = "mage_death.ogg";
+		this->resourceMap[SoundEffect::ID::Potion] = "potion.ogg";
+		this->resourceMap[SoundEffect::ID::Trap] = "trap.ogg";
+		this->resourceMap[SoundEffect::ID::Alarm] = "alarm.ogg";
+		this->resourceMap[SoundEffect::ID::MenuClick] = "menu_buttonclick.ogg";
+	}
+
+	void preloadSounds()
+	{
+		for (auto iter : this->resourceMap)
+		{
+			ResourceManager<sf::SoundBuffer>::GetResource(iter.second);	
+		}
 	}
 
 	void play(SoundEffect::ID effect, float volume)
-	{
-		this->mSounds.push_back(sf::Sound(this->mSoundContainer.getSoundBuffer(effect)));
+	{		
+		string soundFile = this->resourceMap[effect];
+		sf::Sound sound = sf::Sound(*ResourceManager<sf::SoundBuffer>::GetResource(soundFile));
+		this->mSounds.push_back(sound);
 		this->mSounds.back().setVolume(volume);
 		this->mSounds.back().play();
 		removeStoppedSounds();

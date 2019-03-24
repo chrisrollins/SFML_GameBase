@@ -13,8 +13,6 @@ private:
 	DifficultySettings::DIFFICULTY difficulty;
 	int finalScore = 0;
 	int internalClock = 0;
-	sf::Texture mainTexture;
-	sf::Texture backTexture;
 	sf::Sprite backSprite;
 	sf::Sprite* spritePtr() { return dynamic_cast<sf::Sprite*>(this->graphic); }
 public:

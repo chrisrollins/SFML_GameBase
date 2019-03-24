@@ -2,11 +2,16 @@
 #define RESPAWNMANAGER_H
 
 #include "Screen.h"
+#include "ResourceManager.h"
+#include <string>
 #include <ctime>
 #include <map>
 #include <vector>
 
 using namespace Engine;
+using std::string;
+using std::map;
+using std::vector;
 
 template <typename T>
 class RespawnManager : public GameObject
@@ -30,26 +35,20 @@ private:
 			size_t randIndex = rand() % spawnPositions.size();
 			sf::Vector2f position = spawnPositions[randIndex];
 			this->sprite.setPosition(position);
-			this->add(this->sprite);
+			T* ptr = new T(this->sprite, this);
+			this->screen->add(ptr);
+			this->characters[ptr->getID()] = ptr;
 		}
 		else { this->cooldown--; }
 	}
-
-	void add(sf::Sprite& sprite)
-	{
-		T* ptr = new T(sprite, this);
-		this->screen->add(ptr);
-		this->characters[ptr->getID()] = ptr;
-	}
 public:
 
-	RespawnManager(sf::Sprite& sprite, int max, int respawnSpeed)
+	RespawnManager(string imageFile, int max, int respawnSpeed) : max(max), respawnSpeed(respawnSpeed)
 	{
-		this->max = max;
-		this->respawnSpeed = respawnSpeed;
-		this->sprite = sprite;
+		sf::Texture* texture = ResourceManager<sf::Texture>::GetResource(imageFile);
+		this->sprite.setTexture(*texture);
 	}
-
+	
 	void died(T* character)
 	{
 		this->characters.erase(character->getID());
