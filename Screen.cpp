@@ -1,7 +1,9 @@
 #include "SFML/Graphics.hpp"
 #include "Screen.h"
+#include "GameObject.h"
 #include "FileLoadException.h"
 #include <utility>
+#include <functional>
 
 using namespace Engine;
 
@@ -9,6 +11,9 @@ static bool renderStarted = false;
 static int currentFPS;
 static sf::RenderWindow* windowPtr = nullptr;
 static std::queue<std::pair<GameObject*, bool>> removeQueue;
+#ifdef _DEBUG
+static sf::Int64 frameDurationSum;
+#endif
 
 namespace Engine
 {
@@ -21,11 +26,13 @@ namespace Engine
 	bool running = true;
 	bool windowInitialized = false;
 
+	void addEvents(GameObject* gameObject);
+
 	Screen::Screen() {}
 
 	void Screen::addMap(TileMap* map)
 	{
-		this->map = map;
+		this->tMap = map;
 	}
 
 	void Screen::addMainCharacter(GameObject* mainCharacter)
@@ -38,23 +45,6 @@ namespace Engine
 	GameObject* Screen::getMainCharacter() const
 	{
 		return this->mainCharacter;
-	}
-
-	void Screen::add(GameObject* gameObject)
-	{
-		if (gameObject == nullptr) { return; }
-		GameObjectMap& map = (dynamic_cast<GraphicalGameObject*>(gameObject)) ? this->gObjects : this->objects;
-		map[gameObject->getID()] = gameObject;
-		gameObject->screen = this;
-		gameObject->AddedToScreen();
-	}
-
-	void Screen::addUIObject(GameObject* uiObj)
-	{
-		if (uiObj == nullptr) { return; }
-		this->uiObjects[uiObj->getID()] = uiObj;
-		uiObj->screen = this;
-		uiObj->AddedToScreen();
 	}
 
 	void Screen::remove(GameObject* gameObject, bool autoDelete)
@@ -88,7 +78,7 @@ namespace Engine
 
 	const TileMap* Screen::getMap() const
 	{
-		return this->map;
+		return this->tMap;
 	}
 
 	void Screen::close()
@@ -125,87 +115,6 @@ namespace Engine
 		currentScreen = this;
 		renderStarted = true;
 
-		//local function used by game loop to iterate over each map of objects for the events
-		static std::function<void(GameObjectMap*, sf::Event)> handleEvents = [](GameObjectMap* objects, sf::Event event)
-		{
-			for (auto const& pair : *objects)
-			{
-				GameObject* obj = pair.second;
-				if (obj->eventsDisabled) { continue; }
-				switch (event.type)
-				{
-				case sf::Event::Resized:
-					obj->Resized(event);
-					break;
-				case sf::Event::LostFocus:
-					obj->LostFocus(event);
-					break;
-				case sf::Event::GainedFocus:
-					obj->GainedFocus(event);
-					break;
-				case sf::Event::TextEntered:
-					obj->TextEntered(event);
-					break;
-				case sf::Event::KeyPressed:
-					obj->KeyPressed(event);
-					break;
-				case sf::Event::KeyReleased:
-					obj->KeyReleased(event);
-					break;
-				case sf::Event::MouseWheelMoved:
-					obj->MouseWheelMoved(event);
-					break;
-				case sf::Event::MouseWheelScrolled:
-					obj->MouseWheelScrolled(event);
-					break;
-				case sf::Event::MouseButtonPressed:
-					obj->MouseButtonPressed(event);
-					break;
-				case sf::Event::MouseButtonReleased:
-					obj->MouseButtonReleased(event);
-					break;
-				case sf::Event::MouseMoved:
-					obj->MouseMoved(event);
-					break;
-				case sf::Event::MouseEntered:
-					obj->MouseEntered(event);
-					break;
-				case sf::Event::MouseLeft:
-					obj->MouseLeft(event);
-					break;
-				case sf::Event::JoystickButtonPressed:
-					obj->JoystickButtonPressed(event);
-					break;
-				case sf::Event::JoystickButtonReleased:
-					obj->JoystickButtonReleased(event);
-					break;
-				case sf::Event::JoystickMoved:
-					obj->JoystickMoved(event);
-					break;
-				case sf::Event::JoystickConnected:
-					obj->JoystickConnected(event);
-					break;
-				case sf::Event::JoystickDisconnected:
-					obj->JoystickDisconnected(event);
-					break;
-				case sf::Event::TouchBegan:
-					obj->TouchBegan(event);
-					break;
-				case sf::Event::TouchMoved:
-					obj->TouchMoved(event);
-					break;
-				case sf::Event::TouchEnded:
-					obj->TouchEnded(event);
-					break;
-				case sf::Event::SensorChanged:
-					obj->SensorChanged(event);
-					break;
-				default:
-					break;
-				}
-			}
-		};
-
 		while (window.isOpen() && !pendingSwitch)
 		{
 			try
@@ -239,7 +148,82 @@ namespace Engine
 					//handle events on each object
 					for (auto map : { &currentScreen->objects, &currentScreen->gObjects, &currentScreen->uiObjects })
 					{
-						handleEvents(map, event);
+						for (auto const& pair : *map)
+						{
+							GameObject* obj = pair.second;
+							if (obj->eventsDisabled) { continue; }
+							switch (event.type)
+							{
+							case sf::Event::Resized:
+								obj->Resized(event);
+								break;
+							case sf::Event::LostFocus:
+								obj->LostFocus(event);
+								break;
+							case sf::Event::GainedFocus:
+								obj->GainedFocus(event);
+								break;
+							case sf::Event::TextEntered:
+								obj->TextEntered(event);
+								break;
+							case sf::Event::KeyPressed:
+								obj->KeyPressed(event);
+								break;
+							case sf::Event::KeyReleased:
+								obj->KeyReleased(event);
+								break;
+							case sf::Event::MouseWheelMoved:
+								obj->MouseWheelMoved(event);
+								break;
+							case sf::Event::MouseWheelScrolled:
+								obj->MouseWheelScrolled(event);
+								break;
+							case sf::Event::MouseButtonPressed:
+								obj->MouseButtonPressed(event);
+								break;
+							case sf::Event::MouseButtonReleased:
+								obj->MouseButtonReleased(event);
+								break;
+							case sf::Event::MouseMoved:
+								obj->MouseMoved(event);
+								break;
+							case sf::Event::MouseEntered:
+								obj->MouseEntered(event);
+								break;
+							case sf::Event::MouseLeft:
+								obj->MouseLeft(event);
+								break;
+							case sf::Event::JoystickButtonPressed:
+								obj->JoystickButtonPressed(event);
+								break;
+							case sf::Event::JoystickButtonReleased:
+								obj->JoystickButtonReleased(event);
+								break;
+							case sf::Event::JoystickMoved:
+								obj->JoystickMoved(event);
+								break;
+							case sf::Event::JoystickConnected:
+								obj->JoystickConnected(event);
+								break;
+							case sf::Event::JoystickDisconnected:
+								obj->JoystickDisconnected(event);
+								break;
+							case sf::Event::TouchBegan:
+								obj->TouchBegan(event);
+								break;
+							case sf::Event::TouchMoved:
+								obj->TouchMoved(event);
+								break;
+							case sf::Event::TouchEnded:
+								obj->TouchEnded(event);
+								break;
+							case sf::Event::SensorChanged:
+								obj->SensorChanged(event);
+								break;
+							default:
+								break;
+							}
+						}
 					}
 				}
 
@@ -250,11 +234,11 @@ namespace Engine
 				unsigned int mapWidth = 0;
 				unsigned int mapHeight = 0;
 
-				if (currentScreen->map)
+				if (currentScreen->tMap)
 				{
-					window.draw(*currentScreen->map);
-					mapWidth = currentScreen->map->width() * currentScreen->map->tileSize().x;
-					mapHeight = currentScreen->map->height() * currentScreen->map->tileSize().y;
+					window.draw(*currentScreen->tMap);
+					mapWidth = currentScreen->tMap->width() * currentScreen->tMap->tileSize().x;
+					mapHeight = currentScreen->tMap->height() * currentScreen->tMap->tileSize().y;
 				}
 
 				//draw the objects
@@ -297,7 +281,7 @@ namespace Engine
 								bool collision = false;
 								for (auto corner : corners)
 								{
-									if (currentScreen->map->isObstacle(corner))
+									if (currentScreen->tMap->isObstacle(corner))
 									{
 										collision = true;
 										break;
@@ -308,7 +292,7 @@ namespace Engine
 									if (obj->spawnCollisionsResolved) { transformable->setPosition(obj->lastPos); }
 									else
 									{
-										auto positions = this->map->getSafeSpawnPositions();
+										auto positions = this->tMap->getSafeSpawnPositions();
 										transformable->setPosition(positions[rand() % positions.size()]);
 									}
 								}
@@ -336,7 +320,7 @@ namespace Engine
 					transformable->setPosition(screenPosition);
 				}
 
-				//trigger collision events
+				//trigger collision events				
 				for (auto const& p1 : currentScreen->gObjects)
 				{
 					GraphicalGameObject* eventReciever = dynamic_cast<GraphicalGameObject*>(p1.second);
@@ -445,14 +429,26 @@ namespace Engine
 			{
 				std::cout << "Failed to load file: " << e.getFileName() << std::endl;
 				std::cout << " -- Fatal error. Program must terminate." << std::endl;
+				window.close();
 			}
 			catch (...)
 			{
 #ifdef _DEBUG
 				std::cout << "DEBUG: Unknown error." << std::endl;
 #endif
+				window.close();
 			}
 			frameCount++;
+
+#ifdef _DEBUG
+			frameDurationSum += clock.getElapsedTime().asMicroseconds();
+			int avgFrameReportFrequency = 60;
+			if (frameCount % avgFrameReportFrequency == 0)
+			{
+				std::cout << "average frame compute time (microseconds): " << (frameDurationSum / avgFrameReportFrequency) << " (max " << (1000000 / currentFPS) << " before slowdown)" << std::endl;
+				frameDurationSum = 0;
+			}
+#endif
 			while (clock.getElapsedTime().asMicroseconds() < (1000000 / currentFPS)) {}
 		}
 

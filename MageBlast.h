@@ -60,8 +60,10 @@ public:
 		if (dynamic_cast<SuperZombieBlast*>(&other) && this->life > 20)
 		{
 			this->life = 20;
-			this->movePerFrame.x /= 4.f;
-			this->movePerFrame.y /= 4.f;
+			this->baseSpeed.x = 0.f;
+			this->baseSpeed.y = 0.f;
+			this->movePerFrame.x /= 4.5f;
+			this->movePerFrame.y /= 4.5f;
 		}
 	}
 

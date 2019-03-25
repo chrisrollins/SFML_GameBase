@@ -8,9 +8,13 @@
 #include <map>
 #include <functional>
 #include <queue>
+#include <vector>
+#include <utility>
 
 using std::map;
 using std::function;
+using std::vector;
+using std::map;
 
 namespace Engine
 {
@@ -51,8 +55,26 @@ namespace Engine
 		~Screen();
 		void addMap(TileMap* map);
 		void addMainCharacter(GameObject* mainCharacter);
-		void addUIObject(GameObject* uiObj);
-		void add(GameObject* gameObject);
+
+		template<typename T> void add(T* gameObject)
+		{
+			static_assert(std::is_base_of<GameObject, T>::value, "Argument of Screen::add must inherit from GameObject");
+			if (gameObject == nullptr) { return; }
+			GameObjectMap& map = (dynamic_cast<GraphicalGameObject*>(gameObject)) ? this->gObjects : this->objects;
+			map[gameObject->getID()] = gameObject;
+			gameObject->screen = this;
+			gameObject->AddedToScreen();
+		}
+
+		template<typename T> void addUIObject(T* uiObj)
+		{
+			static_assert(std::is_base_of<GameObject, T>::value, "Argument of Screen::addUIObject must inherit from GameObject");
+			if (uiObj == nullptr) { return; }
+			this->uiObjects[uiObj->getID()] = uiObj;
+			uiObj->screen = this;
+			uiObj->AddedToScreen();
+		}
+
 		void remove(GameObject* gameObject, bool autoDelete = true);
 		void schedule(function<void()> func, TimeUnit::Time delay, uint16_t repeatCount = 1);
 		void render(int fps = 60);
@@ -69,7 +91,7 @@ namespace Engine
 		GameObjectMap gObjects; //GraphicalGameObjects go here so during rendering it doesn't have to check the other ones
 		GameObjectMap uiObjects; //UI objects have an absolute position on the screen so they follow the view. they have no collision either.
 		GameObject* mainCharacter = nullptr;
-		TileMap* map = nullptr;
+		TileMap* tMap = nullptr;
 	};
 }
 #endif

@@ -14,6 +14,7 @@ namespace Engine
 	{
 	public:
 		GameObject();
+		//sfml events
 		virtual void Resized(sf::Event event);                ///< The window was resized (data in event.size)
 		virtual void LostFocus(sf::Event event);              ///< The window lost the focus (no data)
 		virtual void GainedFocus(sf::Event event);            ///< The window gained the focus (no data)
@@ -36,6 +37,7 @@ namespace Engine
 		virtual void TouchMoved(sf::Event event);             ///< A touch moved (data in event.touch)
 		virtual void TouchEnded(sf::Event event);             ///< A touch event ended (data in event.touch)
 		virtual void SensorChanged(sf::Event event);          ///< A sensor value changed (data in event.sensor)
+		//end sfml events
 		virtual void EveryFrame(uint64_t frameNumber); //runs every frame if implemented
 		virtual void AddedToScreen(); //triggers when the object is added to the screen
 		virtual void RemovedFromScreen(); //triggers when the object is removed from the screen
