@@ -3,6 +3,7 @@
 
 #include "SFML/Audio.hpp"
 #include "FileLoadException.h"
+#include "ResourceManager.h"
 #include "Screen.h"
 #include <list>
 #include <map>
@@ -11,6 +12,7 @@
 using std::map;
 using std::list;
 using std::string;
+using Engine::ResourceManager;
 
 namespace SoundEffect
 {

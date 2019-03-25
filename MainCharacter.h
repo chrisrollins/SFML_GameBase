@@ -288,8 +288,11 @@ public:
 
 		float time = this->aliveClock.getElapsedTime().asSeconds();
 		float highHealthDrainPenalty = DifficultySettings::Player::highHealthDrainPenalty + (time * (0.02f + DifficultySettings::Player::highHealthDrainPenalty * 0.01f));
-		float drainPenalty = 1.f + (highHealthDrainPenalty * (static_cast<float>(this->health) / static_cast<float>(this->maxHealth)));		
-		int baseDrain = static_cast<int>(static_cast<float>(this->healthDrain) * drainPenalty);
+		float healthRatio = static_cast<float>(this->health) / static_cast<float>(this->maxHealth);
+		if (healthRatio > 1.f) { healthRatio = 1.f; }
+		float drainPenaltyModifier = (healthRatio + (healthRatio * healthRatio)) * 0.5f;
+		float drainPenalty = 1.f + (highHealthDrainPenalty * drainPenaltyModifier);
+		int baseDrain = static_cast<int>(static_cast<float>(this->healthDrain) * drainPenalty) + static_cast<int>(time/15.f);
 		int mageDrain = numMagesAlive * (this->additionalDrainPerMage + DifficultySettings::Mage::healthDrainModifier);
 		int totalDrain = baseDrain + mageDrain;
 		this->changeHealth(-1 * totalDrain);

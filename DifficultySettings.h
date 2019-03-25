@@ -107,7 +107,7 @@ namespace DifficultySettings
 			Map::picture = "tileset.png";
 			Map::fileName = "map_easy.txt";
 			Player::missingHealthHealBonus = 0.7f;
-			Player::highHealthDrainPenalty = 0.8f;
+			Player::highHealthDrainPenalty = 1.2f;
 			Player::eatDrainFreezeDuration = 15;
 			Player::potionMakingCitizenRequired = 3;
 			Score::baseMultiplier = 1.0f;
@@ -120,7 +120,7 @@ namespace DifficultySettings
 			Map::fileName = "map_normal.txt";
 			Player::missingHealthHealBonus = 0.275f;
 			Player::healthDrainModifier = 1;
-			Player::highHealthDrainPenalty = 1.1f;
+			Player::highHealthDrainPenalty = 2.0f;
 			Player::eatDrainFreezeDuration = 11;
 			Player::maxHealthModifier = -4500;
 			Player::attackHealthCostModifier = 175;
@@ -143,7 +143,7 @@ namespace DifficultySettings
 			Map::fileName = "map_insane.txt";
 			Player::missingHealthHealBonus = 0.2f;
 			Player::healthDrainModifier = 1;
-			Player::highHealthDrainPenalty = 4.5f;
+			Player::highHealthDrainPenalty = 5.0f;
 			Player::eatDrainFreezeDuration = 10;
 			Player::maxHealthModifier = -6000;
 			Player::attackHealthCostModifier = 350;

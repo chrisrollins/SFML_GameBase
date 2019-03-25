@@ -3,11 +3,13 @@
 
 #include "SFML/Audio.hpp"
 #include "FileLoadException.h"
+#include "ResourceManager.h"
 #include <map>
 #include <string>
 
 using std::map;
 using std::string;
+using Engine::ResourceManager;
 
 namespace Music
 {
