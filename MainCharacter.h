@@ -11,6 +11,7 @@
 #include "MageBlast.h"
 #include "AntiMagePotion.h"
 #include "FileLoadException.h"
+#include "SpriteFactory.h"
 #include <ctime>
 #include <vector>
 
@@ -55,10 +56,8 @@ class MainCharacter : public GraphicalGameObject
 	std::vector<sf::Vector2f> spawnPositions;
 	std::string name;
 public:
-	MainCharacter(std::string name) : GraphicalGameObject(sf::Sprite())
+	MainCharacter(std::string name) : GraphicalGameObject(SpriteFactory::generateSprite(Sprite::ID::Zombie))
 	{
-		sf::Texture* texturePtr = ResourceManager<sf::Texture>::GetResource("zombie.png");
-		this->sprite()->setTexture(*texturePtr);
 		this->name = name;
 		this->textureSize = this->sprite()->getTexture()->getSize();
 		this->textureSize.x /= 4;
@@ -152,7 +151,7 @@ public:
 				sf::IntRect size = this->sprite()->getTextureRect();
 				shotOrigin.x += static_cast<float>(size.width / 2);
 				shotOrigin.y += static_cast<float>(size.height / 4);
-				ZombieBlast* blast = new ZombieBlast("blast.png", shotOrigin, sf::Vector2f(static_cast<float>(mousePos.x), static_cast<float>(mousePos.y)), 3.5f, 140);
+				ZombieBlast* blast = new ZombieBlast(Sprite::ID::Blast, shotOrigin, sf::Vector2f(static_cast<float>(mousePos.x), static_cast<float>(mousePos.y)), 3.5f, 140);
 				this->screen->add(blast);
 			}
 			else if (this->potionNum > 0)
@@ -163,7 +162,7 @@ public:
 				sf::IntRect size = this->sprite()->getTextureRect();
 				shotOrigin.x += static_cast<float>(size.width / 2);
 				shotOrigin.y += static_cast<float>(size.height / 4);
-				SuperZombieBlast* blast = new SuperZombieBlast("brain.png", shotOrigin, sf::Vector2f(static_cast<float>(mousePos.x), static_cast<float>(mousePos.y)), 2.25f, 180, 1000, 0.1f, 0.2f);
+				SuperZombieBlast* blast = new SuperZombieBlast(Sprite::ID::Brain, shotOrigin, sf::Vector2f(static_cast<float>(mousePos.x), static_cast<float>(mousePos.y)), 2.25f, 180, 1000, 0.1f, 0.2f);
 				this->screen->add(blast);
 				this->potionNum--;
 			}
@@ -287,7 +286,7 @@ public:
 		}
 
 		float time = this->aliveClock.getElapsedTime().asSeconds();
-		float highHealthDrainPenalty = DifficultySettings::Player::highHealthDrainPenalty + (time * (0.02f + DifficultySettings::Player::highHealthDrainPenalty * 0.01f));
+		float highHealthDrainPenalty = DifficultySettings::Player::highHealthDrainPenalty + (time * (0.01f + DifficultySettings::Player::highHealthDrainPenalty * 0.01f));
 		float healthRatio = static_cast<float>(this->health) / static_cast<float>(this->maxHealth);
 		if (healthRatio > 1.f) { healthRatio = 1.f; }
 		float drainPenaltyModifier = (healthRatio + (healthRatio * healthRatio)) * 0.5f;
@@ -398,10 +397,20 @@ public:
 					soundPlayer.play(SoundEffect::ID::ZombieGroan, 15.f);
 				}
 				else if (this->hurtClock.getElapsedTime().asSeconds() > 0.5) { this->isHurt = false; }
+
+				float time = this->aliveClock.getElapsedTime().asSeconds();
+				float timeAmplifier = 1.f + time * 0.01f;
+				sf::Vector2f myPos = this->sprite()->getPosition();
+				sf::Vector2f blastPos = blast->spritePtr()->getPosition();
+				sf::IntRect blastSize = blast->spritePtr()->getTextureRect();
+				float dx = myPos.x - blastPos.x;
+				float dy = myPos.y - blastPos.y;
+				float distance = sqrt(dx * dx + dy * dy);
+				float proximityMultiplier = 1.5f - distance / 100.f;
 				float repeatDamageDampening = (1.f + 0.01f*(static_cast<float>(blast->getHits())));
 				if (repeatDamageDampening < 0.5f) { repeatDamageDampening = 0.5f; }
-				int baseDmg = 250;
-				int damage = static_cast<int>(static_cast<float>(250 + DifficultySettings::Mage::attackDamageModifier) / repeatDamageDampening);
+				float baseDmg = (300.f + static_cast<float>(DifficultySettings::Mage::attackDamageModifier)) * proximityMultiplier * timeAmplifier;
+				int damage = static_cast<int>((baseDmg) / repeatDamageDampening);
 				int minDmg = 18;
 				if (damage < minDmg && DifficultySettings::currentDifficulty != DifficultySettings::DIFFICULTY::TEST) { damage = minDmg; }
 				this->takeDamage(damage);

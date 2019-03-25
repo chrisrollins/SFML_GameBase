@@ -3,7 +3,9 @@
 
 #include "Screen.h"
 #include "ResourceManager.h"
+#include "SpriteFactory.h"
 #include <string>
+#include <cstdlib>
 #include <ctime>
 #include <map>
 #include <vector>
@@ -17,9 +19,9 @@ template <typename T>
 class RespawnManager : public GameObject
 {
 private:
-	std::map<GameObjectID, T*> characters;
+	map<GameObjectID, T*> characters;
 	size_t max;
-	int respawnSpeed;
+	uint32_t respawnSpeed;
 	int cooldown = 0;
 	sf::Sprite sprite;
 	void EveryFrame(uint64_t frameNumber)
@@ -42,12 +44,7 @@ private:
 		else { this->cooldown--; }
 	}
 public:
-
-	RespawnManager(string imageFile, int max, int respawnSpeed) : max(max), respawnSpeed(respawnSpeed)
-	{
-		sf::Texture* texture = ResourceManager<sf::Texture>::GetResource(imageFile);
-		this->sprite.setTexture(*texture);
-	}
+	RespawnManager(Sprite::ID spriteID, int max, int respawnSpeed) : max(max), respawnSpeed(respawnSpeed), sprite(SpriteFactory::generateSprite(spriteID)) { }
 	
 	void died(T* character)
 	{

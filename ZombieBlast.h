@@ -2,7 +2,7 @@
 #define ZOMBIEBLAST_H
 
 #include "Screen.h"
-#include "ResourceManager.h"
+#include "SpriteFactory.h"
 #include <cmath>
 #include <string>
 
@@ -21,10 +21,8 @@ protected:
 	float growRate;
 	float growth = 1.f;
 public:
-	ZombieBlast(string imageFile, sf::Vector2f pos, sf::Vector2f clickPos, float speed = 1.f, int duration = 100, int damage = 1, float startingSize = 1.f, float growRate = 0.05f) : GraphicalGameObject(sf::Sprite())
+	ZombieBlast(Sprite::ID spriteID, sf::Vector2f pos, sf::Vector2f clickPos, float speed = 1.f, int duration = 100, int damage = 1, float startingSize = 1.f, float growRate = 0.05f) : GraphicalGameObject(SpriteFactory::generateSprite(spriteID))
 	{
-		sf::Texture* texturePtr = ResourceManager<sf::Texture>::GetResource(imageFile);
-		this->spritePtr()->setTexture(*texturePtr);
 		this->ignoreObstacles = true;
 		this->blockingCollision = false;
 		double radians = atan2(D(clickPos.y - pos.y), D(clickPos.x - pos.x));
@@ -64,8 +62,8 @@ class SuperZombieBlast : public ZombieBlast
 private:
 	float rotationRate = -3.f;
 public:
-	SuperZombieBlast(string imageFile, sf::Vector2f pos, sf::Vector2f clickPos, float speed = 1.f, int duration = 100, int damage = 1, float startingSize = 1.f, float growRate = 0.05f)
-		: ZombieBlast(imageFile, pos, clickPos, speed, duration, damage, startingSize, growRate)
+	SuperZombieBlast(Sprite::ID spriteID, sf::Vector2f pos, sf::Vector2f clickPos, float speed = 1.f, int duration = 100, int damage = 1, float startingSize = 1.f, float growRate = 0.05f)
+		: ZombieBlast(spriteID, pos, clickPos, speed, duration, damage, startingSize, growRate)
 	{
 		this->spritePtr()->setColor(sf::Color(255, 255, 255, 150));
 	}

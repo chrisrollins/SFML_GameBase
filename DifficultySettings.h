@@ -35,6 +35,7 @@ namespace DifficultySettings
 		static int healthDrainModifier; //adds to the passive health drain per mage alive
 		static int mageHealthModifier; //adds to the mage's health
 		static float blastSpeedModifier; //multiplies the speed of mage attacks
+		static float blastSpeedAccel; //mage blast increases by this percentage per second
 	}
 
 	namespace Citizen
@@ -77,6 +78,7 @@ namespace DifficultySettings
 		Mage::healthDrainModifier = 0;
 		Mage::mageHealthModifier = 0;
 		Mage::blastSpeedModifier = 0.f;
+		Mage::blastSpeedAccel = 0.01f;
 		Citizen::movementSpeedModifier = 0;
 		Score::multiplierPerSecond = 0.f;
 		Score::baseMultiplier = 0.f;
@@ -107,7 +109,7 @@ namespace DifficultySettings
 			Map::picture = "tileset.png";
 			Map::fileName = "map_easy.txt";
 			Player::missingHealthHealBonus = 0.7f;
-			Player::highHealthDrainPenalty = 1.2f;
+			Player::highHealthDrainPenalty = 1.1f;
 			Player::eatDrainFreezeDuration = 15;
 			Player::potionMakingCitizenRequired = 3;
 			Score::baseMultiplier = 1.0f;
@@ -123,11 +125,12 @@ namespace DifficultySettings
 			Player::highHealthDrainPenalty = 2.0f;
 			Player::eatDrainFreezeDuration = 11;
 			Player::maxHealthModifier = -4500;
-			Player::attackHealthCostModifier = 175;
+			Player::attackHealthCostModifier = 200;
 			Player::potionMakingCitizenRequired = 4;
 			Player::maxPotionNumModifier = -1;
-			Mage::attackDamageModifier = 110;
+			Mage::attackDamageModifier = 170;
 			Mage::blastSpeedModifier = 0.85f;
+			Mage::blastSpeedAccel = 0.01f;
 			Mage::touchDamageModifier = 15;
 			Mage::movementSpeedModifier = 1;
 			Mage::healthDrainModifier = 1;
@@ -141,17 +144,18 @@ namespace DifficultySettings
 		case DIFFICULTY::HARD:
 			Map::picture = "tileset.png";
 			Map::fileName = "map_insane.txt";
-			Player::missingHealthHealBonus = 0.2f;
+			Player::missingHealthHealBonus = 0.21f;
 			Player::healthDrainModifier = 1;
-			Player::highHealthDrainPenalty = 5.0f;
+			Player::highHealthDrainPenalty = 3.9f;
 			Player::eatDrainFreezeDuration = 10;
 			Player::maxHealthModifier = -6000;
 			Player::attackHealthCostModifier = 350;
 			Player::potionMakingCitizenRequired = 5;
 			Player::maxPotionNumModifier = -2;
-			Mage::attackDamageModifier = 250;
-			Mage::blastSpeedModifier = 1.6f;
-			Mage::touchDamageModifier = 50;
+			Mage::attackDamageModifier = 350;
+			Mage::blastSpeedModifier = 1.09f;
+			Mage::blastSpeedAccel = 0.014f;
+			Mage::touchDamageModifier = 45;
 			Mage::movementSpeedModifier = 2;
 			Mage::healthDrainModifier = 1;
 			Mage::mageHealthModifier = 7;

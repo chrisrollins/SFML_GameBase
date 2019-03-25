@@ -2,6 +2,8 @@
 #include "ScoreBoard.h"
 #include "Tutorial.h"
 #include "FileLoadException.h"
+#include "ResourceManager.h"
+#include "SpriteFactory.h"
 #include <functional>
 #include <cstdint>
 
@@ -15,7 +17,7 @@ private:
 	bool decline = false;
 	sf::Text* textPtr() { return dynamic_cast<sf::Text*>(this->graphic); }
 public:
-	PlayerNameEntry() : GraphicalGameObject(sf::Text())
+	PlayerNameEntry() : GraphicalGameObject(sf::Text()), background(SpriteFactory::generateSprite(Sprite::ID::Bloodyhands))
 	{
 		sf::Font* fontPtr = ResourceManager<sf::Font>::GetResource("Lycanthrope.ttf");
 		this->textPtr()->setFont(*fontPtr);
@@ -33,8 +35,6 @@ public:
 			this->textPtr()->setString("Oops, you've entered a secret base\n created by your family, but the \nguardian requires a password:\n");
 		}
 		this->background.setPosition(600.f, 400.f);
-		sf::Texture* texturePtr = ResourceManager<sf::Texture>::GetResource("bloodyhands.png");
-		this->background.setTexture(*texturePtr);
 		for (auto obj : Menu::getCurrentMenu()->getMenuObjects()) { if (obj != this) { obj->disableEvents(); } }
 	}
 
@@ -155,10 +155,8 @@ private:
 	sf::Sprite* spritePtr() { return dynamic_cast<sf::Sprite*>(this->getGraphic()); }
 	std::function<void()> clickFunction;
 public:
-	MenuButton(string imageFile, sf::Vector2f position, std::function<void()> clickFunction) : GraphicalGameObject(sf::Sprite())
+	MenuButton(Sprite::ID spriteID, sf::Vector2f position, std::function<void()> clickFunction) : GraphicalGameObject(SpriteFactory::generateSprite(spriteID))
 	{
-		sf::Texture* texturePtr = ResourceManager<sf::Texture>::GetResource(imageFile);
-		this->spritePtr()->setTexture(*texturePtr);
 		this->spritePtr()->setPosition(position);
 		this->clickFunction = clickFunction;
 	}
@@ -186,7 +184,7 @@ private:
 	sf::Color color;
 	sf::Sprite* spritePtr() { return dynamic_cast<sf::Sprite*>(this->getGraphic()); }
 public:
-	TestModeButton() : MenuButton("guardian.png", { 320.f, 160.f }, [&]()
+	TestModeButton() : MenuButton(Sprite::ID::Guardian, { 320.f, 160.f }, [&]()
 	{
 		if (!this->enabled || !this->activated) { return; }
 		DifficultySettings::setDifficulty(DifficultySettings::DIFFICULTY::TEST);
@@ -253,10 +251,8 @@ class MenuBackground : public GraphicalGameObject
 private:
 	sf::Sprite* spritePtr() { return dynamic_cast<sf::Sprite*>(this->getGraphic()); }
 public:
-	MenuBackground() : GraphicalGameObject(sf::Sprite())
+	MenuBackground() : GraphicalGameObject(SpriteFactory::generateSprite(Sprite::ID::MenuBackground))
 	{
-		sf::Texture* texturePtr = ResourceManager<sf::Texture>::GetResource("menu_background.png");
-		this->spritePtr()->setTexture(*texturePtr);
 		this->spritePtr()->setColor({ 255, 255, 255, 0 });
 	}
 
@@ -273,7 +269,7 @@ public:
 class EasyLevelButton : public MenuButton
 {
 public:
-	EasyLevelButton() : MenuButton("menu_easy.png", { 430.f, 190.f }, [&]()
+	EasyLevelButton() : MenuButton(Sprite::ID::MenuEasy, { 430.f, 190.f }, [&]()
 	{
 		DifficultySettings::setDifficulty(DifficultySettings::DIFFICULTY::EASY);
 		this->screen->addUIObject(new PlayerNameEntry());
@@ -283,7 +279,7 @@ public:
 class NormalLevelButton : public MenuButton
 {
 public:
-	NormalLevelButton() : MenuButton("menu_normal.png", { 390.f, 265.f }, [&]()
+	NormalLevelButton() : MenuButton(Sprite::ID::MenuNormal, { 390.f, 265.f }, [&]()
 	{
 		DifficultySettings::setDifficulty(DifficultySettings::DIFFICULTY::NORMAL);
 		this->screen->addUIObject(new PlayerNameEntry());
@@ -293,7 +289,7 @@ public:
 class HardLevelButton : public MenuButton
 {
 public:
-	HardLevelButton() : MenuButton("menu_insane.png", { 390.f, 360.f }, [&]()
+	HardLevelButton() : MenuButton(Sprite::ID::MenuInsane, { 390.f, 360.f }, [&]()
 	{
 		DifficultySettings::setDifficulty(DifficultySettings::DIFFICULTY::HARD);
 		this->screen->addUIObject(new PlayerNameEntry());
@@ -303,7 +299,7 @@ public:
 class TutorialButton : public MenuButton
 {
 public:
-	TutorialButton() : MenuButton("menu_tutorial.png", { 340.f, 450.f }, [&]()
+	TutorialButton() : MenuButton(Sprite::ID::MenuTutorial, { 340.f, 450.f }, [&]()
 	{
 		Tutorial* tutorial = new Tutorial();
 		this->screen->addUIObject(tutorial);
@@ -313,7 +309,7 @@ public:
 class ScoreboardButton : public MenuButton
 {
 public:
-	ScoreboardButton() : MenuButton("menu_score.png", { 410.f, 540.f }, [&]()
+	ScoreboardButton() : MenuButton(Sprite::ID::MenuScore, { 410.f, 540.f }, [&]()
 	{
 		ScoreBoard* scoreBoard = new ScoreBoard();
 		this->screen->addUIObject(scoreBoard);
@@ -323,7 +319,7 @@ public:
 class QuitButton : public MenuButton
 {
 public:
-	QuitButton() : MenuButton("menu_escape.png", { 390.f, 630.f }, [&]()
+	QuitButton() : MenuButton(Sprite::ID::MenuEscape, { 390.f, 630.f }, [&]()
 	{
 		musicPlayer.stop();
 		this->screen->close();

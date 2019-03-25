@@ -4,6 +4,7 @@
 #include "Screen.h"
 #include "ZombieBlast.h"
 #include "FileLoadException.h"
+#include "SpriteFactory.h"
 
 using namespace Engine;
 
@@ -16,29 +17,34 @@ class MageBlast : public GraphicalGameObject
 {
 private:
 	sf::Vector2f movePerFrame;
+	sf::Vector2f baseSpeed;
 	int life;
 	int hitsAgainstPlayer = 0;
+	float rotationRate;
 public:
-	MageBlast(const sf::Vector2f& pos, const sf::Vector2f& destination, double speed, int duration) : GraphicalGameObject(sf::Sprite())
+	MageBlast(const sf::Vector2f& pos, const sf::Vector2f& destination, double speed, int duration) : GraphicalGameObject(SpriteFactory::generateSprite(Sprite::ID::Mageblast))
 	{
 		this->ignoreObstacles = true;
 		this->blockingCollision = false;
-		sf::Texture* blastTexture = ResourceManager<sf::Texture>::GetResource("mageblast.png");
-		this->spritePtr()->setTexture(*blastTexture);
 		this->spritePtr()->setPosition(pos);
 		sf::Vector2u size = this->spritePtr()->getTexture()->getSize();
 		this->spritePtr()->setOrigin(static_cast<float>(size.x) / 2.f, static_cast<float>(size.y) / 2.f);
 		double radians = atan2(static_cast<double>(destination.y - pos.y), static_cast<double>(destination.x - pos.x));
-		this->movePerFrame = { static_cast<float>(speed * cos(radians)), static_cast<float>(speed * sin(radians)) };
+		this->baseSpeed = { static_cast<float>(speed * cos(radians)), static_cast<float>(speed * sin(radians)) };
+		this->movePerFrame = this->baseSpeed;
 		this->life = duration;
+		srand(static_cast<unsigned int>(this->getID()));
+		this->rotationRate = (rand() % 2 == 0) ? 3.5f : -3.5f;
 	}
 
 	void EveryFrame(uint64_t f)
 	{
 		sf::Sprite* spr = this->spritePtr();
 		spr->move(this->movePerFrame);
-		spr->rotate(3.f);
+		spr->rotate(this->rotationRate);
 		spr->setScale(cos(static_cast<float>(this->life)), sin(static_cast<float>(this->life)));
+		this->movePerFrame.x += DifficultySettings::Mage::blastSpeedAccel * this->baseSpeed.x;
+		this->movePerFrame.y += DifficultySettings::Mage::blastSpeedAccel * this->baseSpeed.y;
 		this->life--;
 		if (this->life <= 20)
 		{

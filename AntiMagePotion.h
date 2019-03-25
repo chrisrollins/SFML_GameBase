@@ -5,6 +5,7 @@
 #include "DifficultySettings.h"
 #include "Score.h"
 #include "ResourceManager.h"
+#include "SpriteFactory.h"
 #include <vector>
 #include <ctime>
 
@@ -21,10 +22,8 @@ private:
 	sf::Vector2u imageCount;
 	sf::Vector2u currentImage;
 public:
-	AntiMagePotion() : GraphicalGameObject(sf::Sprite())
+	AntiMagePotion() : GraphicalGameObject(SpriteFactory::generateSprite(Sprite::ID::AnimatedPotion))
 	{
-		sf::Texture* texturePtr = ResourceManager<sf::Texture>::GetResource("animated_potion.png");
-		this->spritePtr()->setTexture(*texturePtr);
 		this->textureSize = this->spritePtr()->getTexture()->getSize();
 		this->textureSize.x /= 8U;
 		this->imageCount.x = 0U;

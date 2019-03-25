@@ -2,14 +2,12 @@
 #include "ScoreBoard.h"
 #include "FileLoadException.h"
 #include "ResourceManager.h"
+#include "SpriteFactory.h"
 
-GameOver::GameOver(int finalScore, DifficultySettings::DIFFICULTY difficulty) : GraphicalGameObject(sf::Sprite()), finalScore(finalScore), difficulty(difficulty)
+GameOver::GameOver(int finalScore, DifficultySettings::DIFFICULTY difficulty) : GraphicalGameObject(SpriteFactory::generateSprite(Sprite::ID::Gameover)), finalScore(finalScore), difficulty(difficulty)
 {
-	sf::Texture* gameOverTexture = ResourceManager<sf::Texture>::GetResource("gameover.png");
-	sf::Texture* backButtonTexture = ResourceManager<sf::Texture>::GetResource("gameover_back.png");
-	this->spritePtr()->setTexture(*gameOverTexture);
 	this->spritePtr()->setColor({ 255, 255, 255, 0 });
-	this->backSprite.setTexture(*backButtonTexture);
+	this->backSprite = SpriteFactory::generateSprite(Sprite::ID::GameoverBack);
 	this->backSprite.setColor({ 255, 255, 255, 255 });
 }
 

@@ -5,6 +5,7 @@
 #include "Screen.h"
 #include "Menu.h"
 #include "FileLoadException.h"
+#include "SpriteFactory.h"
 
 using namespace Engine;
 
@@ -20,17 +21,14 @@ private:
 	bool resetClock = false;
 	bool showStory = true;
 public:
-	Tutorial() : GraphicalGameObject(sf::Sprite())
+	Tutorial()
+		: GraphicalGameObject(sf::Sprite()),
+		story(SpriteFactory::generateSprite(Sprite::ID::Story)),
+		tutorial(SpriteFactory::generateSprite(Sprite::ID::Tutorial)),
+		bookButton(SpriteFactory::generateSprite(Sprite::ID::BookButton)),
+		xButton(SpriteFactory::generateSprite(Sprite::ID::XButton))
 	{
-		sf::Texture* storyTexture = ResourceManager<sf::Texture>::GetResource("story.png");
-		sf::Texture* tutorialTexture = ResourceManager<sf::Texture>::GetResource("tutorial.png");
-		sf::Texture* bookButtonTexture = ResourceManager<sf::Texture>::GetResource("book_button.png");
-		sf::Texture* xButtonTexture = ResourceManager<sf::Texture>::GetResource("x_button.png");
-		this->story.setTexture(*storyTexture);
-		this->tutorial.setTexture(*tutorialTexture);
-		this->bookButton.setTexture(*bookButtonTexture);
 		this->bookButton.setPosition(Screen::windowWidth - 280.f, Screen::windowHeight - 260.f);
-		this->xButton.setTexture(*xButtonTexture);
 		this->xButton.setPosition(Screen::windowWidth - 55.f, 15.f);
 		for (auto obj : Menu::getCurrentMenu()->getMenuObjects()) { if (obj != this) { obj->disableEvents(); } }
 	}

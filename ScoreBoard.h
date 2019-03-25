@@ -4,6 +4,8 @@
 #include "Menu.h"
 #include "FileLoadException.h"
 #include "DifficultySettings.h"
+#include "ResourceManager.h"
+#include "SpriteFactory.h"
 #include "GameObject.h"
 #include "Screen.h"
 #include <iostream>
@@ -171,19 +173,18 @@ namespace Engine
 			column->setString(stream.str());
 		}
 	public:
-		ScoreBoard() : GraphicalGameObject(sf::RectangleShape()), easyFileName("easyScores.dat"), normalFileName("normalScores.dat"), hardFileName("hardScores.dat")
+		ScoreBoard()
+			: GraphicalGameObject(sf::RectangleShape()),
+			easyFileName("easyScores.dat"),
+			normalFileName("normalScores.dat"),
+			hardFileName("hardScores.dat"),
+			xButton(SpriteFactory::generateSprite(Sprite::ID::XButton)),
+			background(SpriteFactory::generateSprite(Sprite::ID::Scoreboard)),
+			ezButton(SpriteFactory::generateSprite(Sprite::ID::EasyButton)),
+			normalButton(SpriteFactory::generateSprite(Sprite::ID::NormalButton)),
+			insaneButton(SpriteFactory::generateSprite(Sprite::ID::InsaneButton))
 		{
-			sf::Texture* xButtonTexture = ResourceManager<sf::Texture>::GetResource("x_button.png");
-			sf::Texture* backgroundTexture = ResourceManager<sf::Texture>::GetResource("scoreboard.png");
-			sf::Texture* ezButtonTexture = ResourceManager<sf::Texture>::GetResource("easy_button.png");
-			sf::Texture* normalButtonTexture = ResourceManager<sf::Texture>::GetResource("normal_button.png");
-			sf::Texture* insaneButtonTexture = ResourceManager<sf::Texture>::GetResource("insane_button.png");
 			sf::Font* fontPtr = ResourceManager<sf::Font>::GetResource("harting.ttf");
-			this->xButton.setTexture(*xButtonTexture);
-			this->background.setTexture(*backgroundTexture);
-			this->ezButton.setTexture(*ezButtonTexture);
-			this->normalButton.setTexture(*normalButtonTexture);
-			this->insaneButton.setTexture(*insaneButtonTexture);
 			this->easyScores.loadFromDataFile(this->easyFileName);
 			this->normalScores.loadFromDataFile(this->normalFileName);
 			this->hardScores.loadFromDataFile(this->hardFileName);
