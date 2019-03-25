@@ -7,6 +7,7 @@
 #include "MageBlast.h"
 #include "DifficultySettings.h"
 #include "Score.h"
+#include "SoundPlayer.h"
 #include <unordered_set>
 
 using namespace Engine;
@@ -255,7 +256,7 @@ public:
 				numMagesAlive--;
 				DifficultySettings::Score::cumulativeBonusMultiplierCurrent = fmin(DifficultySettings::Score::cumulativeBonusMultiplierMax, DifficultySettings::Score::cumulativeBonusMultiplierCurrent + DifficultySettings::Score::cumulativeBonusMultiplier);
 				(*scorePtr) += DifficultySettings::Score::applyMultipliers(20);
-				soundPlayer.play(SoundEffect::ID::MageDeath, 30.f);
+				SoundPlayer::play(SoundEffect::ID::MageDeath, 30.f);
 				this->screen->remove(this->healthBar);
 			}
 		}

@@ -71,8 +71,5 @@ namespace Engine
 		GameObject* mainCharacter = nullptr;
 		TileMap* map = nullptr;
 	};
-
-	static MusicPlayer musicPlayer;
-	static SoundPlayer soundPlayer;
 }
 #endif

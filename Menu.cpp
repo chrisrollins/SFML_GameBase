@@ -72,9 +72,7 @@ public:
 					music = Music::ID::TestMode;
 					break;
 				}
-				musicPlayer.stop();
-				musicPlayer.play(music);
-				musicPlayer.setVolume(20.f);
+				MusicPlayer::play(music);
 				this->screen->remove(this);
 				Menu::getCurrentMenu()->startTestLevel(this->name);
 			}
@@ -87,9 +85,7 @@ public:
 			{
 				;
 			} while (this->clock.getElapsedTime().asSeconds() < 1.5f);
-			musicPlayer.stop();
-			musicPlayer.play(music);
-			musicPlayer.setVolume(20.f);
+			MusicPlayer::play(music);
 			this->screen->remove(this);
 			Menu::getCurrentMenu()->startTestLevel(this->name);
 		}
@@ -166,7 +162,7 @@ public:
 		if (e.mouseButton.button == sf::Mouse::Button::Left
 			&& this->spritePtr()->getGlobalBounds().contains(static_cast<float>(e.mouseButton.x), static_cast<float>(e.mouseButton.y)))
 		{
-			soundPlayer.play(SoundEffect::ID::MenuClick, 20.f);
+			SoundPlayer::play(SoundEffect::ID::MenuClick, 20.f);
 			this->clickFunction();
 		}
 	}
@@ -230,7 +226,7 @@ public:
 			&& this->spritePtr()->getGlobalBounds().contains(static_cast<float>(e.mouseButton.x), static_cast<float>(e.mouseButton.y)))
 		{
 			DifficultySettings::setDifficulty(DifficultySettings::DIFFICULTY::TEST);
-			soundPlayer.play(SoundEffect::ID::MenuClick, 20.f);
+			SoundPlayer::play(SoundEffect::ID::MenuClick, 20.f);
 			this->screen->addUIObject(new PlayerNameEntry());
 		}
 	}
@@ -321,7 +317,7 @@ class QuitButton : public MenuButton
 public:
 	QuitButton() : MenuButton(Sprite::ID::MenuEscape, { 390.f, 630.f }, [&]()
 	{
-		musicPlayer.stop();
+		MusicPlayer::stop();
 		this->screen->close();
 	}) {}
 };
@@ -378,8 +374,8 @@ namespace Engine
 	{
 		currentMenu = this;
 		Loader* loader = new Loader(showLoadingBar, {
-			[]() { musicPlayer.play(Music::ID::Menu); },
-			[]() { soundPlayer.preloadSounds(); },
+			[]() { MusicPlayer::play(Music::ID::Menu); },
+			[]() { SoundPlayer::preloadSounds(); },
 			[&]() { this->menuObjects.push_back(new MenuBackground()); },
 			[&]() { this->menuObjects.push_back(new EasyLevelButton()); },
 			[&]() { this->menuObjects.push_back(new NormalLevelButton()); },

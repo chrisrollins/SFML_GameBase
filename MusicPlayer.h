@@ -6,9 +6,11 @@
 #include "ResourceManager.h"
 #include <map>
 #include <string>
+#include <functional>
 
 using std::map;
 using std::string;
+using std::function;
 using Engine::ResourceManager;
 
 namespace Music
@@ -36,46 +38,33 @@ public:
 class MusicPlayer : private sf::NonCopyable
 {
 private:
-	sf::Music* currentMusic = nullptr;
-	std::map<Music::ID, std::string> mFilenames;
-	float mVolume;
-public:
-	MusicPlayer() : currentMusic(), mFilenames(), mVolume(100.f)
+
+	static map<Music::ID, std::string>& getMusicIDMap()
 	{
-		this->mFilenames[Music::ID::Menu] = "theme_menu.ogg";
-		this->mFilenames[Music::ID::TestMode] = "theme_test.ogg";
-		this->mFilenames[Music::ID::EasyGame] = "theme_easy.ogg";
-		this->mFilenames[Music::ID::NormalGame] = "theme_normal.ogg";
-		this->mFilenames[Music::ID::HardGame] = "theme_hard.ogg";
-		this->mFilenames[Music::ID::GameOver] = "theme_gameover.ogg";
+		static map<Music::ID, std::string> musicIDMap;
+		return musicIDMap;
 	}
 
-	void play(Music::ID theme)
+	static void InitializeIDMap()
 	{
-		this->stop();
-		std::string filename = this->mFilenames[theme];
-		MusicWrapper* wrapper = ResourceManager<MusicWrapper>::GetResource(filename);
-		this->currentMusic = &wrapper->music;
-		wrapper->music.setVolume(mVolume);
-		wrapper->music.setLoop(true);
-		wrapper->music.play();
+		static bool initialized = false;
+		if (initialized) { return; }
+		map<Music::ID, std::string>& musicIDMap = getMusicIDMap();
+		musicIDMap[Music::ID::Menu] = "theme_menu.ogg";
+		musicIDMap[Music::ID::TestMode] = "theme_test.ogg";
+		musicIDMap[Music::ID::EasyGame] = "theme_easy.ogg";
+		musicIDMap[Music::ID::NormalGame] = "theme_normal.ogg";
+		musicIDMap[Music::ID::HardGame] = "theme_hard.ogg";
+		musicIDMap[Music::ID::GameOver] = "theme_gameover.ogg";
+		initialized = true;
 	}
 
-	void stop()
-	{
-		if (this->currentMusic) { this->currentMusic->stop(); }
-	}
-
-	void setPaused(bool paused)
-	{
-		if (paused) { this->currentMusic->pause(); }
-		else { this->currentMusic->play(); }
-	}
-
-	void setVolume(float volume)
-	{
-		this->currentMusic->setVolume(volume);
-	}
+public:	
+	static void play(string musicFileName, float volume = 20.f);
+	static void play(Music::ID theme, float volume = 20.f);
+	static void stop();	
+	static void setPaused(bool paused);
+	static void setVolume(float volume);
 };
 
 #endif

@@ -2,6 +2,7 @@
 #define HEALTHBAR_H
 
 #include "MainCharacter.h"
+#include "SoundPlayer.h"
 
 class HealthBar : public GraphicalGameObject
 {
@@ -52,7 +53,7 @@ public:
 				{
 					this->isAlarming = true;
 					this->alarmClock.restart();
-					soundPlayer.play(SoundEffect::ID::Alarm, 20.f);
+					SoundPlayer::play(SoundEffect::ID::Alarm, 20.f);
 				}
 				else if (this->alarmClock.getElapsedTime().asSeconds() > 3.5) { this->isAlarming = false; }
 			}

@@ -12,6 +12,8 @@
 #include "AntiMagePotion.h"
 #include "FileLoadException.h"
 #include "SpriteFactory.h"
+#include "SoundPlayer.h"
+#include "MusicPlayer.h"
 #include <ctime>
 #include <vector>
 
@@ -144,7 +146,7 @@ public:
 		{
 			if (e.mouseButton.button == sf::Mouse::Left)
 			{
-				soundPlayer.play(SoundEffect::ID::ZombieAttack, 40.f);
+				SoundPlayer::play(SoundEffect::ID::ZombieAttack, 40.f);
 				if (this->health > 0.2 * this->maxHealth) { this->changeHealth(-1 * this->attackHealthCost); } //health cost of ranged attack only applies if health is above 20%
 				sf::Vector2i mousePos = this->screen->getMousePosition();
 				sf::Vector2f shotOrigin = this->sprite()->getPosition();
@@ -156,7 +158,7 @@ public:
 			}
 			else if (this->potionNum > 0)
 			{
-				soundPlayer.play(SoundEffect::ID::ZombieAttack, 40.f);
+				SoundPlayer::play(SoundEffect::ID::ZombieAttack, 40.f);
 				sf::Vector2i mousePos = this->screen->getMousePosition();
 				sf::Vector2f shotOrigin = this->sprite()->getPosition();
 				sf::IntRect size = this->sprite()->getTextureRect();
@@ -181,7 +183,7 @@ public:
 			{
 				this->inTrap = true;
 				this->trapClock.restart();
-				soundPlayer.play(SoundEffect::ID::Trap, 20.f);
+				SoundPlayer::play(SoundEffect::ID::Trap, 20.f);
 			}
 			this->speed = 1;
 		}
@@ -251,7 +253,7 @@ public:
 			{
 				this->totalAliveTime = this->aliveClock.getElapsedTime().asSeconds();
 				this->startDeath = true;
-				soundPlayer.play(SoundEffect::ID::ZombieDeath, 60.f);
+				SoundPlayer::play(SoundEffect::ID::ZombieDeath, 60.f);
 			}
 			this->imageCount.x = this->deathCount;
 			if (f % 50 == 0 && !this->isDead)
@@ -259,9 +261,7 @@ public:
 				this->deathCount++;
 				if (deathCount == 2)
 				{
-					musicPlayer.stop();
-					musicPlayer.play(Music::ID::GameOver);
-					musicPlayer.setVolume(20.f);
+					MusicPlayer::play(Music::ID::GameOver);
 				}
 			}
 			if (this->direction == DIRECTION::DOWN || this->sKeyHeld) { this->imageCount.y = 4; }
@@ -394,7 +394,7 @@ public:
 				{
 					this->isHurt = true;
 					this->hurtClock.restart();
-					soundPlayer.play(SoundEffect::ID::ZombieGroan, 15.f);
+					SoundPlayer::play(SoundEffect::ID::ZombieGroan, 15.f);
 				}
 				else if (this->hurtClock.getElapsedTime().asSeconds() > 0.5) { this->isHurt = false; }
 
@@ -422,7 +422,7 @@ public:
 				{
 					this->isHurt = true;
 					this->hurtClock.restart();
-					soundPlayer.play(SoundEffect::ID::ZombieGroan, 10.f);
+					SoundPlayer::play(SoundEffect::ID::ZombieGroan, 10.f);
 				}
 				else if (this->hurtClock.getElapsedTime().asSeconds() > 0.5) { this->isHurt = false; }
 				if (!mage->isAlive()) { return; }
@@ -436,13 +436,13 @@ public:
 				switch (randSound)
 				{
 				case 0:
-					soundPlayer.play(SoundEffect::ID::ZombieEat1, 80.f);
+					SoundPlayer::play(SoundEffect::ID::ZombieEat1, 80.f);
 					break;
 				case 1:
-					soundPlayer.play(SoundEffect::ID::ZombieEat2, 80.f);
+					SoundPlayer::play(SoundEffect::ID::ZombieEat2, 80.f);
 					break;
 				case 2:
-					soundPlayer.play(SoundEffect::ID::ZombieEat3, 50.f);
+					SoundPlayer::play(SoundEffect::ID::ZombieEat3, 50.f);
 					break;
 				default:
 					break;
@@ -455,16 +455,16 @@ public:
 					switch (rand() % 4)
 					{
 					case 0:
-						soundPlayer.play(SoundEffect::ID::ZombieBurp1, 70.f);
+						SoundPlayer::play(SoundEffect::ID::ZombieBurp1, 70.f);
 						break;
 					case 1:
-						soundPlayer.play(SoundEffect::ID::ZombieBurp2, 70.f);
+						SoundPlayer::play(SoundEffect::ID::ZombieBurp2, 70.f);
 						break;
 					case 2:
-						soundPlayer.play(SoundEffect::ID::ZombieBurp3, 50.f);
+						SoundPlayer::play(SoundEffect::ID::ZombieBurp3, 50.f);
 						break;
 					case 3:
-						soundPlayer.play(SoundEffect::ID::ZombieBurp4, 50.f);
+						SoundPlayer::play(SoundEffect::ID::ZombieBurp4, 50.f);
 						break;
 					}
 					this->spawnPositions = this->screen->getMap()->getSafeSpawnPositions();
@@ -484,7 +484,7 @@ public:
 			}
 			else if (AntiMagePotion* potion = dynamic_cast<AntiMagePotion*>(&other))
 			{
-				soundPlayer.play(SoundEffect::ID::Potion, 40.f);
+				SoundPlayer::play(SoundEffect::ID::Potion, 40.f);
 				this->addPotionNum();
 				this->changeHealth(this->eatHeal / 2);
 				this->eatDrainFreezeCountdown = DifficultySettings::Player::eatDrainFreezeDuration * 3;
