@@ -141,18 +141,18 @@ namespace Engine
 				RUN_EVERYFRAME(currentScreen->uiObjects);
 #undef RUN_EVERYFRAME
 
-				sf::Event event;
-				while (window.pollEvent(event))
+				sf::Event ev;
+				while (window.pollEvent(ev))
 				{
-					if (event.type == sf::Event::Closed || !running)
+					if (ev.type == sf::Event::Closed || !running)
 					{
 						window.close();
 						return;
 					}
-					else if (event.type == sf::Event::Resized)
+					else if (ev.type == sf::Event::Resized)
 					{
 						// update the view to the new size of the window
-						sf::FloatRect visibleArea(0.f, 0.f, static_cast<float>(event.size.width), static_cast<float>(event.size.height));
+						sf::FloatRect visibleArea(0.f, 0.f, static_cast<float>(ev.size.width), static_cast<float>(ev.size.height));
 						view = sf::View(visibleArea);
 					}
 					//handle events on each object
@@ -160,7 +160,7 @@ namespace Engine
 #define HANDLE_EVENTS(forMap) for (auto const& pair : forMap)\
 					{\
 						GameObject* obj = pair.second;\
-						if (!obj->eventsDisabled) { obj->dispatchEvent(event); }\
+						if (!obj->eventsDisabled) { obj->dispatchEvent(ev); }\
 					}
 					HANDLE_EVENTS(currentScreen->objects);
 					HANDLE_EVENTS(currentScreen->gObjects);
@@ -370,6 +370,7 @@ namespace Engine
 					GameObjectID id = toRemove->getID();
 					#define REMOVE(fromMap) if (fromMap.find(id) != fromMap.end())\
 					{\
+						toRemove->RemovedFromScreen();\
 						fromMap.erase(id);\
 						if (autoDelete) { delete toRemove; }\
 					}

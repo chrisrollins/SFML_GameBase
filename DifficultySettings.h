@@ -108,7 +108,7 @@ namespace DifficultySettings
 		case DIFFICULTY::EASY:
 			Map::picture = "tileset.png";
 			Map::fileName = "map_easy.txt";
-			Player::missingHealthHealBonus = 0.7f;
+			Player::missingHealthHealBonus = 0.75f;
 			Player::highHealthDrainPenalty = 1.1f;
 			Player::eatDrainFreezeDuration = 15;
 			Player::potionMakingCitizenRequired = 3;
@@ -120,9 +120,9 @@ namespace DifficultySettings
 		case DIFFICULTY::NORMAL:
 			Map::picture = "tileset.png";
 			Map::fileName = "map_normal.txt";
-			Player::missingHealthHealBonus = 0.275f;
+			Player::missingHealthHealBonus = 0.35f;
 			Player::healthDrainModifier = 1;
-			Player::highHealthDrainPenalty = 2.0f;
+			Player::highHealthDrainPenalty = 2.1f;
 			Player::eatDrainFreezeDuration = 11;
 			Player::maxHealthModifier = -4500;
 			Player::attackHealthCostModifier = 200;
@@ -144,7 +144,7 @@ namespace DifficultySettings
 		case DIFFICULTY::HARD:
 			Map::picture = "tileset.png";
 			Map::fileName = "map_insane.txt";
-			Player::missingHealthHealBonus = 0.21f;
+			Player::missingHealthHealBonus = 0.25f;
 			Player::healthDrainModifier = 1;
 			Player::highHealthDrainPenalty = 3.9f;
 			Player::eatDrainFreezeDuration = 10;
@@ -160,7 +160,7 @@ namespace DifficultySettings
 			Mage::healthDrainModifier = 1;
 			Mage::mageHealthModifier = 7;
 			Citizen::movementSpeedModifier = 1;
-			Score::baseMultiplier = 2.6f;
+			Score::baseMultiplier = 2.75f;
 			Score::cumulativeBonusMultiplier = 0.02f;
 			Score::cumulativeBonusMultiplierMax = 10.f;
 			Score::multiplierPerSecond = 0.006f;

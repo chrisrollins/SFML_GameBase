@@ -46,7 +46,7 @@ class MainCharacter : public GraphicalGameObject
 	int healthDrain = 15;
 	int additionalDrainPerMage = 1;
 	int numCitizenEated = 0;
-	int eatHeal = 7000;
+	int eatHeal = 7500;
 	int eatDrainFreezeCountdown = 0;
 	int attackHealthCost = 250;
 	int baseSpeed = 3;
@@ -408,11 +408,9 @@ public:
 				float distance = sqrt(dx * dx + dy * dy);
 				float proximityMultiplier = 1.5f - distance / 100.f;
 				float repeatDamageDampening = (1.f + 0.01f*(static_cast<float>(blast->getHits())));
-				if (repeatDamageDampening < 0.5f) { repeatDamageDampening = 0.5f; }
-				float baseDmg = (300.f + static_cast<float>(DifficultySettings::Mage::attackDamageModifier)) * proximityMultiplier * timeAmplifier;
+				if (repeatDamageDampening > 3.0f) { repeatDamageDampening = 3.0f; }
+				float baseDmg = (275.f + static_cast<float>(DifficultySettings::Mage::attackDamageModifier)) * proximityMultiplier * timeAmplifier;
 				int damage = static_cast<int>((baseDmg) / repeatDamageDampening);
-				int minDmg = 18;
-				if (damage < minDmg && DifficultySettings::currentDifficulty != DifficultySettings::DIFFICULTY::TEST) { damage = minDmg; }
 				this->takeDamage(damage);
 				blast->hitPlayer();
 			}
