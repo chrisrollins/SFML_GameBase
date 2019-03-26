@@ -465,11 +465,11 @@ namespace Engine
 			if (frameCount % avgFrameReportFrequency == 0)
 			{	
 				DebugManager::MessageType msgType = DebugManager::MessageType::PERFORMANCE_REPORTING;
-				DebugManager::PrintMessage(msgType, "\naverage event compute time: " + (eventDurationSum / avgFrameReportFrequency));
-				DebugManager::PrintMessage(msgType, "average collision compute time: " + (collisionDurationSum / avgFrameReportFrequency));
-				DebugManager::PrintMessage(msgType, "average draw compute time: " + (drawDurationSum / avgFrameReportFrequency));
-				DebugManager::PrintMessage(msgType, "average total compute time: " + (frameDurationSum / avgFrameReportFrequency));
-				DebugManager::PrintMessage(msgType, "max total before slowdown: " + (1000000 / currentFPS));
+				DebugManager::PrintMessage(msgType, string("\naverage event compute time: ") + std::to_string(eventDurationSum / avgFrameReportFrequency));
+				DebugManager::PrintMessage(msgType, string("average collision compute time: ") + std::to_string(collisionDurationSum / avgFrameReportFrequency));
+				DebugManager::PrintMessage(msgType, string("average draw compute time: ") + std::to_string(drawDurationSum / avgFrameReportFrequency));
+				DebugManager::PrintMessage(msgType, string("average total compute time: ") + std::to_string(frameDurationSum / avgFrameReportFrequency));
+				DebugManager::PrintMessage(msgType, string("max total before slowdown: ") + std::to_string(1000000 / currentFPS));
 				frameDurationSum = 0;
 				eventDurationSum = 0;
 				collisionDurationSum = 0;

@@ -28,14 +28,14 @@ namespace Engine
 			auto iter = resourceCache.find(filename);
 			if (iter != resourceCache.end())
 			{
-				DebugManager::PrintMessage(DebugManager::MessageType::RESOURCE_REPORTING, "Resource \"" + filename + "\" found in cache.");
+				DebugManager::PrintMessage(DebugManager::MessageType::RESOURCE_REPORTING, string("Resource \"") + filename + string("\" found in cache."));
 				return (*iter).second;
 			}
-			else { DebugManager::PrintMessage(DebugManager::MessageType::RESOURCE_REPORTING, "Resource \"" + filename + "\" not found in cache. Loading from file."); }
+			else { DebugManager::PrintMessage(DebugManager::MessageType::RESOURCE_REPORTING, string("Resource \"") + filename + string("\" not found in cache. Loading from file.")); }
 			T* resourcePtr = new T();
 			if (!resourcePtr->loadFromFile(filename)) { throw GameException::DataFileLoadException(filename); }
 			resourceCache[filename] = resourcePtr;
-			DebugManager::PrintMessage(DebugManager::MessageType::RESOURCE_REPORTING, "Resource \"" + filename + "\" loaded successfully.");
+			DebugManager::PrintMessage(DebugManager::MessageType::RESOURCE_REPORTING, string("Resource \"") + filename + string("\" loaded successfully."));
 			return resourcePtr;
 		}
 
