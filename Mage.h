@@ -43,7 +43,8 @@ public:
 
 	void setCurrHealth(int health)
 	{
-		this->rectPtr()->setSize({ 37.f * health / this->maxHealth, 5.f });
+		if (health < 0) { health = 0; }
+		this->rectPtr()->setSize({ 37.f * (static_cast<float>(health) / static_cast<float>(this->maxHealth)), 5.f });
 	}
 };
 
