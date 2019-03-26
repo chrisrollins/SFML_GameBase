@@ -46,6 +46,7 @@ namespace Engine
 		void enableEvents() { this->eventsDisabled = false; }
 	private:
 		GameObject(GameObjectID id);
+		void dispatchEvent(sf::Event);
 	protected:
 		friend class Screen;
 		GameObjectID id;

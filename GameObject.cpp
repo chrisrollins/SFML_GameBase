@@ -193,4 +193,79 @@ namespace Engine
 	{
 
 	}
+
+	void GameObject::dispatchEvent(sf::Event event)
+	{
+		switch (event.type)
+		{
+		case sf::Event::Resized:
+			this->Resized(event);
+			break;
+		case sf::Event::LostFocus:
+			this->LostFocus(event);
+			break;
+		case sf::Event::GainedFocus:
+			this->GainedFocus(event);
+			break;
+		case sf::Event::TextEntered:
+			this->TextEntered(event);
+			break;
+		case sf::Event::KeyPressed:
+			this->KeyPressed(event);
+			break;
+		case sf::Event::KeyReleased:
+			this->KeyReleased(event);
+			break;
+		case sf::Event::MouseWheelMoved:
+			this->MouseWheelMoved(event);
+			break;
+		case sf::Event::MouseWheelScrolled:
+			this->MouseWheelScrolled(event);
+			break;
+		case sf::Event::MouseButtonPressed:
+			this->MouseButtonPressed(event);
+			break;
+		case sf::Event::MouseButtonReleased:
+			this->MouseButtonReleased(event);
+			break;
+		case sf::Event::MouseMoved:
+			this->MouseMoved(event);
+			break;
+		case sf::Event::MouseEntered:
+			this->MouseEntered(event);
+			break;
+		case sf::Event::MouseLeft:
+			this->MouseLeft(event);
+			break;
+		case sf::Event::JoystickButtonPressed:
+			this->JoystickButtonPressed(event);
+			break;
+		case sf::Event::JoystickButtonReleased:
+			this->JoystickButtonReleased(event);
+			break;
+		case sf::Event::JoystickMoved:
+			this->JoystickMoved(event);
+			break;
+		case sf::Event::JoystickConnected:
+			this->JoystickConnected(event);
+			break;
+		case sf::Event::JoystickDisconnected:
+			this->JoystickDisconnected(event);
+			break;
+		case sf::Event::TouchBegan:
+			this->TouchBegan(event);
+			break;
+		case sf::Event::TouchMoved:
+			this->TouchMoved(event);
+			break;
+		case sf::Event::TouchEnded:
+			this->TouchEnded(event);
+			break;
+		case sf::Event::SensorChanged:
+			this->SensorChanged(event);
+			break;
+		default:
+			break;
+		}
+	}
 }

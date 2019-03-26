@@ -60,8 +60,8 @@ namespace Engine
 		{
 			static_assert(std::is_base_of<GameObject, T>::value, "Argument of Screen::add must inherit from GameObject");
 			if (gameObject == nullptr) { return; }
-			GameObjectMap& map = (dynamic_cast<GraphicalGameObject*>(gameObject)) ? this->gObjects : this->objects;
-			map[gameObject->getID()] = gameObject;
+			if(GraphicalGameObject* ggo = dynamic_cast<GraphicalGameObject*>(gameObject)) { this->gObjects[ggo->getID()] = ggo; }
+			else { this->objects[gameObject->getID()] = gameObject; }
 			gameObject->screen = this;
 			gameObject->AddedToScreen();
 		}
@@ -69,10 +69,12 @@ namespace Engine
 		template<typename T> void addUIObject(T* uiObj)
 		{
 			static_assert(std::is_base_of<GameObject, T>::value, "Argument of Screen::addUIObject must inherit from GameObject");
-			if (uiObj == nullptr) { return; }
-			this->uiObjects[uiObj->getID()] = uiObj;
-			uiObj->screen = this;
-			uiObj->AddedToScreen();
+			if (GraphicalGameObject* ggo = dynamic_cast<GraphicalGameObject*>(uiObj))
+			{
+				this->uiObjects[ggo->getID()] = ggo;
+				ggo->screen = this;
+				ggo->AddedToScreen();
+			}
 		}
 
 		void remove(GameObject* gameObject, bool autoDelete = true);
@@ -86,10 +88,9 @@ namespace Engine
 		unsigned static int windowHeight;
 		static const char* windowTitle;
 	private:
-		typedef map<GameObjectID, GameObject*> GameObjectMap;
-		GameObjectMap objects;
-		GameObjectMap gObjects; //GraphicalGameObjects go here so during rendering it doesn't have to check the other ones
-		GameObjectMap uiObjects; //UI objects have an absolute position on the screen so they follow the view. they have no collision either.
+		map<GameObjectID, GameObject*> objects;
+		map<GameObjectID, GraphicalGameObject*> gObjects; //GraphicalGameObjects go here so during rendering it doesn't have to check the other ones
+		map<GameObjectID, GraphicalGameObject*> uiObjects; //UI objects have an absolute position on the screen so they follow the view. they have no collision either.
 		GameObject* mainCharacter = nullptr;
 		TileMap* tMap = nullptr;
 	};
