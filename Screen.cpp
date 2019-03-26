@@ -2,6 +2,7 @@
 #include "Screen.h"
 #include "GameObject.h"
 #include "FileLoadException.h"
+#include "DebugManager.h"
 #include <utility>
 #include <functional>
 
@@ -11,9 +12,6 @@ static bool renderStarted = false;
 static int currentFPS;
 static sf::RenderWindow* windowPtr = nullptr;
 static std::queue<std::pair<GameObject*, bool>> removeQueue;
-#ifdef _DEBUG
-static sf::Int64 frameDurationSum;
-#endif
 
 namespace Engine
 {
@@ -25,9 +23,7 @@ namespace Engine
 	static Screen* pendingSwitch;
 	bool running = true;
 	bool windowInitialized = false;
-
-	void addEvents(GameObject* gameObject);
-
+	
 	Screen::Screen() {}
 
 	void Screen::addMap(TileMap* map)
@@ -115,11 +111,24 @@ namespace Engine
 		currentScreen = this;
 		renderStarted = true;
 
+#ifdef _DEBUG
+		sf::Clock eventClock;
+		sf::Clock collisionClock;
+		sf::Clock drawClock;
+		sf::Int64 eventDurationSum = 0;
+		sf::Int64 collisionDurationSum = 0;
+		sf::Int64 drawDurationSum = 0;
+		sf::Int64 frameDurationSum = 0;
+#endif
+
 		while (window.isOpen() && !pendingSwitch)
 		{
 			try
 			{
 				clock.restart();
+#ifdef _DEBUG
+				eventClock.restart();
+#endif
 
 				//run the EveryFrame event on all objects
 				for (auto map : { &currentScreen->objects, &currentScreen->gObjects, &currentScreen->uiObjects })
@@ -226,6 +235,35 @@ namespace Engine
 						}
 					}
 				}
+#ifdef _DEBUG
+				eventDurationSum += eventClock.getElapsedTime().asMicroseconds();
+				collisionClock.restart();
+#endif
+				//trigger collision events				
+				for (auto const& p1 : currentScreen->gObjects)
+				{
+					GraphicalGameObject* eventReciever = dynamic_cast<GraphicalGameObject*>(p1.second);
+					if (eventReciever->eventsDisabled) { continue; }
+					sf::Sprite* receiverSprite = dynamic_cast<sf::Sprite*>(eventReciever->getGraphic());
+					if (!receiverSprite) { continue; }
+					for (auto const& p2 : currentScreen->gObjects)
+					{
+						GraphicalGameObject* eventArg = dynamic_cast<GraphicalGameObject*>(p2.second);
+						if (eventArg == eventReciever || !eventArg->triggerCollisionEvents || !eventReciever->triggerCollisionEvents) { continue; }
+						sf::Sprite* argSprite = dynamic_cast<sf::Sprite*>(eventArg->getGraphic());
+						if (!argSprite) { continue; }
+						sf::FloatRect r1 = receiverSprite->getGlobalBounds();
+						sf::FloatRect r2 = argSprite->getGlobalBounds();
+						if (r1.intersects(r2))
+						{
+							eventReciever->Collision(*eventArg);
+						}
+					}
+				}
+#ifdef _DEBUG
+				collisionDurationSum += collisionClock.getElapsedTime().asMicroseconds();
+				drawClock.restart();
+#endif
 
 				window.clear();
 
@@ -320,28 +358,9 @@ namespace Engine
 					transformable->setPosition(screenPosition);
 				}
 
-				//trigger collision events				
-				for (auto const& p1 : currentScreen->gObjects)
-				{
-					GraphicalGameObject* eventReciever = dynamic_cast<GraphicalGameObject*>(p1.second);
-					if (eventReciever->eventsDisabled) { continue; }
-					sf::Sprite* receiverSprite = dynamic_cast<sf::Sprite*>(eventReciever->getGraphic());
-					if (!receiverSprite) { continue; }
-					for (auto const& p2 : currentScreen->gObjects)
-					{
-						GraphicalGameObject* eventArg = dynamic_cast<GraphicalGameObject*>(p2.second);
-						if (eventArg == eventReciever || !eventArg->triggerCollisionEvents || !eventReciever->triggerCollisionEvents) { continue; }
-						sf::Sprite* argSprite = dynamic_cast<sf::Sprite*>(eventArg->getGraphic());
-						if (!argSprite) { continue; }
-						sf::FloatRect r1 = receiverSprite->getGlobalBounds();
-						sf::FloatRect r2 = argSprite->getGlobalBounds();
-						if (r1.intersects(r2))
-						{
-							eventReciever->Collision(*eventArg);
-						}
-					}
-				}
-
+#ifdef _DEBUG
+				drawDurationSum += drawClock.getElapsedTime().asMicroseconds();
+#endif				
 				//view moves with character
 				if (GraphicalGameObject* mainCharGraphical = dynamic_cast<GraphicalGameObject*>(mainCharacter))
 				{
@@ -434,7 +453,7 @@ namespace Engine
 			catch (...)
 			{
 #ifdef _DEBUG
-				std::cout << "DEBUG: Unknown error." << std::endl;
+				DebugManager::PrintMessage(DebugManager::MessageType::ERROR_REPORTING, "Unknown error.");
 #endif
 				window.close();
 			}
@@ -444,9 +463,17 @@ namespace Engine
 			frameDurationSum += clock.getElapsedTime().asMicroseconds();
 			int avgFrameReportFrequency = 60;
 			if (frameCount % avgFrameReportFrequency == 0)
-			{
-				std::cout << "average frame compute time (microseconds): " << (frameDurationSum / avgFrameReportFrequency) << " (max " << (1000000 / currentFPS) << " before slowdown)" << std::endl;
+			{	
+				DebugManager::MessageType msgType = DebugManager::MessageType::PERFORMANCE_REPORTING;
+				DebugManager::PrintMessage(msgType, "\naverage event compute time: " + (eventDurationSum / avgFrameReportFrequency));
+				DebugManager::PrintMessage(msgType, "average collision compute time: " + (collisionDurationSum / avgFrameReportFrequency));
+				DebugManager::PrintMessage(msgType, "average draw compute time: " + (drawDurationSum / avgFrameReportFrequency));
+				DebugManager::PrintMessage(msgType, "average total compute time: " + (frameDurationSum / avgFrameReportFrequency));
+				DebugManager::PrintMessage(msgType, "max total before slowdown: " + (1000000 / currentFPS));
 				frameDurationSum = 0;
+				eventDurationSum = 0;
+				collisionDurationSum = 0;
+				drawDurationSum = 0;
 			}
 #endif
 			while (clock.getElapsedTime().asMicroseconds() < (1000000 / currentFPS)) {}

@@ -8,6 +8,7 @@
 #include "SFML/Graphics.hpp"
 #include "SFML/Audio.hpp"
 #include "FileLoadException.h"
+#include "DebugManager.h"
 
 using std::string;
 using std::unordered_map;
@@ -27,23 +28,14 @@ namespace Engine
 			auto iter = resourceCache.find(filename);
 			if (iter != resourceCache.end())
 			{
-#ifdef _DEBUG
-				cout << "Resource \"" << filename << "\" found in cache." << endl;
-#endif
+				DebugManager::PrintMessage(DebugManager::MessageType::RESOURCE_REPORTING, "Resource \"" + filename + "\" found in cache.");
 				return (*iter).second;
 			}
-			else
-			{
-#ifdef _DEBUG
-				cout << "Resource \"" << filename << "\" not found in cache. Loading from file." << endl;
-#endif
-			}
+			else { DebugManager::PrintMessage(DebugManager::MessageType::RESOURCE_REPORTING, "Resource \"" + filename + "\" not found in cache. Loading from file."); }
 			T* resourcePtr = new T();
 			if (!resourcePtr->loadFromFile(filename)) { throw GameException::DataFileLoadException(filename); }
 			resourceCache[filename] = resourcePtr;
-#ifdef _DEBUG
-			cout << "Resource \"" << filename << "\" loaded successfully." << endl;
-#endif
+			DebugManager::PrintMessage(DebugManager::MessageType::RESOURCE_REPORTING, "Resource \"" + filename + "\" loaded successfully.");
 			return resourcePtr;
 		}
 
