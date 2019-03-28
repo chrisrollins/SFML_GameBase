@@ -11,8 +11,10 @@ using namespace Engine;
 
 int main(int argc, char** argv)
 {
+	#ifndef _DEBUG
 	#ifdef _MSC_VER
 	FreeConsole();
+	#endif
 	#endif
 
 	for (int i = 0; i < argc; i++)
