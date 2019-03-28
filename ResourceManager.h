@@ -33,7 +33,7 @@ namespace Engine
 			}
 			else { DebugManager::PrintMessage(DebugManager::MessageType::RESOURCE_REPORTING, string("Resource \"") + filename + string("\" not found in cache. Loading from file.")); }
 			T* resourcePtr = new T();
-			if (!resourcePtr->loadFromFile(filename)) { throw GameException::DataFileLoadException(filename); }
+			if (!resourcePtr->loadFromFile(string("data/") + filename)) { throw GameException::DataFileLoadException(filename); }
 			resourceCache[filename] = resourcePtr;
 			DebugManager::PrintMessage(DebugManager::MessageType::RESOURCE_REPORTING, string("Resource \"") + filename + string("\" loaded successfully."));
 			return resourcePtr;

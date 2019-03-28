@@ -121,17 +121,18 @@ namespace Engine
 		sf::Int64 frameDurationSum = 0;
 		#endif
 		
+		//GAME LOOP
 		while (window.isOpen() && !pendingSwitch)
 		{
 			try
 			{
 				clock.restart();
-#ifdef _DEBUG
+				#ifdef _DEBUG
 				eventClock.restart();
-#endif
+				#endif
 
 				//run the EveryFrame event on all objects
-#define RUN_EVERYFRAME(forMap) for (auto const& pair : forMap)\
+				#define RUN_EVERYFRAME(forMap) for (auto const& pair : forMap)\
 				{\
 					GameObject* obj = pair.second;\
 					if (!obj->eventsDisabled) { obj->EveryFrame(frameCount); }\
@@ -139,7 +140,7 @@ namespace Engine
 				RUN_EVERYFRAME(currentScreen->objects);
 				RUN_EVERYFRAME(currentScreen->gObjects);
 				RUN_EVERYFRAME(currentScreen->uiObjects);
-#undef RUN_EVERYFRAME
+				#undef RUN_EVERYFRAME
 
 				sf::Event ev;
 				while (window.pollEvent(ev))
@@ -157,7 +158,7 @@ namespace Engine
 					}
 					//handle events on each object
 
-#define HANDLE_EVENTS(forMap) for (auto const& pair : forMap)\
+					#define HANDLE_EVENTS(forMap) for (auto const& pair : forMap)\
 					{\
 						GameObject* obj = pair.second;\
 						if (!obj->eventsDisabled) { obj->dispatchEvent(ev); }\
@@ -165,13 +166,13 @@ namespace Engine
 					HANDLE_EVENTS(currentScreen->objects);
 					HANDLE_EVENTS(currentScreen->gObjects);
 					HANDLE_EVENTS(currentScreen->uiObjects);
-#undef HANDLE_EVENTS
+					#undef HANDLE_EVENTS
 				}
 
-#ifdef _DEBUG
+				#ifdef _DEBUG
 				eventDurationSum += eventClock.getElapsedTime().asMicroseconds();
 				collisionClock.restart();
-#endif
+				#endif
 
 				const GraphicalGameObject* mainCharacterGraphical = dynamic_cast<const GraphicalGameObject*>(mainCharacter);
 				const sf::Sprite* mainCharacterSprite = (mainCharacterGraphical != nullptr) ? dynamic_cast<const sf::Sprite*>(mainCharacterGraphical->graphic) : nullptr;
@@ -267,10 +268,10 @@ namespace Engine
 					#undef Y
 				}
 
-#ifdef _DEBUG
+				#ifdef _DEBUG
 				collisionDurationSum += collisionClock.getElapsedTime().asMicroseconds();
 				drawClock.restart();
-#endif
+				#endif
 
 				window.clear();
 
@@ -353,9 +354,9 @@ namespace Engine
 						view.setCenter(fWidth - halfWidth, y);
 					}
 				}
-#ifdef _DEBUG
+				#ifdef _DEBUG
 				drawDurationSum += drawClock.getElapsedTime().asMicroseconds();
-#endif
+				#endif
 
 				window.setView(view);
 				window.display();
@@ -414,7 +415,7 @@ namespace Engine
 			}
 			#endif
 			while (clock.getElapsedTime().asMicroseconds() < (1000000 / currentFPS)) {}
-		}
+		} //END OF GAME LOOP
 
 		if (pendingSwitch)
 		{
