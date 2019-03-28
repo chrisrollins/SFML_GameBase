@@ -90,7 +90,7 @@ namespace DifficultySettings
 		{
 		case DIFFICULTY::TEST:
 			Map::picture = "tileset.png";
-			Map::fileName = "map_easy.txt";
+			Map::fileName = "data/map_easy.txt";
 			Player::missingHealthHealBonus = 0.6f;
 			Player::healthDrainModifier = -100000;
 			Player::maxHealthModifier = 100000;
@@ -107,7 +107,7 @@ namespace DifficultySettings
 			break;
 		case DIFFICULTY::EASY:
 			Map::picture = "tileset.png";
-			Map::fileName = "map_easy.txt";
+			Map::fileName = "data/map_easy.txt";
 			Player::missingHealthHealBonus = 0.75f;
 			Player::highHealthDrainPenalty = 1.1f;
 			Player::eatDrainFreezeDuration = 15;
@@ -119,7 +119,7 @@ namespace DifficultySettings
 			break;
 		case DIFFICULTY::NORMAL:
 			Map::picture = "tileset.png";
-			Map::fileName = "map_normal.txt";
+			Map::fileName = "data/map_normal.txt";
 			Player::missingHealthHealBonus = 0.35f;
 			Player::healthDrainModifier = 1;
 			Player::highHealthDrainPenalty = 2.1f;
@@ -143,7 +143,7 @@ namespace DifficultySettings
 			break;
 		case DIFFICULTY::HARD:
 			Map::picture = "tileset.png";
-			Map::fileName = "map_insane.txt";
+			Map::fileName = "data/map_insane.txt";
 			Player::missingHealthHealBonus = 0.25f;
 			Player::healthDrainModifier = 1;
 			Player::highHealthDrainPenalty = 3.9f;

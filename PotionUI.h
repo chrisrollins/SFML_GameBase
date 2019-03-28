@@ -3,6 +3,7 @@
 
 #include "GameObject.h"
 #include "MainCharacter.h"
+#include "ResourceManager.h"
 #include <string>
 
 using namespace Engine;
@@ -11,15 +12,14 @@ class PotionUI : public GraphicalGameObject
 {
 private:
 	MainCharacter* character = nullptr;
-	sf::Font font;
 	sf::Text text;
 	sf::Sprite* spritePtr() { return dynamic_cast<sf::Sprite*>(this->getGraphic()); }
 public:
 	PotionUI(sf::Sprite s) : GraphicalGameObject(s)
 	{
 		this->spritePtr()->setPosition(50.f, 70.f);
-		this->font.loadFromFile("zombie.ttf");
-		this->text.setFont(font);
+		sf::Font* font = ResourceManager<sf::Font>::GetResource("zombie.ttf");
+		this->text.setFont(*font);
 		this->text.setStyle(sf::Text::Bold);
 		this->text.setLetterSpacing(3.f);
 		this->text.setOutlineColor({ 163, 19, 88 });

@@ -175,9 +175,9 @@ namespace Engine
 	public:
 		ScoreBoard()
 			: GraphicalGameObject(sf::RectangleShape()),
-			easyFileName("easyScores.dat"),
-			normalFileName("normalScores.dat"),
-			hardFileName("hardScores.dat"),
+			easyFileName("data/easyScores.dat"),
+			normalFileName("data/normalScores.dat"),
+			hardFileName("data/hardScores.dat"),
 			xButton(SpriteFactory::generateSprite(Sprite::ID::XButton)),
 			background(SpriteFactory::generateSprite(Sprite::ID::Scoreboard)),
 			ezButton(SpriteFactory::generateSprite(Sprite::ID::EasyButton)),
