@@ -11,14 +11,14 @@ using namespace Engine;
 
 template<typename T> class RespawnManager;
 
-class Citizen : public GraphicalGameObject
+class Citizen : StandardEnemy
 {
 private:
 	friend class RespawnManager<Citizen>;
-	bool wKeyHeld = false;
-	bool aKeyHeld = false;
-	bool sKeyHeld = false;
-	bool dKeyHeld = false;
+	bool movingUp = false;
+	bool movingLeft = false;
+	bool movingDown = false;
+	bool movingRight = false;
 	sf::Vector2u textureSize;
 	sf::Vector2u imageCount;
 	sf::Vector2u currentImage;
@@ -29,7 +29,9 @@ public:
 		this->respawnManager = respawnManager;
 	}
 
-	Citizen(sf::Sprite s) : GraphicalGameObject(s)
+	Citizen(sf::Sprite s) :
+		GraphicalGameObject(s),
+		Health(1)
 	{
 		this->textureSize = this->spritePtr()->getTexture()->getSize();
 		this->textureSize.x /= 3;
@@ -38,28 +40,28 @@ public:
 		switch (rand() % 4)
 		{
 		case 0:
-			this->wKeyHeld = true;
-			this->aKeyHeld = false;
-			this->sKeyHeld = false;
-			this->dKeyHeld = false;
+			this->movingUp = true;
+			this->movingLeft = false;
+			this->movingDown = false;
+			this->movingRight = false;
 			break;
 		case 1:
-			this->aKeyHeld = true;
-			this->wKeyHeld = false;
-			this->sKeyHeld = false;
-			this->dKeyHeld = false;
+			this->movingLeft = true;
+			this->movingUp = false;
+			this->movingDown = false;
+			this->movingRight = false;
 			break;
 		case 2:
-			this->sKeyHeld = true;
-			this->aKeyHeld = false;
-			this->wKeyHeld = false;
-			this->dKeyHeld = false;
+			this->movingDown = true;
+			this->movingLeft = false;
+			this->movingUp = false;
+			this->movingRight = false;
 			break;
 		case 3:
-			this->dKeyHeld = true;
-			this->aKeyHeld = false;
-			this->sKeyHeld = false;
-			this->wKeyHeld = false;
+			this->movingRight = true;
+			this->movingLeft = false;
+			this->movingDown = false;
+			this->movingUp = false;
 			break;
 		default:
 			break;
@@ -73,53 +75,54 @@ public:
 			switch (rand() % 4)
 			{
 			case 0:
-				this->wKeyHeld = true;
-				this->aKeyHeld = false;
-				this->sKeyHeld = false;
-				this->dKeyHeld = false;
+				this->movingUp = true;
+				this->movingLeft = false;
+				this->movingDown = false;
+				this->movingRight = false;
 				break;
 			case 1:
-				this->aKeyHeld = true;
-				this->wKeyHeld = false;
-				this->sKeyHeld = false;
-				this->dKeyHeld = false;
+				this->movingLeft = true;
+				this->movingUp = false;
+				this->movingDown = false;
+				this->movingRight = false;
 				break;
 			case 2:
-				this->sKeyHeld = true;
-				this->aKeyHeld = false;
-				this->wKeyHeld = false;
-				this->dKeyHeld = false;
+				this->movingDown = true;
+				this->movingLeft = false;
+				this->movingUp = false;
+				this->movingRight = false;
 				break;
 			case 3:
-				this->dKeyHeld = true;
-				this->aKeyHeld = false;
-				this->sKeyHeld = false;
-				this->wKeyHeld = false;
+				this->movingRight = true;
+				this->movingLeft = false;
+				this->movingDown = false;
+				this->movingUp = false;
 				break;
 			default:
 				break;
 			}
 		}
 
-		if (this->wKeyHeld)
+		float speed = 0.3f + DifficultySettings::Citizen::movementSpeedModifier;
+		if (this->movingUp)
 		{
 			this->imageCount.y = 3;
-			this->spritePtr()->move(0, -0.5);
+			this->move(Degrees(270.f), speed);
 		}
-		if (this->aKeyHeld)
+		else if (this->movingLeft)
 		{
 			this->imageCount.y = 1;
-			this->spritePtr()->move(-0.5, 0);
+			this->move(Degrees(180.f), speed);
 		}
-		if (this->sKeyHeld)
+		else if (this->movingDown)
 		{
 			this->imageCount.y = 0;
-			this->spritePtr()->move(0, 0.5);
+			this->move(Degrees(90.f), speed);
 		}
-		if (this->dKeyHeld)
+		else if (this->movingRight)
 		{
 			this->imageCount.y = 2;
-			this->spritePtr()->move(0.5, 0);
+			this->move(Degrees(0.f), speed);
 		}
 
 		if (f % 20 == 0)
@@ -132,9 +135,9 @@ public:
 			this->imageCount.y * this->textureSize.y, this->textureSize.x, this->textureSize.y));
 	}
 
-	void Collision(GraphicalGameObject& other)
+	void Collided(Collision* other)
 	{
-		if (dynamic_cast<ZombieBlast*>(&other))
+		if (dynamic_cast<ZombieBlast*>(other))
 		{
 			(*scorePtr) += DifficultySettings::Score::applyMultipliers(1);
 			this->die();

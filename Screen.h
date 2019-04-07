@@ -2,6 +2,7 @@
 #define SCREEN_H
 
 #include "GameObject.h"
+#include "GameObjectAttribute.h"
 #include "TileMap.h"
 #include "MusicPlayer.h"
 #include "SoundPlayer.h"
@@ -11,9 +12,9 @@
 #include <vector>
 #include <utility>
 
-using std::map;
 using std::function;
 using std::vector;
+using std::unordered_map;
 using std::map;
 
 namespace Engine
@@ -54,44 +55,28 @@ namespace Engine
 		Screen();
 		~Screen();
 		void addMap(TileMap* map);
-		void addMainCharacter(GameObject* mainCharacter);
-
-		template<typename T> void add(T* gameObject)
-		{
-			static_assert(std::is_base_of<GameObject, T>::value, "Argument of Screen::add must inherit from GameObject");
-			if (gameObject == nullptr) { return; }
-			if(GraphicalGameObject* ggo = dynamic_cast<GraphicalGameObject*>(gameObject)) { this->gObjects[ggo->getID()] = ggo; }
-			else { this->objects[gameObject->getID()] = gameObject; }
-			gameObject->screen = this;
-			gameObject->AddedToScreen();
-		}
-
-		template<typename T> void addUIObject(T* uiObj)
-		{
-			static_assert(std::is_base_of<GameObject, T>::value, "Argument of Screen::addUIObject must inherit from GameObject");
-			if (GraphicalGameObject* ggo = dynamic_cast<GraphicalGameObject*>(uiObj))
-			{
-				this->uiObjects[ggo->getID()] = ggo;
-				ggo->screen = this;
-				ggo->AddedToScreen();
-			}
-		}
-
+		void addMainCharacter(GraphicalGameObject* mainCharacter);
+		void add(GameObject* gameObject);
+		void addUIObject(GameObject* uiObj);
+		bool find(GameObject* gameObject);
 		void remove(GameObject* gameObject, bool autoDelete = true);
 		void schedule(function<void()> func, TimeUnit::Time delay, uint16_t repeatCount = 1);
-		void render(int fps = 60);
+		void render();
 		void close();
 		sf::Vector2i getMousePosition() const;
-		GameObject* getMainCharacter() const;
+		GraphicalGameObject* getMainCharacter() const;
 		const TileMap* getMap() const;
 		unsigned static int windowWidth;
 		unsigned static int windowHeight;
 		static const char* windowTitle;
 	private:
-		map<GameObjectID, GameObject*> objects;
-		map<GameObjectID, GraphicalGameObject*> gObjects; //GraphicalGameObjects go here so during rendering it doesn't have to check the other ones
-		map<GameObjectID, GraphicalGameObject*> uiObjects; //UI objects have an absolute position on the screen so they follow the view. they have no collision either.
-		GameObject* mainCharacter = nullptr;
+		unordered_map<GameObjectID, GameObject*> allObjects;
+		unordered_map<GameObjectID, GraphicalGameObject*> renderObjects;
+		unordered_map<GameObjectID, GraphicalGameObject*> uiObjects;
+		unordered_map<GameObjectID, GameObjectAttribute::Collision*> collisionObjects;
+		unordered_map<GameObjectID, GameObjectAttribute::Movement*> movingObjectsWithTerrainCollision;
+		unordered_map<GameObjectID, GameObjectAttribute::Movement*> movingObjects;
+		GraphicalGameObject* mainCharacter = nullptr;
 		TileMap* tMap = nullptr;
 	};
 }

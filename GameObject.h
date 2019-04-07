@@ -44,6 +44,7 @@ namespace Engine
 		GameObjectID getID() { return this->id; }
 		void disableEvents() { this->eventsDisabled = true; }
 		void enableEvents() { this->eventsDisabled = false; }
+		Screen* getScreenPtr() const { return this->screen; }
 	private:
 		GameObject(GameObjectID id);
 		void dispatchEvent(sf::Event);
@@ -66,14 +67,14 @@ namespace Engine
 		GraphicalGameObject(sf::VertexArray);
 		GraphicalGameObject(sf::VertexBuffer);
 		virtual void draw(sf::RenderWindow& win);
-		virtual void Collision(GraphicalGameObject& otherObject);
+		//virtual void Collision(GraphicalGameObject& otherObject);
 		virtual ~GraphicalGameObject();
 		sf::Drawable* getGraphic();
-		bool triggerCollisionEvents = true;
-		bool blockingCollision = true;
-		bool ignoreObstacles = false;
-		sf::FloatRect obstacleCollisionSize;
-		sf::FloatRect objectCollisionSize;
+		//bool triggerCollisionEvents = true;
+		//bool blockingCollision = true;
+		//bool ignoreObstacles = false;
+		//sf::FloatRect obstacleCollisionSize;
+		//sf::FloatRect objectCollisionSize;
 	protected:
 		sf::Drawable* graphic;
 	private:

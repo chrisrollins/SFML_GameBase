@@ -27,8 +27,6 @@ public:
 		sf::RectangleShape* rect = this->rectPtr();
 		rect->setFillColor({ 50, 255, 50, 140 });
 		rect->setSize({ 37.f, 5.f });
-		this->blockingCollision = false;
-		this->ignoreObstacles = true;
 	}
 
 	void setPosition(sf::Vector2f pos)
@@ -48,17 +46,17 @@ public:
 	}
 };
 
-class Mage : public GraphicalGameObject
+class Mage : StandardEnemy
 {
 private:
 	friend class RespawnManager<Mage>;
-	bool wKeyHeld = false;
-	bool aKeyHeld = false;
-	bool sKeyHeld = false;
-	bool dKeyHeld = false;
-	bool alive = true;
+	bool movingUp = false;
+	bool movingLeft = false;
+	bool movingDown = false;
+	bool movingRight = false;
+	//bool alive = true;
 	int deathCount = 0;
-	int health = 3 + DifficultySettings::Mage::mageHealthModifier;
+	//int health = 3 + DifficultySettings::Mage::mageHealthModifier;
 	std::unordered_set<GameObjectID> blastsHitBy;
 	bool isShooting = false;;
 	uint64_t internalClock = 0;
@@ -78,32 +76,34 @@ public:
 		this->respawnManager = respawnManager;
 	}
 
-	Mage(sf::Sprite s) : GraphicalGameObject(s)
+	Mage(sf::Sprite s) :
+		GraphicalGameObject(s),
+		Health(3 + DifficultySettings::Mage::mageHealthModifier)
 	{
 		this->textureSize = this->spritePtr()->getTexture()->getSize();
 		this->textureSize.x /= 4;
 		this->textureSize.y /= 12;
 		this->imageCount.x = 0;
 
-		this->wKeyHeld = false;
-		this->aKeyHeld = false;
-		this->sKeyHeld = false;
-		this->dKeyHeld = false;
+		this->movingUp = false;
+		this->movingLeft = false;
+		this->movingDown = false;
+		this->movingRight = false;
 
 		srand(static_cast<unsigned int>(time(0) * this->getID()));
 		switch (rand() % 4)
 		{
 		case 0:
-			this->wKeyHeld = true;
+			this->movingUp = true;
 			break;
 		case 1:
-			this->aKeyHeld = true;
+			this->movingLeft = true;
 			break;
 		case 2:
-			this->sKeyHeld = true;
+			this->movingDown = true;
 			break;
 		case 3:
-			this->dKeyHeld = true;
+			this->movingRight = true;
 			break;
 		default:
 			break;
@@ -115,11 +115,11 @@ public:
 	void AddedToScreen()
 	{
 		this->healthBar = new MageHealthBar();
-		healthBar->setMaxHealth(this->health);
+		healthBar->setMaxHealth(this->getHealth());
 		sf::Vector2f pos = this->spritePtr()->getPosition();
 		pos.y -= 10.f;
 		pos.x += 5.f;
-		this->healthBar->setCurrHealth(this->health);
+		this->healthBar->setCurrHealth(this->getHealth());
 		this->healthBar->setPosition(pos);
 		this->screen->add(this->healthBar);
 	}
@@ -128,7 +128,7 @@ public:
 	{
 		this->internalClock++;
 		srand(static_cast<unsigned int>(time(0) * this->getID()));
-		if (this->alive)
+		if (this->isAlive())
 		{
 			sf::Vector2f healthBarPos = this->spritePtr()->getPosition();
 			healthBarPos.y -= 10.f;
@@ -143,28 +143,29 @@ public:
 				DIRECTION xDirection = (playerPosition.x > myPosition.x) ? DIRECTION::RIGHT : DIRECTION::LEFT;
 				DIRECTION yDirection = (playerPosition.y > myPosition.y) ? DIRECTION::DOWN : DIRECTION::UP;
 
-				this->wKeyHeld = false;
-				this->aKeyHeld = false;
-				this->sKeyHeld = false;
-				this->dKeyHeld = false;
+				this->movingUp = false;
+				this->movingLeft = false;
+				this->movingDown = false;
+				this->movingRight = false;
 
 				int choice = rand() % 2;
 				if (choice == 0)
 				{
-					if (xDirection == DIRECTION::RIGHT) { this->dKeyHeld = true; }
-					else { this->aKeyHeld = true; }
+					if (xDirection == DIRECTION::RIGHT) { this->movingRight = true; }
+					else { this->movingLeft = true; }
 				}
 				else
 				{
-					if (yDirection == DIRECTION::DOWN) { this->sKeyHeld = true; }
-					else { this->wKeyHeld = true; }
+					if (yDirection == DIRECTION::DOWN) { this->movingDown = true; }
+					else { this->movingUp = true; }
 				}
 			}
 
-			if (this->wKeyHeld)
+			float speed = 0.5f + DifficultySettings::Mage::movementSpeedModifier;
+			if (this->movingUp)
 			{
 				if (!this->isShooting) { this->imageCount.y = 3; }
-				this->spritePtr()->move(0, -0.5);
+				this->move(Degrees(270.f), speed);
 				if (this->internalClock % 100 == 0 && !this->isShooting)
 				{
 					this->imageCount.y = 7;
@@ -172,11 +173,10 @@ public:
 					this->bulletCooldown = 0;
 				}
 			}
-
-			if (this->aKeyHeld)
+			else if (this->movingLeft)
 			{
 				if (!this->isShooting) { this->imageCount.y = 1; }
-				this->spritePtr()->move(-0.5, 0);
+				this->move(Degrees(180.f), speed);
 				if (this->internalClock % 100 == 0 && !this->isShooting)
 				{
 					this->imageCount.y = 5;
@@ -184,11 +184,10 @@ public:
 					this->bulletCooldown = 0;
 				}
 			}
-
-			if (this->sKeyHeld)
+			else if (this->movingDown)
 			{
 				if (!this->isShooting) { this->imageCount.y = 0; }
-				this->spritePtr()->move(0, 0.5);
+				this->move(Degrees(90.f), speed);
 				if (this->internalClock % 100 == 0 && !this->isShooting)
 				{
 					this->imageCount.y = 4;
@@ -196,11 +195,10 @@ public:
 					this->bulletCooldown = 0;
 				}
 			}
-
-			if (this->dKeyHeld)
+			else if (this->movingRight)
 			{
 				if (!this->isShooting) { this->imageCount.y = 2; }
-				this->spritePtr()->move(0.5, 0);
+				this->move(Degrees(0.f), speed);
 				if (this->internalClock % 100 == 0 && !this->isShooting)
 				{
 					this->imageCount.y = 6;
@@ -229,10 +227,10 @@ public:
 		}
 		else
 		{
-			if (this->wKeyHeld) { this->imageCount.y = 11; }
-			if (this->aKeyHeld) { this->imageCount.y = 9; }
-			if (this->sKeyHeld) { this->imageCount.y = 8; }
-			if (this->dKeyHeld) { this->imageCount.y = 10; }
+			if (this->movingUp) { this->imageCount.y = 11; }
+			if (this->movingLeft) { this->imageCount.y = 9; }
+			if (this->movingDown) { this->imageCount.y = 8; }
+			if (this->movingRight) { this->imageCount.y = 10; }
 			this->imageCount.x = this->deathCount;
 			if (this->internalClock % 30 == 0) { this->deathCount++; }
 			if (this->deathCount == 3) { this->screen->remove(this); }
@@ -241,36 +239,28 @@ public:
 			this->imageCount.y * this->textureSize.y, this->textureSize.x, this->textureSize.y));
 	}
 
-	void Collision(GraphicalGameObject& other)
+	void Collided(Collision* other)
 	{
-		if (this->alive)
+		if (this->isAlive())
 		{
-			if (ZombieBlast* blast = dynamic_cast<ZombieBlast*>(&other))
+			if (ZombieBlast* blast = dynamic_cast<ZombieBlast*>(other))
 			{
 				if (this->blastsHitBy.find(blast->getID()) != this->blastsHitBy.end()) { return; }
 				this->blastsHitBy.insert(blast->getID());
-				this->health -= blast->getDamage();
-				this->healthBar->setCurrHealth(this->health);
-				if (this->health > 0) { return; }
-				if (this->respawnManager) { this->respawnManager->died(this); }
-				this->alive = false;
-				numMagesAlive--;
-				DifficultySettings::Score::cumulativeBonusMultiplierCurrent = fmin(DifficultySettings::Score::cumulativeBonusMultiplierMax, DifficultySettings::Score::cumulativeBonusMultiplierCurrent + DifficultySettings::Score::cumulativeBonusMultiplier);
-				(*scorePtr) += DifficultySettings::Score::applyMultipliers(20);
-				SoundPlayer::play(SoundEffect::ID::MageDeath, 30.f);
-				this->screen->remove(this->healthBar);
+				this->damage(blast->getDamage());
+				this->healthBar->setCurrHealth(this->getHealth());
 			}
 		}
 	}
 
-	bool isAlive() const
+	void Death()
 	{
-		return this->alive;
-	}
-
-	int getHealth() const
-	{
-		return this->health;
+		DifficultySettings::Score::cumulativeBonusMultiplierCurrent = fmin(DifficultySettings::Score::cumulativeBonusMultiplierMax, DifficultySettings::Score::cumulativeBonusMultiplierCurrent + DifficultySettings::Score::cumulativeBonusMultiplier);
+		(*scorePtr) += DifficultySettings::Score::applyMultipliers(20);
+		SoundPlayer::play(SoundEffect::ID::MageDeath, 30.f);
+		this->screen->remove(this->healthBar);
+		numMagesAlive--;
+		if (this->respawnManager) { this->respawnManager->died(this); }
 	}
 };
 

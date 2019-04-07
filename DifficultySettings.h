@@ -31,7 +31,7 @@ namespace DifficultySettings
 	{
 		static int attackDamageModifier; //adds to the damage per frame of the mage's attack
 		static int touchDamageModifier; //adds to the damage per frame of the mage's melee damage
-		static int movementSpeedModifier; //unimplemented
+		static float movementSpeedModifier; //increases mage movement speed
 		static int healthDrainModifier; //adds to the passive health drain per mage alive
 		static int mageHealthModifier; //adds to the mage's health
 		static float blastSpeedModifier; //multiplies the speed of mage attacks
@@ -40,7 +40,7 @@ namespace DifficultySettings
 
 	namespace Citizen
 	{
-		static int movementSpeedModifier; //unimplemented
+		static float movementSpeedModifier;
 	}
 
 	namespace Score
@@ -74,12 +74,12 @@ namespace DifficultySettings
 		Player::potionMakingCitizenRequired = 0;
 		Mage::attackDamageModifier = 0;
 		Mage::touchDamageModifier = 0;
-		Mage::movementSpeedModifier = 0;
+		Mage::movementSpeedModifier = 0.f;
 		Mage::healthDrainModifier = 0;
 		Mage::mageHealthModifier = 0;
 		Mage::blastSpeedModifier = 0.f;
 		Mage::blastSpeedAccel = 0.01f;
-		Citizen::movementSpeedModifier = 0;
+		Citizen::movementSpeedModifier = 0.f;
 		Score::multiplierPerSecond = 0.f;
 		Score::baseMultiplier = 0.f;
 		Score::cumulativeBonusMultiplier = 0.f;
@@ -100,6 +100,7 @@ namespace DifficultySettings
 			Mage::attackDamageModifier = -1000;
 			Mage::touchDamageModifier = -1000;
 			Mage::healthDrainModifier = -1000;
+			Citizen::movementSpeedModifier = -0.1f;
 			Score::baseMultiplier = 0.f;
 			Score::cumulativeBonusMultiplier = 0.0f;
 			Score::cumulativeBonusMultiplierMax = 0.0f;
@@ -132,10 +133,10 @@ namespace DifficultySettings
 			Mage::blastSpeedModifier = 0.85f;
 			Mage::blastSpeedAccel = 0.01f;
 			Mage::touchDamageModifier = 15;
-			Mage::movementSpeedModifier = 1;
+			Mage::movementSpeedModifier = 0.01f;
 			Mage::healthDrainModifier = 1;
 			Mage::mageHealthModifier = 2;
-			Citizen::movementSpeedModifier = 1;
+			Citizen::movementSpeedModifier = 0.2f;
 			Score::baseMultiplier = 1.4f;
 			Score::cumulativeBonusMultiplier = 0.03f;
 			Score::cumulativeBonusMultiplierMax = 1.29f;
@@ -156,10 +157,10 @@ namespace DifficultySettings
 			Mage::blastSpeedModifier = 1.09f;
 			Mage::blastSpeedAccel = 0.014f;
 			Mage::touchDamageModifier = 45;
-			Mage::movementSpeedModifier = 2;
+			Mage::movementSpeedModifier = 1.5f;
 			Mage::healthDrainModifier = 1;
 			Mage::mageHealthModifier = 7;
-			Citizen::movementSpeedModifier = 1;
+			Citizen::movementSpeedModifier = 0.5f;
 			Score::baseMultiplier = 2.75f;
 			Score::cumulativeBonusMultiplier = 0.02f;
 			Score::cumulativeBonusMultiplierMax = 10.f;

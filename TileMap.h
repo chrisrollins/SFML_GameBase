@@ -115,7 +115,7 @@ namespace Engine
 
 		static bool isTileTypeObstacle(int tileType)
 		{
-			return (tileType == 0 || tileType == 1 || tileType == 2 || tileType == 9 || tileType == 10 || tileType == 11 || tileType == 18 || tileType == 19 || tileType == 20);
+			return (tileType < 0 || tileType == 0 || tileType == 1 || tileType == 2 || tileType == 9 || tileType == 10 || tileType == 11 || tileType == 18 || tileType == 19 || tileType == 20);
 		}
 
 		static bool isTileTypeTrap(int tileType)
@@ -149,12 +149,12 @@ namespace Engine
 			return this->safeSpawnPositions;
 		}
 
-		sf::FloatRect currTile(sf::Vector2f position) const
+		/*sf::FloatRect currTile(sf::Vector2f position) const
 		{
 			float row = position.x / F(this->tileSize().x);
 			float column = position.y / F(this->tileSize().y);
 			return sf::FloatRect(row * this->tileSize().x, column * F(this->tileSize().y), F(this->tileSize().x), F(this->tileSize().y));
-		}
+		}*/
 
 		unsigned int width() const
 		{
@@ -173,7 +173,8 @@ namespace Engine
 
 		int getTileAt(int i, int j) const
 		{
-			return this->tiles[i + j * this->width()];
+			if (i < 0 || j < 0 || i >= I(this->width()) || j >= I(this->height())) { return -1; }			
+			return this->tiles[i + j * I(this->width())];
 		}
 
 		int* readFromFile(std::string mapTable)

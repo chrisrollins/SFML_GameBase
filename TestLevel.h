@@ -85,7 +85,7 @@ public:
 
 		if (oldScreen)
 		{
-			if (GameObject* oldMC = oldScreen->getMainCharacter()) { delete oldMC; }
+			//if (GameObject* oldMC = oldScreen->getMainCharacter()) { delete oldMC; }
 			delete oldScreen;
 			oldScreen = levelScreen;
 		}

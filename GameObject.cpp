@@ -54,10 +54,10 @@ namespace Engine
 		win.draw(*this->graphic);
 	}
 
-	void GraphicalGameObject::Collision(GraphicalGameObject& otherObject)
+	/*void GraphicalGameObject::Collision(GraphicalGameObject& otherObject)
 	{
 
-	}
+	}*/
 
 	GraphicalGameObject::~GraphicalGameObject()
 	{

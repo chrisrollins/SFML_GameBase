@@ -3,6 +3,7 @@
 
 #include "Screen.h"
 #include "SpriteFactory.h"
+#include "GameObjectAttribute.h"
 #include <cmath>
 #include <string>
 
@@ -12,7 +13,11 @@ using std::string;
 #define F(n) static_cast<float>(n)
 #define D(n) static_cast<double>(n)
 
-class ZombieBlast : public GraphicalGameObject
+class ZombieBlast :
+	public GraphicalGameObject,
+	public Collision,
+	public Attacker,
+	public Movement
 {
 protected:
 	sf::Vector2f distance;
@@ -23,8 +28,6 @@ protected:
 public:
 	ZombieBlast(Sprite::ID spriteID, sf::Vector2f pos, sf::Vector2f clickPos, float speed = 1.f, int duration = 100, int damage = 1, float startingSize = 1.f, float growRate = 0.05f) : GraphicalGameObject(SpriteFactory::generateSprite(spriteID))
 	{
-		this->ignoreObstacles = true;
-		this->blockingCollision = false;
 		double radians = atan2(D(clickPos.y - pos.y), D(clickPos.x - pos.x));
 		this->distance = sf::Vector2f(F(cos(radians)) * speed, F(sin(radians)) * speed);
 		sf::Vector2u size = this->spritePtr()->getTexture()->getSize();
@@ -39,7 +42,7 @@ public:
 
 	virtual void EveryFrame(uint64_t f)
 	{
-		this->spritePtr()->move(distance.x, distance.y);
+		this->move(this->distance);
 		this->growth += growRate / 60.0f;
 		this->spritePtr()->setScale(this->growth, this->growth);
 		this->blastLife--;
@@ -71,7 +74,7 @@ public:
 	void EveryFrame(uint64_t f)
 	{
 		sf::Sprite* spr = this->spritePtr();
-		spr->move(this->distance.x, this->distance.y);
+		this->move(this->distance);
 		this->growth += growRate / 60.f;
 		spr->setScale(this->growth, this->growth);
 		spr->rotate(this->rotationRate);

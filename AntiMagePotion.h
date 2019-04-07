@@ -6,12 +6,19 @@
 #include "Score.h"
 #include "ResourceManager.h"
 #include "SpriteFactory.h"
+#include "GameObjectAttribute.h"
 #include <vector>
 #include <ctime>
 
 using namespace Engine;
+typedef Engine::GameObjectAttribute::Health Health;
+typedef Engine::GameObjectAttribute::Movement Movement;
+typedef Engine::GameObjectAttribute::Collision Collision;
+typedef Engine::GameObjectAttribute::TerrainCollision TerrainCollision;
 
-class AntiMagePotion : public GraphicalGameObject
+class AntiMagePotion :
+	public GraphicalGameObject,
+	public Collision
 {
 private:
 	int wiggleDirection = 1;
