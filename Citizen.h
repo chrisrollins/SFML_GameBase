@@ -37,31 +37,25 @@ public:
 		this->textureSize.x /= 3;
 		this->textureSize.y /= 4;
 		this->imageCount.x = 0;
+		this->spritePtr()->setTextureRect(sf::IntRect(this->imageCount.x * this->textureSize.x,
+			this->imageCount.y * this->textureSize.y, this->textureSize.x, this->textureSize.y));
+		this->movingUp = false;
+		this->movingLeft = false;
+		this->movingDown = false;
+		this->movingRight = false;
 		switch (rand() % 4)
 		{
 		case 0:
 			this->movingUp = true;
-			this->movingLeft = false;
-			this->movingDown = false;
-			this->movingRight = false;
 			break;
 		case 1:
 			this->movingLeft = true;
-			this->movingUp = false;
-			this->movingDown = false;
-			this->movingRight = false;
 			break;
 		case 2:
 			this->movingDown = true;
-			this->movingLeft = false;
-			this->movingUp = false;
-			this->movingRight = false;
 			break;
 		case 3:
 			this->movingRight = true;
-			this->movingLeft = false;
-			this->movingDown = false;
-			this->movingUp = false;
 			break;
 		default:
 			break;
@@ -72,31 +66,23 @@ public:
 	{
 		if (f % 120 == 0)
 		{
+			this->movingUp = false;
+			this->movingLeft = false;
+			this->movingDown = false;
+			this->movingRight = false;
 			switch (rand() % 4)
 			{
 			case 0:
 				this->movingUp = true;
-				this->movingLeft = false;
-				this->movingDown = false;
-				this->movingRight = false;
 				break;
 			case 1:
 				this->movingLeft = true;
-				this->movingUp = false;
-				this->movingDown = false;
-				this->movingRight = false;
 				break;
 			case 2:
 				this->movingDown = true;
-				this->movingLeft = false;
-				this->movingUp = false;
-				this->movingRight = false;
 				break;
 			case 3:
 				this->movingRight = true;
-				this->movingLeft = false;
-				this->movingDown = false;
-				this->movingUp = false;
 				break;
 			default:
 				break;

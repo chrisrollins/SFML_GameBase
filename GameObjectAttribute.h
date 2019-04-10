@@ -71,8 +71,9 @@ namespace Engine
 				else if (sf::Sprite* spr = this->getDrawablePtr())
 				{
 					sf::IntRect tr = spr->getTextureRect();
-					return sf::FloatRect(static_cast<float>(tr.left), static_cast<float>(tr.top), static_cast<float>(tr.width), static_cast<float>(tr.height));
+					return sf::FloatRect(0.f, 0.f, static_cast<float>(tr.width), static_cast<float>(tr.height));
 				}
+				std::cout << "a" << std::endl;
 				return sf::FloatRect(0.f, 0.f, 0.f, 0.f);
 			}
 

@@ -67,14 +67,8 @@ namespace Engine
 		GraphicalGameObject(sf::VertexArray);
 		GraphicalGameObject(sf::VertexBuffer);
 		virtual void draw(sf::RenderWindow& win);
-		//virtual void Collision(GraphicalGameObject& otherObject);
 		virtual ~GraphicalGameObject();
 		sf::Drawable* getGraphic();
-		//bool triggerCollisionEvents = true;
-		//bool blockingCollision = true;
-		//bool ignoreObstacles = false;
-		//sf::FloatRect obstacleCollisionSize;
-		//sf::FloatRect objectCollisionSize;
 	protected:
 		sf::Drawable* graphic;
 	private:

@@ -54,11 +54,6 @@ namespace Engine
 		win.draw(*this->graphic);
 	}
 
-	/*void GraphicalGameObject::Collision(GraphicalGameObject& otherObject)
-	{
-
-	}*/
-
 	GraphicalGameObject::~GraphicalGameObject()
 	{
 		delete this->graphic;

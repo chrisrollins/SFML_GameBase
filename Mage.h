@@ -84,6 +84,8 @@ public:
 		this->textureSize.x /= 4;
 		this->textureSize.y /= 12;
 		this->imageCount.x = 0;
+		this->spritePtr()->setTextureRect(sf::IntRect(this->imageCount.x * this->textureSize.x,
+			this->imageCount.y * this->textureSize.y, this->textureSize.x, this->textureSize.y));
 
 		this->movingUp = false;
 		this->movingLeft = false;
