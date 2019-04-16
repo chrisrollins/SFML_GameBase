@@ -153,6 +153,7 @@ private:
 public:
 	MenuButton(Sprite::ID spriteID, sf::Vector2f position, std::function<void()> clickFunction) : GraphicalGameObject(SpriteFactory::generateSprite(spriteID))
 	{
+		this->spritePtr()->setColor({ 255, 255, 255, 0 });
 		this->spritePtr()->setPosition(position);
 		this->clickFunction = clickFunction;
 	}
@@ -184,7 +185,7 @@ public:
 	{
 		if (!this->enabled || !this->activated) { return; }
 		DifficultySettings::setDifficulty(DifficultySettings::DIFFICULTY::TEST);
-		this->screen->addUIObject(new PlayerNameEntry());		
+		this->screen->addUIObject(new PlayerNameEntry());
 	})
 	{
 		this->textureSize = this->spritePtr()->getTexture()->getSize();
@@ -256,70 +257,136 @@ public:
 	{
 		this->screen->schedule([&]() {
 			sf::Color color = this->spritePtr()->getColor();
-			color.a++;
+			color.a += 3;
 			this->spritePtr()->setColor(color);
-		}, TimeUnit::Frames(1), 254);
+		}, TimeUnit::Frames(1), 84);
 	}
 };
 
 class EasyLevelButton : public MenuButton
 {
+private:
+	sf::Sprite* spritePtr() { return dynamic_cast<sf::Sprite*>(this->getGraphic()); }
 public:
 	EasyLevelButton() : MenuButton(Sprite::ID::MenuEasy, { 430.f, 190.f }, [&]()
 	{
 		DifficultySettings::setDifficulty(DifficultySettings::DIFFICULTY::EASY);
 		this->screen->addUIObject(new PlayerNameEntry());
 	}) {}
+
+	void AddedToScreen()
+	{
+		this->screen->schedule([&]() {
+			sf::Color color = this->spritePtr()->getColor();
+			color.a += 3;
+			this->spritePtr()->setColor(color);
+		}, TimeUnit::Frames(1), 84);
+	}
 };
 
 class NormalLevelButton : public MenuButton
 {
+private:
+	sf::Sprite* spritePtr() { return dynamic_cast<sf::Sprite*>(this->getGraphic()); }
 public:
 	NormalLevelButton() : MenuButton(Sprite::ID::MenuNormal, { 390.f, 265.f }, [&]()
 	{
 		DifficultySettings::setDifficulty(DifficultySettings::DIFFICULTY::NORMAL);
 		this->screen->addUIObject(new PlayerNameEntry());
 	}) {}
+
+	void AddedToScreen()
+	{
+		this->screen->schedule([&]() {
+			sf::Color color = this->spritePtr()->getColor();
+			color.a += 3;
+			this->spritePtr()->setColor(color);
+		}, TimeUnit::Frames(1), 84);
+	}
 };
 
 class HardLevelButton : public MenuButton
 {
+private:
+	sf::Sprite* spritePtr() { return dynamic_cast<sf::Sprite*>(this->getGraphic()); }
 public:
 	HardLevelButton() : MenuButton(Sprite::ID::MenuInsane, { 390.f, 360.f }, [&]()
 	{
 		DifficultySettings::setDifficulty(DifficultySettings::DIFFICULTY::HARD);
 		this->screen->addUIObject(new PlayerNameEntry());
 	}) {}
+
+	void AddedToScreen()
+	{
+		this->screen->schedule([&]() {
+			sf::Color color = this->spritePtr()->getColor();
+			color.a += 3;
+			this->spritePtr()->setColor(color);
+		}, TimeUnit::Frames(1), 84);
+	}
 };
 
 class TutorialButton : public MenuButton
 {
+private:
+	sf::Sprite* spritePtr() { return dynamic_cast<sf::Sprite*>(this->getGraphic()); }
 public:
 	TutorialButton() : MenuButton(Sprite::ID::MenuTutorial, { 340.f, 450.f }, [&]()
 	{
 		Tutorial* tutorial = new Tutorial();
 		this->screen->addUIObject(tutorial);
 	}) {}
+
+	void AddedToScreen()
+	{
+		this->screen->schedule([&]() {
+			sf::Color color = this->spritePtr()->getColor();
+			color.a += 3;
+			this->spritePtr()->setColor(color);
+		}, TimeUnit::Frames(1), 84);
+	}
 };
 
 class ScoreboardButton : public MenuButton
 {
+private:
+	sf::Sprite* spritePtr() { return dynamic_cast<sf::Sprite*>(this->getGraphic()); }
 public:
 	ScoreboardButton() : MenuButton(Sprite::ID::MenuScore, { 410.f, 540.f }, [&]()
 	{
 		ScoreBoard* scoreBoard = new ScoreBoard();
 		this->screen->addUIObject(scoreBoard);
 	}) {}
+
+	void AddedToScreen()
+	{
+		this->screen->schedule([&]() {
+			sf::Color color = this->spritePtr()->getColor();
+			color.a += 3;
+			this->spritePtr()->setColor(color);
+		}, TimeUnit::Frames(1), 84);
+	}
 };
 
 class QuitButton : public MenuButton
 {
+private:
+	sf::Sprite* spritePtr() { return dynamic_cast<sf::Sprite*>(this->getGraphic()); }
 public:
 	QuitButton() : MenuButton(Sprite::ID::MenuEscape, { 390.f, 630.f }, [&]()
 	{
 		MusicPlayer::stop();
 		this->screen->close();
 	}) {}
+
+	void AddedToScreen()
+	{
+		this->screen->schedule([&]() {
+			sf::Color color = this->spritePtr()->getColor();
+			color.a += 3;
+			this->spritePtr()->setColor(color);
+		}, TimeUnit::Frames(1), 84);
+	}
 };
 
 class Loader : public GraphicalGameObject
@@ -328,15 +395,15 @@ public:
 	Loader(bool show, std::vector<function<void()>> loadingActions) : GraphicalGameObject(sf::RectangleShape())
 	{
 		sf::RectangleShape* rect = this->rectPtr();
-		rect->setPosition(static_cast<float>(Screen::windowWidth) * 0.05f, static_cast<float>(Screen::windowHeight) * 0.92f);
-		rect->setSize({ 0.f , 30.f });
-		rect->setFillColor({ 100, 200, 100, (show ? static_cast<uint8_t>(255) : static_cast<uint8_t>(0)) });
+		rect->setPosition(static_cast<float>(Screen::windowWidth) * 0.05f, static_cast<float>(Screen::windowHeight) * 0.5f);
+		rect->setSize({ 0.f , 10.f });
+		rect->setFillColor({ 9, 67, 8, (show ? static_cast<uint8_t>(255) : static_cast<uint8_t>(0)) });
 		size_t numActions = loadingActions.size();
 		this->barIncrement = (static_cast<float>(Screen::windowWidth) * 0.9f) / static_cast<float>(numActions);
 		this->loadingActions = loadingActions;
 		this->finishedLoading = false;
 	}
-	
+
 	void draw(sf::RenderWindow& win)
 	{
 		if (!this->finishedLoading)
@@ -358,7 +425,10 @@ public:
 				this->rectPtr()->setFillColor(color);
 			}, TimeUnit::Frames(1), 31);
 		}
-		else { win.draw(*this->graphic); }
+		else
+		{
+			win.draw(*this->graphic);
+		}
 	}
 
 private:
@@ -385,7 +455,7 @@ namespace Engine
 			[&]() { this->menuObjects.push_back(new QuitButton()); },
 			[&]() { this->menuObjects.push_back(new TestModeButton()); },
 			[&]() {	for (auto obj : this->menuObjects) { this->menuScreen.addUIObject(obj); } }
-		});
+			});
 		this->menuScreen.addUIObject(loader);
 	}
 
