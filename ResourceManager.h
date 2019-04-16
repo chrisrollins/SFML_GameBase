@@ -53,6 +53,7 @@ namespace Engine
 			T* ptr = (*iter).second;
 			resourceCache.erase(iter);
 			delete ptr;
+			ptr = nullptr;
 		}
 
 		static void ReloadAllResources()
