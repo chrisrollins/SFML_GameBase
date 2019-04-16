@@ -77,7 +77,7 @@ public:
 			this->imageCount.y * this->textureSize.y, this->textureSize.x, this->textureSize.y));
 		sf::IntRect size = this->sprite()->getTextureRect();
 		sf::Vector2f collisionSizeRatio(0.4f, 0.3f); //these numbers shrink the collision size of the player, and the code below adjusts it to be positioned at the bottom of the sprite
-		
+
 		sf::FloatRect collisionSize;
 		collisionSize.width = static_cast<float>(size.width) * collisionSizeRatio.x;
 		collisionSize.height = static_cast<float>(size.height) * collisionSizeRatio.y;
@@ -206,14 +206,14 @@ public:
 				else { this->imageCount.x++; }
 			}
 			if (!this->upKeyHeld && !this->leftKeyHeld && !this->downKeyHeld && !this->rightKeyHeld) { this->imageCount.x = 0; }
-			
+
 			int xDirection = 0;
 			int yDirection = 0;
 			if (this->rightKeyHeld) { xDirection += 1; }
 			if (this->leftKeyHeld) { xDirection -= 1; }
 			if (this->downKeyHeld) { yDirection += 1; }
 			if (this->upKeyHeld) { yDirection -= 1; }
-		
+
 			if (xDirection != 0 || yDirection != 0)
 			{
 				float angle = atan2(static_cast<float>(yDirection), static_cast<float>(xDirection));
@@ -259,12 +259,13 @@ public:
 			{
 				this->totalAliveTime = this->aliveClock.getElapsedTime().asSeconds();
 				this->startDeath = true;
+				this->imageCount.x = 0;
 				SoundPlayer::play(SoundEffect::ID::ZombieDeath, 60.f);
 			}
-			this->imageCount.x = this->deathCount;
-			if (f % 50 == 0 && !this->finishedDying)
+			if (f % 50 == 0 && this->startDeath)
 			{
 				this->deathCount++;
+				this->imageCount.x = this->deathCount;
 				if (deathCount == 2)
 				{
 					MusicPlayer::play(Music::ID::GameOver);
@@ -277,10 +278,7 @@ public:
 			if (this->imageCount.x == 3) { this->die(); }
 		}
 
-		if (this->isAlive())
-		{
-			this->sprite()->setTextureRect(sf::IntRect(this->imageCount.x * this->textureSize.x, this->imageCount.y * this->textureSize.y, this->textureSize.x, this->textureSize.y));
-		}
+		this->sprite()->setTextureRect(sf::IntRect(this->imageCount.x * this->textureSize.x, this->imageCount.y * this->textureSize.y, this->textureSize.x, this->textureSize.y));
 	}
 
 	void drain()
@@ -297,7 +295,7 @@ public:
 		if (healthRatio > 1.f) { healthRatio = 1.f; }
 		float drainPenaltyModifier = (healthRatio + (healthRatio * healthRatio)) * 0.5f;
 		float drainPenalty = 1.f + (highHealthDrainPenalty * drainPenaltyModifier);
-		int baseDrain = static_cast<int>(static_cast<float>(this->healthDrain) * drainPenalty) + static_cast<int>(time/15.f);
+		int baseDrain = static_cast<int>(static_cast<float>(this->healthDrain) * drainPenalty) + static_cast<int>(time / 15.f);
 		int mageDrain = numMagesAlive * (this->additionalDrainPerMage + DifficultySettings::Mage::healthDrainModifier);
 		int totalDrain = baseDrain + mageDrain;
 		this->changeHealth(-1 * totalDrain);
@@ -333,7 +331,7 @@ public:
 	{
 		return this->numCitizenEated;
 	}
-	
+
 	void setDirection(DIRECTION direction)
 	{
 		this->direction = direction;
