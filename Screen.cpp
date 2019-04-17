@@ -201,18 +201,29 @@ namespace Engine
 				obj->xVelocity = 0.0;
 				obj->yVelocity = 0.0;
 				sf::FloatRect collisionSize = dynamic_cast<TerrainCollision*>(obj)->getObstacleCollisionSize();
+				sf::IntRect tRect = obj->getDrawablePtr()->getTextureRect();
 				auto tryMove = [&](float vx, float vy)
 				{
 					sf::Vector2f destination(position.x + vx, position.y + vy);
 					float x = destination.x + collisionSize.left;
 					float y = destination.y + collisionSize.top;
-					sf::Vector2f corners[4] = {
+					sf::Vector2f mapBoundsCollisionCorners[4] = {
+						{x, y},
+						{x + static_cast<float>(tRect.width), y},
+						{x + static_cast<float>(tRect.width), y + static_cast<float>(tRect.height)},
+						{x, y + static_cast<float>(tRect.height)}
+					};
+					for (auto const & corner : mapBoundsCollisionCorners)
+					{
+						if (this->tMap->isOutOfBounds(corner)) { return false; }
+					}
+					sf::Vector2f terrainCollisionCorners[4] = {
 						{x, y},
 						{x + collisionSize.width, y},
 						{x + collisionSize.width, y + collisionSize.height},
 						{x, y + collisionSize.height}
 					};
-					for (auto const & corner : corners)
+					for (auto const & corner : terrainCollisionCorners)
 					{
 						if (this->tMap->isObstacle(corner)) { return false; }
 					}

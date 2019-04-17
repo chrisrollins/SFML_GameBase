@@ -73,7 +73,6 @@ namespace Engine
 					sf::IntRect tr = spr->getTextureRect();
 					return sf::FloatRect(0.f, 0.f, static_cast<float>(tr.width), static_cast<float>(tr.height));
 				}
-				std::cout << "a" << std::endl;
 				return sf::FloatRect(0.f, 0.f, 0.f, 0.f);
 			}
 
