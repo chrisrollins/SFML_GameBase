@@ -25,9 +25,10 @@ using namespace Engine;
 class MainCharacter :
 	public GraphicalGameObject,
 	public Health,
-	public Movement,
 	public Collision,
-	public TerrainCollision
+	public TerrainCollision,
+	public SpriteSheet,
+	public Movement
 {
 	bool upKeyHeld = false;
 	bool leftKeyHeld = false;
@@ -35,9 +36,6 @@ class MainCharacter :
 	bool rightKeyHeld = false;
 	DIRECTION direction = DIRECTION::DOWN;
 	AntiMagePotion* potionPtr = nullptr;
-	sf::Vector2u textureSize;
-	sf::Vector2u imageCount;
-	sf::Vector2u currentImage;
 	sf::Clock aliveClock;
 	sf::Clock hurtClock;
 	sf::Clock trapClock;
@@ -66,16 +64,12 @@ class MainCharacter :
 public:
 	MainCharacter(std::string name) :
 		GraphicalGameObject(SpriteFactory::generateSprite(Sprite::ID::Zombie)),
-		Health(30 * 60 * 100 + DifficultySettings::Player::maxHealthModifier)
+		Health(30 * 60 * 100 + DifficultySettings::Player::maxHealthModifier),
+		SpriteSheet(4, 12)
 	{
 		this->name = name;
-		this->textureSize = this->sprite()->getTexture()->getSize();
-		this->textureSize.x /= 4;
-		this->textureSize.y /= 12;
-		this->imageCount.x = 0;
-		this->sprite()->setTextureRect(sf::IntRect(this->imageCount.x * this->textureSize.x,
-			this->imageCount.y * this->textureSize.y, this->textureSize.x, this->textureSize.y));
-		sf::IntRect size = this->sprite()->getTextureRect();
+		this->resetSpriteSheet();
+		sf::IntRect size = this->getDrawablePtr()->getTextureRect();
 		sf::Vector2f collisionSizeRatio(0.4f, 0.3f); //these numbers shrink the collision size of the player, and the code below adjusts it to be positioned at the bottom of the sprite
 
 		sf::FloatRect collisionSize;
@@ -153,26 +147,22 @@ public:
 	{
 		if (this->getHealth() > 0)
 		{
+			sf::Vector2i mousePos = this->screen->getMousePosition();
+			sf::Vector2f shotOrigin = this->getDrawablePtr()->getPosition();
+			sf::IntRect size = this->getDrawablePtr()->getTextureRect();
+			shotOrigin.x += static_cast<float>(size.width / 2);
+			shotOrigin.y += static_cast<float>(size.height / 4);
 			if (e.mouseButton.button == sf::Mouse::Left)
 			{
 				SoundPlayer::play(SoundEffect::ID::ZombieAttack, 40.f);
 				if (this->getHealthPercent() > 0.2) { this->changeHealth(-1 * this->attackHealthCost); } //health cost of ranged attack only applies if health is above 20%
-				sf::Vector2i mousePos = this->screen->getMousePosition();
-				sf::Vector2f shotOrigin = this->sprite()->getPosition();
-				sf::IntRect size = this->sprite()->getTextureRect();
-				shotOrigin.x += static_cast<float>(size.width / 2);
-				shotOrigin.y += static_cast<float>(size.height / 4);
 				ZombieBlast* blast = new ZombieBlast(Sprite::ID::Blast, shotOrigin, sf::Vector2f(static_cast<float>(mousePos.x), static_cast<float>(mousePos.y)), 3.5f, 140);
+				//ZombieBlast* blast = new ZombieBlast(Sprite::ID::Blast, sf::Vector2f(static_cast<float>(mousePos.x), static_cast<float>(mousePos.y)), shotOrigin, 3.5f, 140);
 				this->screen->add(blast);
 			}
 			else if (this->potionNum > 0)
 			{
 				SoundPlayer::play(SoundEffect::ID::ZombieAttack, 40.f);
-				sf::Vector2i mousePos = this->screen->getMousePosition();
-				sf::Vector2f shotOrigin = this->sprite()->getPosition();
-				sf::IntRect size = this->sprite()->getTextureRect();
-				shotOrigin.x += static_cast<float>(size.width / 2);
-				shotOrigin.y += static_cast<float>(size.height / 4);
 				SuperZombieBlast* blast = new SuperZombieBlast(Sprite::ID::Brain, shotOrigin, sf::Vector2f(static_cast<float>(mousePos.x), static_cast<float>(mousePos.y)), 2.25f, 180, 1000, 0.1f, 0.2f);
 				this->screen->add(blast);
 				this->potionNum--;
@@ -182,11 +172,10 @@ public:
 
 	void EveryFrame(uint64_t f)
 	{
-		sf::Sprite* s = this->sprite();
-		sf::Vector2f adjustPos;
-		adjustPos.x = s->getPosition().x + this->textureSize.x / 2;
-		adjustPos.y = s->getPosition().y + this->textureSize.y;
-		if (this->screen->getMap()->isTrap(adjustPos))
+		sf::Sprite* s = this->getDrawablePtr();
+		sf::Vector2f adjustPos = s->getPosition();
+		sf::IntRect tr = s->getTextureRect();
+		if (this->screen->getMap()->isTrap({ s->getPosition().x + tr.width / 2, s->getPosition().y + tr.height }))
 		{
 			if (!this->inTrap)
 			{
@@ -200,12 +189,8 @@ public:
 
 		if (this->isAlive())
 		{
-			if (f % 20 == 0 && (this->upKeyHeld || this->leftKeyHeld || this->downKeyHeld || this->rightKeyHeld))
-			{
-				if (this->imageCount.x == 3) { this->imageCount.x = 0; }
-				else { this->imageCount.x++; }
-			}
-			if (!this->upKeyHeld && !this->leftKeyHeld && !this->downKeyHeld && !this->rightKeyHeld) { this->imageCount.x = 0; }
+			if (f % 20 == 0 && (this->upKeyHeld || this->leftKeyHeld || this->downKeyHeld || this->rightKeyHeld)) { this->spriteSheetRow++; }
+			if (!this->upKeyHeld && !this->leftKeyHeld && !this->downKeyHeld && !this->rightKeyHeld) { this->spriteSheetRow = 0; }
 
 			int xDirection = 0;
 			int yDirection = 0;
@@ -220,10 +205,10 @@ public:
 				this->move(Radians(angle), currentSpeed);
 			}
 
-			if (this->upKeyHeld) { this->imageCount.y = 3; }
-			else if (this->downKeyHeld) { this->imageCount.y = 0; }
-			else if (this->leftKeyHeld) { this->imageCount.y = 1; }
-			else if (this->rightKeyHeld) { this->imageCount.y = 2; }
+			if (this->upKeyHeld) { this->spriteSheetColumn = 3; }
+			else if (this->downKeyHeld) { this->spriteSheetColumn = 0; }
+			else if (this->leftKeyHeld) { this->spriteSheetColumn = 1; }
+			else if (this->rightKeyHeld) { this->spriteSheetColumn = 2; }
 
 			this->drain();
 			if (f % 120 == 0) { *scorePtr += DifficultySettings::Score::applyMultipliers(1); }
@@ -249,36 +234,34 @@ public:
 			if (this->isAlive())
 			{
 				if (this->colorRestoreDelay > 0) { this->colorRestoreDelay--; }
-				else { this->sprite()->setColor({ 255, 255, 255 }); }
+				else { this->getDrawablePtr()->setColor({ 255, 255, 255 }); }
 			}
 		}
 		else
 		{
-			this->sprite()->setColor({ 255, 100, 100 });
+			this->getDrawablePtr()->setColor({ 255, 100, 100 });
 			if (!this->startDeath)
 			{
 				this->totalAliveTime = this->aliveClock.getElapsedTime().asSeconds();
 				this->startDeath = true;
-				this->imageCount.x = 0;
+				this->spriteSheetRow = 0;
 				SoundPlayer::play(SoundEffect::ID::ZombieDeath, 60.f);
 			}
 			if (f % 50 == 0 && this->startDeath)
 			{
 				this->deathCount++;
-				this->imageCount.x = this->deathCount;
+				this->spriteSheetRow = this->deathCount;
 				if (deathCount == 2)
 				{
 					MusicPlayer::play(Music::ID::GameOver);
 				}
 			}
-			if (this->direction == DIRECTION::DOWN || this->downKeyHeld) { this->imageCount.y = 4; }
-			if (this->direction == DIRECTION::LEFT || this->leftKeyHeld) { this->imageCount.y = 5; }
-			if (this->direction == DIRECTION::RIGHT || this->rightKeyHeld) { this->imageCount.y = 6; }
-			if (this->direction == DIRECTION::UP || this->upKeyHeld) { this->imageCount.y = 7; }
-			if (this->imageCount.x == 3) { this->die(); }
+			if (this->direction == DIRECTION::DOWN || this->downKeyHeld) { this->spriteSheetColumn = 4; }
+			if (this->direction == DIRECTION::LEFT || this->leftKeyHeld) { this->spriteSheetColumn = 5; }
+			if (this->direction == DIRECTION::RIGHT || this->rightKeyHeld) { this->spriteSheetColumn = 6; }
+			if (this->direction == DIRECTION::UP || this->upKeyHeld) { this->spriteSheetColumn = 7; }
+			if (this->spriteSheetRow == 3) { this->die(); }
 		}
-
-		this->sprite()->setTextureRect(sf::IntRect(this->imageCount.x * this->textureSize.x, this->imageCount.y * this->textureSize.y, this->textureSize.x, this->textureSize.y));
 	}
 
 	void drain()
@@ -305,7 +288,7 @@ public:
 	{
 		if (!this->finishedDying)
 		{
-			this->sprite()->setColor({ 0, 0, 0, 0 });
+			this->getDrawablePtr()->setColor({ 0, 0, 0, 0 });
 			this->finishedDying = true;
 			scorePtr->freeze();
 			this->screen->addUIObject(new GameOver(scorePtr->get(), DifficultySettings::currentDifficulty));
@@ -340,7 +323,7 @@ public:
 	void damage(int damage)
 	{
 		this->changeHealth(-1 * damage);
-		this->sprite()->setColor({ 255, 100, 100 });
+		this->getDrawablePtr()->setColor({ 255, 100, 100 });
 		this->colorRestoreDelay = 2;
 	}
 
@@ -383,7 +366,7 @@ public:
 
 				float time = this->aliveClock.getElapsedTime().asSeconds();
 				float timeAmplifier = 1.f + time * 0.01f;
-				sf::Vector2f myPos = this->sprite()->getPosition();
+				sf::Vector2f myPos = this->getDrawablePtr()->getPosition();
 				sf::Vector2f blastPos = blast->spritePtr()->getPosition();
 				sf::IntRect blastSize = blast->spritePtr()->getTextureRect();
 				float dx = myPos.x - blastPos.x;
@@ -477,11 +460,6 @@ public:
 	void changeScore(int change)
 	{
 		*scorePtr += change;
-	}
-
-	sf::Sprite* sprite()
-	{
-		return dynamic_cast<sf::Sprite*>(this->graphic);
 	}
 };
 #endif

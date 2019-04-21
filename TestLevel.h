@@ -27,7 +27,7 @@ public:
 		levelScreen->addMap(&map);
 
 		MainCharacter* mcPtr = new MainCharacter(playerName);
-		mcPtr->sprite()->setPosition(static_cast<float>(map.width() * map.tileSize().x / 2),
+		mcPtr->getDrawablePtr()->setPosition(static_cast<float>(map.width() * map.tileSize().x / 2),
 			static_cast<float>(map.height() * map.tileSize().y / 2));
 		levelScreen->addMainCharacter(mcPtr);
 

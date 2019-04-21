@@ -169,12 +169,12 @@ public:
 	}
 };
 
-class TestModeButton : public MenuButton
+class TestModeButton : public MenuButton, SpriteSheet
 {
 private:
-	sf::Vector2u textureSize;
-	sf::Vector2u imageCount;
-	sf::Vector2u currentImage;
+	//sf::Vector2u textureSize;
+	//sf::Vector2u imageCount;
+	//sf::Vector2u currentImage;
 	bool activated = false;
 	bool enabled = true;
 	bool enterPressed = false;
@@ -182,29 +182,31 @@ private:
 	sf::Sprite* spritePtr() { return dynamic_cast<sf::Sprite*>(this->getGraphic()); }
 public:
 	TestModeButton() : MenuButton(Sprite::ID::Guardian, { 320.f, 160.f }, [&]()
+		{
+			if (!this->enabled || !this->activated) { return; }
+			DifficultySettings::setDifficulty(DifficultySettings::DIFFICULTY::TEST);
+			this->screen->addUIObject(new PlayerNameEntry());
+		}),
+		SpriteSheet(3)
 	{
-		if (!this->enabled || !this->activated) { return; }
-		DifficultySettings::setDifficulty(DifficultySettings::DIFFICULTY::TEST);
-		this->screen->addUIObject(new PlayerNameEntry());
-	})
-	{
+		/*
 		this->textureSize = this->spritePtr()->getTexture()->getSize();
 		this->textureSize.x /= 3;
 		this->imageCount.x = 0;
 		this->color = this->spritePtr()->getColor();
-		this->spritePtr()->setColor({ 0, 0, 0, 0 });
+		this->spritePtr()->setColor({ 0, 0, 0, 0 });*/
 	}
 
 	void EveryFrame(uint64_t f)
 	{
 		if (f % 15 == 0)
 		{
-			if (this->imageCount.x == 2) { this->imageCount.x = 0; }
-			else { this->imageCount.x++; }
+			//if (this->imageCount.x == 2) { this->imageCount.x = 0; }
+			//else { this->imageCount.x++; }
+			this->spriteSheetRow++;
 		}
 
-		this->spritePtr()->setTextureRect(sf::IntRect(this->imageCount.x * this->textureSize.x,
-			this->imageCount.y * this->textureSize.y, this->textureSize.x, this->textureSize.y));
+		//this->spritePtr()->setTextureRect(sf::IntRect(this->imageCount.x * this->textureSize.x, this->imageCount.y * this->textureSize.y, this->textureSize.x, this->textureSize.y));
 	}
 
 	void KeyReleased(sf::Event e)

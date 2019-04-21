@@ -46,7 +46,7 @@ public:
 	}
 };
 
-class Mage : StandardEnemy
+class Mage : StandardEnemy, SpriteSheet
 {
 private:
 	friend class RespawnManager<Mage>;
@@ -61,9 +61,9 @@ private:
 	bool isShooting = false;;
 	uint64_t internalClock = 0;
 	int bulletCooldown = 0;
-	sf::Vector2u textureSize;
-	sf::Vector2u imageCount;
-	sf::Vector2u currentImage;
+	//sf::Vector2u textureSize;
+	//sf::Vector2u imageCount;
+	//sf::Vector2u currentImage;
 	MageHealthBar* healthBar = nullptr;
 	RespawnManager<Mage>* respawnManager = nullptr;
 	sf::Sprite* spritePtr()
@@ -78,15 +78,17 @@ public:
 
 	Mage(sf::Sprite s) :
 		GraphicalGameObject(s),
-		Health(3 + DifficultySettings::Mage::mageHealthModifier)
+		Health(3 + DifficultySettings::Mage::mageHealthModifier),
+		SpriteSheet(4, 12)
 	{
-		this->textureSize = this->spritePtr()->getTexture()->getSize();
+		/*this->textureSize = this->spritePtr()->getTexture()->getSize();
 		this->textureSize.x /= 4;
 		this->textureSize.y /= 12;
 		this->imageCount.x = 0;
 		this->spritePtr()->setTextureRect(sf::IntRect(this->imageCount.x * this->textureSize.x,
-			this->imageCount.y * this->textureSize.y, this->textureSize.x, this->textureSize.y));
+			this->imageCount.y * this->textureSize.y, this->textureSize.x, this->textureSize.y));*/
 
+		this->resetSpriteSheet();
 		this->movingUp = false;
 		this->movingLeft = false;
 		this->movingDown = false;
@@ -166,44 +168,52 @@ public:
 			float speed = 0.5f + DifficultySettings::Mage::movementSpeedModifier;
 			if (this->movingUp)
 			{
-				if (!this->isShooting) { this->imageCount.y = 3; }
+				//if (!this->isShooting) { this->imageCount.y = 3; }
+				if (!this->isShooting) { this->spriteSheetColumn = 3; }
 				this->move(Degrees(270.f), speed);
 				if (this->internalClock % 100 == 0 && !this->isShooting)
 				{
-					this->imageCount.y = 7;
+					//this->imageCount.y = 7;
+					this->spriteSheetColumn = 7;
 					this->isShooting = true;
 					this->bulletCooldown = 0;
 				}
 			}
 			else if (this->movingLeft)
 			{
-				if (!this->isShooting) { this->imageCount.y = 1; }
+				//if (!this->isShooting) { this->imageCount.y = 1; }
+				if (!this->isShooting) { this->spriteSheetColumn= 1; }
 				this->move(Degrees(180.f), speed);
 				if (this->internalClock % 100 == 0 && !this->isShooting)
 				{
-					this->imageCount.y = 5;
+					//this->imageCount.y = 5;
+					this->spriteSheetColumn = 5;
 					this->isShooting = true;
 					this->bulletCooldown = 0;
 				}
 			}
 			else if (this->movingDown)
 			{
-				if (!this->isShooting) { this->imageCount.y = 0; }
+				//if (!this->isShooting) { this->imageCount.y = 0; }
+				if (!this->isShooting) { this->spriteSheetColumn = 0; }
 				this->move(Degrees(90.f), speed);
 				if (this->internalClock % 100 == 0 && !this->isShooting)
 				{
-					this->imageCount.y = 4;
+					//this->imageCount.y = 4;
+					this->spriteSheetColumn = 4;
 					this->isShooting = true;
 					this->bulletCooldown = 0;
 				}
 			}
 			else if (this->movingRight)
 			{
-				if (!this->isShooting) { this->imageCount.y = 2; }
+				//if (!this->isShooting) { this->imageCount.y = 2; }
+				if (!this->isShooting) { this->spriteSheetColumn = 2; }
 				this->move(Degrees(0.f), speed);
 				if (this->internalClock % 100 == 0 && !this->isShooting)
 				{
-					this->imageCount.y = 6;
+					//this->imageCount.y = 6;
+					this->spriteSheetColumn = 6;
 					this->isShooting = true;
 					this->bulletCooldown = 0;
 				}
@@ -223,22 +233,28 @@ public:
 
 			if (this->internalClock % 15 == 0)
 			{
-				if (this->imageCount.x == 3) { this->imageCount.x = 0; }
-				else { this->imageCount.x++; }
+				//if (this->imageCount.x == 3) { this->imageCount.x = 0; }
+				//else { this->imageCount.x++; }
+				this->spriteSheetRow++;
 			}
 		}
 		else
 		{
-			if (this->movingUp) { this->imageCount.y = 11; }
+			/*if (this->movingUp) { this->imageCount.y = 11; }
 			if (this->movingLeft) { this->imageCount.y = 9; }
 			if (this->movingDown) { this->imageCount.y = 8; }
 			if (this->movingRight) { this->imageCount.y = 10; }
-			this->imageCount.x = this->deathCount;
+			this->imageCount.x = this->deathCount;*/
+
+			if (this->movingUp) { this->spriteSheetColumn = 11; }
+			if (this->movingLeft) { this->spriteSheetColumn = 9; }
+			if (this->movingDown) { this->spriteSheetColumn = 8; }
+			if (this->movingRight) { this->spriteSheetColumn = 10; }
+			this->spriteSheetRow = this->deathCount;
 			if (this->internalClock % 30 == 0) { this->deathCount++; }
 			if (this->deathCount == 3) { this->screen->remove(this); }
 		}
-		this->spritePtr()->setTextureRect(sf::IntRect(this->imageCount.x * this->textureSize.x,
-			this->imageCount.y * this->textureSize.y, this->textureSize.x, this->textureSize.y));
+		//this->spritePtr()->setTextureRect(sf::IntRect(this->imageCount.x * this->textureSize.x, this->imageCount.y * this->textureSize.y, this->textureSize.x, this->textureSize.y));
 	}
 
 	void Collided(Collision* other)

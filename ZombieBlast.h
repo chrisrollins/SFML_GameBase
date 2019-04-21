@@ -28,12 +28,13 @@ protected:
 public:
 	ZombieBlast(Sprite::ID spriteID, sf::Vector2f pos, sf::Vector2f clickPos, float speed = 1.f, int duration = 100, int damage = 1, float startingSize = 1.f, float growRate = 0.05f) : GraphicalGameObject(SpriteFactory::generateSprite(spriteID))
 	{
+		const double pi = 3.14159265358979323846;
 		double radians = atan2(D(clickPos.y - pos.y), D(clickPos.x - pos.x));
 		this->distance = sf::Vector2f(F(cos(radians)) * speed, F(sin(radians)) * speed);
 		sf::Vector2u size = this->spritePtr()->getTexture()->getSize();
 		this->spritePtr()->setOrigin(static_cast<float>(size.x) / 2.f, static_cast<float>(size.y) / 2.f);
-		this->spritePtr()->rotate(F(radians * (180 / 3.141592653589793) - 180.0));
-		this->spritePtr()->setPosition(pos.x + (this->distance.x * 15.f), pos.y + (this->distance.y * 15.f));
+		this->spritePtr()->setRotation(F(radians * (180.0 / pi) - 180.0));
+		this->spritePtr()->setPosition(pos.x + (this->distance.x * 5.f), pos.y + (this->distance.y * 5.f));
 		this->spritePtr()->setScale(startingSize, startingSize);
 		this->blastLife = duration;
 		this->growRate = growRate;

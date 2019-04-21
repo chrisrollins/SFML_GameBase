@@ -11,46 +11,30 @@
 #include <ctime>
 
 using namespace Engine;
-typedef Engine::GameObjectAttribute::Health Health;
-typedef Engine::GameObjectAttribute::Movement Movement;
-typedef Engine::GameObjectAttribute::Collision Collision;
-typedef Engine::GameObjectAttribute::TerrainCollision TerrainCollision;
 
 class AntiMagePotion :
 	public GraphicalGameObject,
-	public Collision
+	public Collision,
+	public SpriteSheet
 {
 private:
 	int wiggleDirection = 1;
 	float wiggleSpeed = 1.1f;
 	float wiggleMagnitude = 18.f;
 	float currentRotation = 0.f;
-	sf::Vector2u textureSize;
-	sf::Vector2u imageCount;
-	sf::Vector2u currentImage;
 public:
-	AntiMagePotion() : GraphicalGameObject(SpriteFactory::generateSprite(Sprite::ID::AnimatedPotion))
+	AntiMagePotion() :
+		GraphicalGameObject(SpriteFactory::generateSprite(Sprite::ID::AnimatedPotion)),
+		SpriteSheet(8)
 	{
-		this->textureSize = this->spritePtr()->getTexture()->getSize();
-		this->textureSize.x /= 8U;
-		this->imageCount.x = 0U;
-		this->spritePtr()->setTextureRect(sf::IntRect(this->imageCount.x * this->textureSize.x,
-			this->imageCount.y * this->textureSize.y, this->textureSize.x, this->textureSize.y));
-
+		this->resetSpriteSheet();
 		sf::IntRect size = this->spritePtr()->getTextureRect();
 		this->spritePtr()->setOrigin(static_cast<float>(size.width / 2), static_cast<float>(size.height / 2));
 	}
 
 	void EveryFrame(uint64_t f)
 	{
-		if (f % 10 == 0)
-		{
-			if (this->imageCount.x == 7) { this->imageCount.x = 0; }
-			else { this->imageCount.x++; }
-		}
-		this->spritePtr()->setTextureRect(sf::IntRect(this->imageCount.x * this->textureSize.x,
-			this->imageCount.y * this->textureSize.y, this->textureSize.x, this->textureSize.y));
-
+		if (f % 10 == 0) { this->spriteSheetRow++; }
 		if (this->currentRotation >= this->wiggleMagnitude || this->currentRotation <= (-1.f * this->wiggleMagnitude)) { this->wiggleDirection *= -1; }
 		this->currentRotation += static_cast<float>(this->wiggleDirection) * this->wiggleSpeed;
 		this->spritePtr()->setRotation(this->currentRotation);

@@ -144,8 +144,13 @@ namespace Engine
 		public:
 			virtual void healTarget(GameObject& target, int heal)
 			{
-				if (Health* targetHealth = dynamic_cast<Health*>(&target)) { targetHealth->heal(heal); }
+				if (Health* targetHealth = dynamic_cast<Health*>(&target))
+				{
+					targetHealth->heal(heal);
+				}
 			}
+		private:
+			Health* lastTarget = nullptr;
 		};
 
 		//has the dealDamage method which will attempt to damage a target. If the target does not have health, nothing happens.
@@ -156,6 +161,8 @@ namespace Engine
 			{
 				if (Health* targetHealth = dynamic_cast<Health*>(&target)) { targetHealth->damage(damage); }
 			}
+		private:
+			Health* lastTarget = nullptr;
 		};
 
 		//this class lets the player class know which objects are enemies
@@ -217,7 +224,6 @@ namespace Engine
 			{
 				this->xVelocity += static_cast<double>(distance.x);
 				this->yVelocity += static_cast<double>(distance.y);
-				this->move(Radians(1.f), 1);
 			}
 
 			virtual void move(Angle angle, float distance = 1.0f)
@@ -238,7 +244,87 @@ namespace Engine
 			double xVelocity;
 			double yVelocity;
 		};
+
+		//provides the sprite sheet functionality
+		class SpriteSheet : public virtual GraphicalGameObjectDrawablePointerAccess<sf::Sprite>
+		{
+		public:
+			SpriteSheet(int rows) : SpriteSheet(rows, 1) { }
+			SpriteSheet(int rows, int columns) : spriteSheetRow(rows, this), spriteSheetColumn(columns, this){ }
+
+			//call this from the inheriting class if you need to set up the texture rect and the sheet hasn't set it up yet
+			void resetSpriteSheet()
+			{
+				this->spriteSheetRow.set(0);
+				this->spriteSheetColumn.set(0);
+			}
+
+			class SpriteSheetDimension
+			{
+			public:
+				SpriteSheetDimension() = delete;
+				SpriteSheetDimension operator ++(int)
+				{
+					this->add(1);
+					return *this;
+				}
+				void operator +=(int n) { this->add(n); }
+				void operator -=(int n) { this->add(-1 * n); }
+				void operator =(int n) { this->set(n); }
+				void operator *=(int n) { this->multiply(n); }
+				void operator /=(int n) { this->divide(n); }
+				bool operator ==(int n) const { return this->position == n; }
+				operator int() const { return this->position; }
+				int size() const { return this->max; }
+			private:
+				friend class SpriteSheet;
+				void add(int n) { this->set(this->position + n); }
+				void multiply(int n) { this->set(this->position * n); }
+				void divide(int n) { this->set(this->position / n); }
+				void set(int n)
+				{
+					n = n % this->max;
+					if (n < 0) { n = this->max + n; }
+					if (sf::Sprite* s = this->sheet->getDrawablePtr())
+					{
+						this->sheet->init();
+						s->setTextureRect({
+							this->sheet->spriteSheetRow * static_cast<int>(this->sheet->textureSize.x),
+							this->sheet->spriteSheetColumn * static_cast<int>(this->sheet->textureSize.y),
+							static_cast<int>(this->sheet->textureSize.x),
+							static_cast<int>(this->sheet->textureSize.y)
+						});
+					}
+					this->position = static_cast<uint32_t>(n);
+				}
+				friend SpriteSheet::SpriteSheet(int, int);
+				SpriteSheetDimension(int max, SpriteSheet* sheet) : max(max), sheet(sheet), position(0) { }
+				int position;
+				int max;
+				SpriteSheet* sheet;
+			};
+			
+			SpriteSheetDimension spriteSheetRow;
+			SpriteSheetDimension spriteSheetColumn;
+
+		private:
+			friend void SpriteSheetDimension::set(int);
+
+			void init()
+			{
+				if (this->initialized) { return; }
+				this->initialized = true;
+				sf::Sprite* s = this->getDrawablePtr();
+				const sf::Texture* t = s->getTexture();
+				this->textureSize = t->getSize();
+				this->textureSize.x /= (this->spriteSheetRow.max > 0) ? this->spriteSheetRow.max : 1;
+				this->textureSize.y /= (this->spriteSheetColumn.max > 0) ? this->spriteSheetColumn.max : 1 ;
+			}
+			bool initialized = false;
+			sf::Vector2u textureSize;
+		};
 	};
+
 	
 	#define TYPE_SHORTCUT(type) typedef Engine::GameObjectAttribute::type type
 	TYPE_SHORTCUT(Health);
@@ -248,6 +334,7 @@ namespace Engine
 	TYPE_SHORTCUT(Attacker);
 	TYPE_SHORTCUT(Healer);
 	TYPE_SHORTCUT(Enemy);
+	TYPE_SHORTCUT(SpriteSheet);
 	#undef TYPE_SHORTCUT
 
 	#define StandardEnemy public GraphicalGameObject, public Health, public Movement, public Collision, public TerrainCollision, public Enemy

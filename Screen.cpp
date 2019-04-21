@@ -303,8 +303,9 @@ namespace Engine
 					mapHeight = this->tMap->height() * this->tMap->tileSize().y;
 				}
 				sf::Vector2f pos = mainCharacterSprite->getPosition();
-				float x = pos.x;
-				float y = pos.y;
+				sf::Vector2f origin = mainCharacterSprite->getOrigin();
+				float x = pos.x + origin.x;
+				float y = pos.y + origin.y;
 				float fWidth = static_cast<float>(mapWidth);
 				float fHeight = static_cast<float>(mapHeight);
 				float halfWidth = static_cast<float>(windowWidth / 2);

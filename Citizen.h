@@ -11,7 +11,7 @@ using namespace Engine;
 
 template<typename T> class RespawnManager;
 
-class Citizen : StandardEnemy
+class Citizen : StandardEnemy, SpriteSheet
 {
 private:
 	friend class RespawnManager<Citizen>;
@@ -19,9 +19,9 @@ private:
 	bool movingLeft = false;
 	bool movingDown = false;
 	bool movingRight = false;
-	sf::Vector2u textureSize;
-	sf::Vector2u imageCount;
-	sf::Vector2u currentImage;
+	//sf::Vector2u textureSize;
+	//sf::Vector2u imageCount;
+	//sf::Vector2u currentImage;
 	RespawnManager<Citizen>* respawnManager = nullptr;
 public:
 	Citizen(sf::Sprite s, RespawnManager<Citizen>* respawnManager) : Citizen(s)
@@ -31,14 +31,16 @@ public:
 
 	Citizen(sf::Sprite s) :
 		GraphicalGameObject(s),
-		Health(1)
+		Health(1),
+		SpriteSheet(3, 4)
 	{
-		this->textureSize = this->spritePtr()->getTexture()->getSize();
+		/*this->textureSize = this->spritePtr()->getTexture()->getSize();
 		this->textureSize.x /= 3;
 		this->textureSize.y /= 4;
 		this->imageCount.x = 0;
 		this->spritePtr()->setTextureRect(sf::IntRect(this->imageCount.x * this->textureSize.x,
-			this->imageCount.y * this->textureSize.y, this->textureSize.x, this->textureSize.y));
+			this->imageCount.y * this->textureSize.y, this->textureSize.x, this->textureSize.y));*/
+		this->resetSpriteSheet();
 		this->movingUp = false;
 		this->movingLeft = false;
 		this->movingDown = false;
@@ -92,33 +94,37 @@ public:
 		float speed = 0.3f + DifficultySettings::Citizen::movementSpeedModifier;
 		if (this->movingUp)
 		{
-			this->imageCount.y = 3;
+			//this->imageCount.y = 3;
+			this->spriteSheetColumn = 3;
 			this->move(Degrees(270.f), speed);
 		}
 		else if (this->movingLeft)
 		{
-			this->imageCount.y = 1;
+			//this->imageCount.y = 1;
+			this->spriteSheetColumn = 1;
 			this->move(Degrees(180.f), speed);
 		}
 		else if (this->movingDown)
 		{
-			this->imageCount.y = 0;
+			//this->imageCount.y = 0;
+			this->spriteSheetColumn = 0;
 			this->move(Degrees(90.f), speed);
 		}
 		else if (this->movingRight)
 		{
-			this->imageCount.y = 2;
+			//this->imageCount.y = 2
+			this->spriteSheetColumn = 2;
 			this->move(Degrees(0.f), speed);
 		}
 
 		if (f % 20 == 0)
 		{
-			if (this->imageCount.x == 2) { this->imageCount.x = 0; }
-			else { this->imageCount.x++; }
+			//if (this->imageCount.x == 2) { this->imageCount.x = 0; }
+			//else { this->imageCount.x++; }
+			this->spriteSheetRow++;
 		}
 
-		this->spritePtr()->setTextureRect(sf::IntRect(this->imageCount.x * this->textureSize.x,
-			this->imageCount.y * this->textureSize.y, this->textureSize.x, this->textureSize.y));
+		//this->spritePtr()->setTextureRect(sf::IntRect(this->imageCount.x * this->textureSize.x, this->imageCount.y * this->textureSize.y, this->textureSize.x, this->textureSize.y));
 	}
 
 	void Collided(Collision* other)
