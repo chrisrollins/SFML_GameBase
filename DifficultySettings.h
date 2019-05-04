@@ -109,27 +109,27 @@ namespace DifficultySettings
 		case DIFFICULTY::EASY:
 			Map::picture = "tileset.png";
 			Map::fileName = "data/map_easy.txt";
-			Player::missingHealthHealBonus = 0.75f;
-			Player::highHealthDrainPenalty = 1.1f;
+			Player::missingHealthHealBonus = 0.8f;
+			Player::highHealthDrainPenalty = 1.09f;
 			Player::eatDrainFreezeDuration = 15;
 			Player::potionMakingCitizenRequired = 3;
 			Score::baseMultiplier = 1.0f;
 			Score::cumulativeBonusMultiplier = 0.02f;
 			Score::cumulativeBonusMultiplierMax = 1.10f;
-			Score::multiplierPerSecond = -0.001f;
+			Score::multiplierPerSecond = 0.0f;
 			break;
 		case DIFFICULTY::NORMAL:
 			Map::picture = "tileset.png";
 			Map::fileName = "data/map_normal.txt";
-			Player::missingHealthHealBonus = 0.35f;
+			Player::missingHealthHealBonus = 0.4f;
 			Player::healthDrainModifier = 1;
 			Player::highHealthDrainPenalty = 2.1f;
-			Player::eatDrainFreezeDuration = 11;
-			Player::maxHealthModifier = -4500;
-			Player::attackHealthCostModifier = 200;
+			Player::eatDrainFreezeDuration = 12;
+			Player::maxHealthModifier = -3000;
+			Player::attackHealthCostModifier = 190;
 			Player::potionMakingCitizenRequired = 4;
 			Player::maxPotionNumModifier = -1;
-			Mage::attackDamageModifier = 170;
+			Mage::attackDamageModifier = 130;
 			Mage::blastSpeedModifier = 0.85f;
 			Mage::blastSpeedAccel = 0.01f;
 			Mage::touchDamageModifier = 15;
@@ -145,16 +145,16 @@ namespace DifficultySettings
 		case DIFFICULTY::HARD:
 			Map::picture = "tileset.png";
 			Map::fileName = "data/map_insane.txt";
-			Player::missingHealthHealBonus = 0.25f;
+			Player::missingHealthHealBonus = 0.3f;
 			Player::healthDrainModifier = 1;
-			Player::highHealthDrainPenalty = 3.9f;
+			Player::highHealthDrainPenalty = 3.80f;
 			Player::eatDrainFreezeDuration = 10;
-			Player::maxHealthModifier = -6000;
+			Player::maxHealthModifier = -5000;
 			Player::attackHealthCostModifier = 350;
 			Player::potionMakingCitizenRequired = 5;
 			Player::maxPotionNumModifier = -2;
-			Mage::attackDamageModifier = 350;
-			Mage::blastSpeedModifier = 1.09f;
+			Mage::attackDamageModifier = 360;
+			Mage::blastSpeedModifier = 1.08f;
 			Mage::blastSpeedAccel = 0.014f;
 			Mage::touchDamageModifier = 45;
 			Mage::movementSpeedModifier = 1.5f;

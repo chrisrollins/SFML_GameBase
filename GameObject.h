@@ -10,8 +10,12 @@ namespace Engine
 {
 	typedef uint64_t GameObjectID;
 	class Screen;
+	class VisualEffect;
+
 	class GameObject
 	{
+		friend class VisualEffect;
+		friend class Screen;
 	public:
 		GameObject();
 		//sfml events
@@ -45,14 +49,15 @@ namespace Engine
 		void disableEvents() { this->eventsDisabled = true; }
 		void enableEvents() { this->eventsDisabled = false; }
 		Screen* getScreenPtr() const { return this->screen; }
-	private:
-		GameObject(GameObjectID id);
-		void dispatchEvent(sf::Event);
 	protected:
-		friend class Screen;
 		GameObjectID id;
 		Screen* screen = nullptr;
 		bool eventsDisabled = false;
+	private:
+		GameObject(GameObjectID id);
+		void dispatchEvent(sf::Event);
+		bool preserved = false;
+		bool removed = false;
 	};
 
 	class GraphicalGameObject : public GameObject
@@ -68,13 +73,10 @@ namespace Engine
 		GraphicalGameObject(sf::VertexBuffer);
 		virtual void draw(sf::RenderWindow& win);
 		virtual ~GraphicalGameObject();
-		sf::Drawable* getGraphic();
+		sf::Drawable* getGraphic() const;
 	protected:
-		sf::Drawable* graphic;
-	private:
 		friend class Screen;
-		bool spawnCollisionsResolved = false;
-		sf::Vector2f lastPos;
+		sf::Drawable* graphic;
 	};
 }
 

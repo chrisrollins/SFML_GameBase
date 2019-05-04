@@ -18,7 +18,7 @@ private:
 	int minute;
 	int second;
 public:
-	TimerUI(sf::Text t) : GraphicalGameObject(t)
+	TimerUI() : GraphicalGameObject(sf::Text())
 	{
 		sf::Font* fontPtr = ResourceManager<sf::Font>::GetResource("zombie.ttf");
 		this->text()->setFont(*fontPtr);
@@ -32,10 +32,10 @@ public:
 		minute = 0;
 		second = 0;
 	}
-
-	void setCharacter(MainCharacter * mc)
+	
+	void AddedToScreen()
 	{
-		this->character = mc;
+		this->character = dynamic_cast<MainCharacter*>(this->screen->getMainCharacter());
 	}
 
 	void EveryFrame(uint64_t f)

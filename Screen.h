@@ -34,12 +34,18 @@ namespace Engine
 		{
 		public:
 			Minutes(uint64_t minutes) : Time(minutes * 60 * 60) {}
+			Minutes(int minutes) : Minutes(static_cast<uint64_t>(minutes)) {}
+			Minutes(double minutes) : Minutes(static_cast<uint64_t>(minutes)) {}
+			Minutes(float minutes) : Minutes(static_cast<uint64_t>(minutes)) {}
 		};
 
 		class Seconds : public Time
 		{
 		public:
 			Seconds(uint64_t seconds) : Time(seconds * 60) {}
+			Seconds(int seconds) : Seconds(static_cast<uint64_t>(seconds)) {}
+			Seconds(double seconds) : Seconds(static_cast<uint64_t>(seconds)) {}
+			Seconds(float seconds) : Seconds(static_cast<uint64_t>(seconds)) {}
 		};
 		
 		class Frames : public Time
@@ -70,6 +76,7 @@ namespace Engine
 		unsigned static int windowHeight;
 		static const char* windowTitle;
 	private:
+		unordered_map<GameObjectID, GameObject*> preservedObjects;
 		unordered_map<GameObjectID, GameObject*> allObjects;
 		unordered_map<GameObjectID, GraphicalGameObject*> renderObjects;
 		unordered_map<GameObjectID, GraphicalGameObject*> uiObjects;

@@ -59,7 +59,7 @@ namespace Engine
 		delete this->graphic;
 	}
 
-	sf::Drawable* GraphicalGameObject::getGraphic()
+	sf::Drawable* GraphicalGameObject::getGraphic() const
 	{
 		return this->graphic;
 	}

@@ -69,23 +69,26 @@ public:
 		static HealthBar healthbar;
 		healthbar.setCharacter(mcPtr);
 		levelScreen->addUIObject(&healthbar);
+		
+		levelScreen->schedule([=]()
+		{
+			std::vector<sf::Vector2f> spawnPositions = map.getSafeSpawnPositions();
+			size_t randIndex = rand() % spawnPositions.size();
+			sf::Vector2f position = spawnPositions[randIndex];
+			sf::Sprite s = SpriteFactory::generateSprite(Sprite::ID::MageRed);
+			s.setPosition(position);
+			levelScreen->add(new StrongMage(s));
+		}, TimeUnit::Seconds(60), 0);
 
 		//set up the score object
-		static sf::Text s;
-		static Score score(s);
-		score.unfreeze();
-		score.set(0);
-		scorePtr = &score;
-		levelScreen->addUIObject(&score);
+		Score* score = new Score();
+		scorePtr = score;
+		levelScreen->addUIObject(score);
 
-		static sf::Text t;
-		static TimerUI timer(t);
-		timer.setCharacter(mcPtr);
-		levelScreen->addUIObject(&timer);
+		levelScreen->addUIObject(new TimerUI());
 
 		if (oldScreen)
 		{
-			//if (GameObject* oldMC = oldScreen->getMainCharacter()) { delete oldMC; }
 			delete oldScreen;
 			oldScreen = levelScreen;
 		}

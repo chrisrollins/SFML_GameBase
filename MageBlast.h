@@ -6,6 +6,7 @@
 #include "FileLoadException.h"
 #include "SpriteFactory.h"
 #include "GameObjectAttribute.h"
+#include "DebugManager.h"
 
 using namespace Engine;
 
@@ -21,70 +22,136 @@ class MageBlast :
 	public Attacker
 {
 private:
+	sf::Vector2f baseMovePerFrame;
 	sf::Vector2f movePerFrame;
-	sf::Vector2f baseSpeed;
-	int life;
+	uint64_t remainingFrames;
 	int hitsAgainstPlayer = 0;
-	float rotationRate;
-public:
-	MageBlast(const sf::Vector2f& pos, const sf::Vector2f& destination, double speed, int duration) :
-		GraphicalGameObject(SpriteFactory::generateSprite(Sprite::ID::Mageblast))
+	double _speed = 1.0;
+	Radians angle = Radians(0.0);
+	sf::Vector2f _destination;
+	float _rotationRate;
+	int _damage = 1;
+	float scaleModifier = 0.f;
+	bool initializationOver = false;
+
+	void initSpeed()
 	{
-		this->spritePtr()->setPosition(pos);
-		sf::Vector2u size = this->spritePtr()->getTexture()->getSize();
-		this->spritePtr()->setOrigin(static_cast<float>(size.x) / 2.f, static_cast<float>(size.y) / 2.f);
-		double radians = atan2(static_cast<double>(destination.y - pos.y), static_cast<double>(destination.x - pos.x));
-		this->baseSpeed = { static_cast<float>(speed * cos(radians)), static_cast<float>(speed * sin(radians)) };
-		this->movePerFrame = this->baseSpeed;
-		this->life = duration;
-		srand(static_cast<unsigned int>(this->getID()));
-		this->rotationRate = (rand() % 2 == 0) ? 3.5f : -3.5f;
+		double radians = this->angle.getRadians();
+		this->baseMovePerFrame = { static_cast<float>(_speed * cos(radians)), static_cast<float>(_speed * sin(radians)) };
+		this->movePerFrame = this->baseMovePerFrame;
+	}
+
+	void AddedToScreen()
+	{
+		this->initializationOver = true;
 	}
 
 	void EveryFrame(uint64_t f)
 	{
-		sf::Sprite* spr = this->spritePtr();
+		sf::Sprite* spr = this->getDrawablePtr();
 		this->move(this->movePerFrame);
-		spr->rotate(this->rotationRate);
-		spr->setScale(cos(static_cast<float>(this->life)), sin(static_cast<float>(this->life)));
-		this->movePerFrame.x += DifficultySettings::Mage::blastSpeedAccel * this->baseSpeed.x;
-		this->movePerFrame.y += DifficultySettings::Mage::blastSpeedAccel * this->baseSpeed.y;
-		this->life--;
-		if (this->life <= 20)
+		spr->rotate(this->_rotationRate);
+		spr->setScale(scaleModifier + cos(static_cast<float>(this->remainingFrames)), scaleModifier + sin(static_cast<float>(this->remainingFrames)));
+		this->movePerFrame.x += DifficultySettings::Mage::blastSpeedAccel * this->baseMovePerFrame.x;
+		this->movePerFrame.y += DifficultySettings::Mage::blastSpeedAccel * this->baseMovePerFrame.y;
+		this->remainingFrames--;
+		if (this->remainingFrames <= 20)
 		{
 			sf::Color currentColor = spr->getColor();
 			currentColor.a -= (currentColor.a > 13) ? 13 : currentColor.a;
 			spr->setColor(currentColor);
 		}
-		if (this->life <= 0) { this->screen->remove(this); }
+		if (this->remainingFrames <= 0) { this->screen->remove(this); }
 	}
 
-	void Collided(GraphicalGameObject* other)
+	void Collided(Collision* other)
 	{
-		if (dynamic_cast<SuperZombieBlast*>(other) && this->life > 20)
+		if (dynamic_cast<SuperZombieBlast*>(other) && this->remainingFrames > 20)
 		{
-			this->life = 20;
-			this->baseSpeed.x = 0.f;
-			this->baseSpeed.y = 0.f;
+			this->remainingFrames = 20;
+			this->baseMovePerFrame.x = 0.f;
+			this->baseMovePerFrame.y = 0.f;
 			this->movePerFrame.x /= 4.5f;
 			this->movePerFrame.y /= 4.5f;
 		}
 	}
 
-	void hitPlayer()
+public:
+	MageBlast(sf::Sprite sprite) : GraphicalGameObject(sprite)
 	{
-		this->hitsAgainstPlayer++;
+		sf::Vector2u size = this->getDrawablePtr()->getTexture()->getSize();
+		this->getDrawablePtr()->setOrigin(static_cast<float>(size.x) / 2.f, static_cast<float>(size.y) / 2.f);
+		srand(static_cast<unsigned int>(this->getID()));
+		this->_rotationRate = (rand() % 2 == 0) ? 3.5f : -3.5f;
 	}
 
-	int getHits() const
+	#define INIT_FUNC\
+	if (initializationOver)\
+	{\
+		DebugManager::PrintMessage(DebugManager::MessageType::ERROR_REPORTING, "Warning: Initialization function called on MageBlast after it was added to screen. No effect.");\
+		return this;\
+	}
+	
+	MageBlast* position(sf::Vector2f pos)
 	{
-		return this->hitsAgainstPlayer;
+		INIT_FUNC
+		this->getDrawablePtr()->setPosition(pos);
+		return this;
 	}
 
-	sf::Sprite* spritePtr()
+	MageBlast* destination(sf::Vector2f dest)
 	{
-		return dynamic_cast<sf::Sprite*>(this->graphic);
+		INIT_FUNC
+		this->_destination = dest;
+		sf::Vector2f pos = this->getDrawablePtr()->getPosition();
+		this->angle = Radians(atan2(static_cast<double>(dest.y - pos.y), static_cast<double>(dest.x - pos.x)));
+		this->initSpeed();
+		return this;
 	}
+
+	MageBlast* speed(double speed)
+	{
+		INIT_FUNC
+		this->_speed = speed * (1.0 + static_cast<double>(DifficultySettings::Mage::blastSpeedModifier));
+		this->initSpeed();
+		return this;
+	}
+
+	MageBlast* duration(TimeUnit::Time duration)
+	{
+		INIT_FUNC
+		this->remainingFrames = duration;
+		return this;
+	}
+
+	MageBlast* damage(int damage)
+	{
+		INIT_FUNC
+		this->_damage = damage;
+		return this;
+	}
+	
+	MageBlast* scale(float scale)
+	{
+		INIT_FUNC
+		this->scaleModifier = scale;
+		return this;
+	}
+	
+	MageBlast* rotationRate(float rotationRate)
+	{
+		INIT_FUNC
+		this->_rotationRate = rotationRate;
+		return this;
+	}
+
+	#undef INIT_FUNC
+
+	int getDamage() const { return this->_damage; }
+
+	void hitPlayer() { this->hitsAgainstPlayer++; }
+
+	int getHits() const { return this->hitsAgainstPlayer; }
 };
 
 #endif

@@ -14,10 +14,10 @@ namespace Engine
 	{
 	private:
 		bool frozen;
-		int number = 0;
+		int value = 0;
 		sf::Text* text() { return dynamic_cast<sf::Text*>(this->getGraphic()); }
 	public:
-		Score(sf::Text t) : GraphicalGameObject(t)
+		Score() : GraphicalGameObject(sf::Text())
 		{
 			sf::Font* fontPtr = ResourceManager<sf::Font>::GetResource("zombie.ttf");
 			this->text()->setFont(*fontPtr);
@@ -42,32 +42,32 @@ namespace Engine
 
 		int operator+=(const int& n)
 		{
-			this->set(this->number + n);
-			return this->number;
+			this->set(this->value + n);
+			return this->value;
 		}
 
 		int operator-=(const int& n)
 		{
-			this->set(this->number - n);
-			return this->number;
+			this->set(this->value - n);
+			return this->value;
 		}
 
 		int operator=(const int& n)
 		{
 			this->set(n);
-			return this->number;
+			return this->value;
 		}
 
 		void set(int n)
 		{
 			if (this->frozen) { return; }
-			this->number = n;
-			this->text()->setString("Score: " + std::to_string(this->number));
+			this->value = n;
+			this->text()->setString("Score: " + std::to_string(this->value));
 		}
 
 		int get() const
 		{
-			return this->number;
+			return this->value;
 		}
 
 		void freeze()
@@ -81,7 +81,7 @@ namespace Engine
 		}
 
 		void EveryFrame(uint64_t f) {
-			int n = number, count = 0;
+			int n = value, count = 0;
 			while (n) {
 				count++;
 				n /= 10;

@@ -157,7 +157,6 @@ public:
 				SoundPlayer::play(SoundEffect::ID::ZombieAttack, 40.f);
 				if (this->getHealthPercent() > 0.2) { this->changeHealth(-1 * this->attackHealthCost); } //health cost of ranged attack only applies if health is above 20%
 				ZombieBlast* blast = new ZombieBlast(Sprite::ID::Blast, shotOrigin, sf::Vector2f(static_cast<float>(mousePos.x), static_cast<float>(mousePos.y)), 3.5f, 140);
-				//ZombieBlast* blast = new ZombieBlast(Sprite::ID::Blast, sf::Vector2f(static_cast<float>(mousePos.x), static_cast<float>(mousePos.y)), shotOrigin, 3.5f, 140);
 				this->screen->add(blast);
 			}
 			else if (this->potionNum > 0)
@@ -295,37 +294,15 @@ public:
 		}
 	}
 
-	std::string getName() const
-	{
-		return this->name;
-	}
+	std::string getName() const { return this->name; }
 
-	float getCurrAliveTime() const
-	{
-		return this->aliveClock.getElapsedTime().asSeconds();
-	}
+	float getCurrAliveTime() const { return this->aliveClock.getElapsedTime().asSeconds(); }
 
-	float getTotalAliveTime() const
-	{
-		return this->totalAliveTime;
-	}
+	float getTotalAliveTime() const { return this->totalAliveTime; }
 
-	int getNumCitizenEated() const
-	{
-		return this->numCitizenEated;
-	}
+	int getNumCitizenEated() const { return this->numCitizenEated; }
 
-	void setDirection(DIRECTION direction)
-	{
-		this->direction = direction;
-	}
-
-	void damage(int damage)
-	{
-		this->changeHealth(-1 * damage);
-		this->getDrawablePtr()->setColor({ 255, 100, 100 });
-		this->colorRestoreDelay = 2;
-	}
+	void setDirection(DIRECTION direction) { this->direction = direction; }
 
 	void addPotionNum()
 	{
@@ -333,15 +310,9 @@ public:
 		if (this->potionNum > this->maxPotionNum) { this->potionNum = this->maxPotionNum; }
 	}
 
-	int getPotionNum() const
-	{
-		return this->potionNum;
-	}
+	int getPotionNum() const { return this->potionNum; }
 
-	int getMaxPotionNum() const
-	{
-		return this->maxPotionNum;
-	}
+	int getMaxPotionNum() const { return this->maxPotionNum; }
 
 	void changeSpeed(float change)
 	{
@@ -350,7 +321,7 @@ public:
 		else if (this->currentSpeed < 0.f) { this->currentSpeed = 0.f; }
 	}
 
-	void Collided(GameObjectAttribute::Collision* other)
+	void Collided(Collision* other)
 	{
 		if (this->isAlive())
 		{
@@ -367,15 +338,15 @@ public:
 				float time = this->aliveClock.getElapsedTime().asSeconds();
 				float timeAmplifier = 1.f + time * 0.01f;
 				sf::Vector2f myPos = this->getDrawablePtr()->getPosition();
-				sf::Vector2f blastPos = blast->spritePtr()->getPosition();
-				sf::IntRect blastSize = blast->spritePtr()->getTextureRect();
+				sf::Vector2f blastPos = blast->getDrawablePtr()->getPosition();
+				sf::IntRect blastSize = blast->getDrawablePtr()->getTextureRect();
 				float dx = myPos.x - blastPos.x;
 				float dy = myPos.y - blastPos.y;
 				float distance = sqrt(dx * dx + dy * dy);
 				float proximityMultiplier = 1.5f - distance / 100.f;
 				float repeatDamageDampening = (1.f + 0.01f*(static_cast<float>(blast->getHits())));
 				if (repeatDamageDampening > 3.0f) { repeatDamageDampening = 3.0f; }
-				float baseDmg = (275.f + static_cast<float>(DifficultySettings::Mage::attackDamageModifier)) * proximityMultiplier * timeAmplifier;
+				float baseDmg = static_cast<float>(blast->getDamage()) * proximityMultiplier * timeAmplifier;
 				int damage = static_cast<int>((baseDmg) / repeatDamageDampening);
 				this->damage(damage);
 				blast->hitPlayer();
@@ -457,9 +428,14 @@ public:
 		}
 	}
 
-	void changeScore(int change)
+	void changeScore(int change) { *scorePtr += change; }
+
+protected:
+	int Damaged(int damage)
 	{
-		*scorePtr += change;
+		this->getDrawablePtr()->setColor({ 255, 100, 100 });
+		this->colorRestoreDelay = 2;
+		return damage;
 	}
 };
 #endif

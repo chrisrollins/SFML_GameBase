@@ -54,7 +54,7 @@ namespace Engine
 			friend class Screen;
 			virtual bool CheckCollision(Collision* other)
 			{
-				sf::FloatRect  thisRect = this->getDrawablePtr()->getGlobalBounds();
+				sf::FloatRect thisRect = this->getDrawablePtr()->getGlobalBounds();
 				sf::FloatRect otherRect = other->getDrawablePtr()->getGlobalBounds();
 				return thisRect.intersects(otherRect);
 			}
@@ -133,6 +133,9 @@ namespace Engine
 			virtual int Damaged(int damage) { return damage; }
 
 			virtual int Healed(int heal) { return heal; }
+
+			void setMaxHealth(int newMax) { this->maxHealth = newMax; }
+
 		private:
 			int maxHealth;
 			int health;			

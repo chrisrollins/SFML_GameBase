@@ -36,6 +36,9 @@ namespace Engine
 			InsaneButton,
 			Mage,
 			Mageblast,
+			MageRed,
+			MageShield,
+			MageSuperAttackCharge,
 			Man,
 			MenuBackground,
 			MenuEasy,
@@ -101,6 +104,9 @@ namespace Engine
 			idMap[Sprite::ID::InsaneButton] = "insane_button.png";
 			idMap[Sprite::ID::Mage] = "mage.png";
 			idMap[Sprite::ID::Mageblast] = "mageblast.png";
+			idMap[Sprite::ID::MageRed] = "mage_red.png";
+			idMap[Sprite::ID::MageShield] = "mage_shield.png";
+			idMap[Sprite::ID::MageSuperAttackCharge] = "mage_super_attack_charge.png";
 			idMap[Sprite::ID::Man] = "man.png";
 			idMap[Sprite::ID::MenuBackground] = "menu_background.png";
 			idMap[Sprite::ID::MenuEasy] = "menu_easy.png";

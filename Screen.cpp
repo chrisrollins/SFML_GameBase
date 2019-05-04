@@ -81,6 +81,7 @@ namespace Engine
 
 	void Screen::remove(GameObject* gameObject, bool autoDelete)
 	{
+		gameObject->removed = true;
 		if (this != currentScreen)
 		{	
 			GameObjectID id = gameObject->getID();
@@ -89,7 +90,8 @@ namespace Engine
 				this->uiObjects.erase(id) |
 				this->collisionObjects.erase(id) |
 				this->movingObjects.erase(id) |
-				this->movingObjectsWithTerrainCollision.erase(id))
+				this->movingObjectsWithTerrainCollision.erase(id) |
+				this->preservedObjects.erase(id))
 			{
 				if (autoDelete) { delete gameObject; }
 			}
@@ -377,10 +379,18 @@ namespace Engine
 					this->uiObjects.erase(id) |
 					this->collisionObjects.erase(id) |
 					this->movingObjects.erase(id) |
-					this->movingObjectsWithTerrainCollision.erase(id))
+					this->movingObjectsWithTerrainCollision.erase(id) |
+					this->preservedObjects.erase(id))
 				{
-					toRemove->RemovedFromScreen();
-					if (autoDelete) { delete toRemove; }
+					if (!toRemove->preserved)
+					{
+						toRemove->RemovedFromScreen();
+						if (autoDelete) { delete toRemove; }
+					}
+					else
+					{
+						this->preservedObjects[toRemove->getID()] = toRemove;
+					}
 				}
 			}
 
@@ -443,12 +453,9 @@ namespace Engine
 			if (this->countdown == 0)
 			{
 				func();
-				if (repeatsRemaining > 0)
-				{
-					repeatsRemaining--;
-					this->countdown = this->delay;
-				}
-				else if(!this->infinite) { this->screen->remove(this); }				
+				repeatsRemaining--;
+				this->countdown = this->delay;
+				if(repeatsRemaining <= 0 && !this->infinite) { this->screen->remove(this); }				
 			}
 			else { this->countdown--; }
 		}
